@@ -294,6 +294,108 @@ const AuthPage = () => {
   );
 };
 
+// Email Logs Component
+const EmailLogsComponent = ({ onBack }) => {
+  const [emailLogs, setEmailLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEmailLogs();
+  }, []);
+
+  const fetchEmailLogs = async () => {
+    try {
+      const response = await axios.get(`${API}/email-logs`);
+      setEmailLogs(response.data);
+    } catch (error) {
+      console.error('Email logları yüklenemedi:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('tr-TR');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <Button variant="outline" onClick={onBack}>
+            ← Geri Dön
+          </Button>
+          <h2 className="text-2xl font-bold text-gray-900">Gönderilen E-postalar</h2>
+        </div>
+      </div>
+
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {emailLogs.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                Henüz e-posta gönderilmemiş
+              </div>
+            ) : (
+              emailLogs.map((log) => (
+                <div key={log.assignment_id} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-semibold text-gray-900">{log.employee_name}</span>
+                        <span className="text-sm text-gray-500">({log.employee_email})</span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <strong>Konu:</strong> Dijital Dönüşüm - {log.month}/{log.year} Dönemi Soru Yanıtlama
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <strong>Kategori:</strong> {log.question_category}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <strong>Soru:</strong> {log.question_text}
+                      </div>
+                    </div>
+                    <div className="text-right space-y-2">
+                      <div className="text-sm text-gray-500">
+                        {formatDate(log.sent_date)}
+                      </div>
+                      <div className={`text-sm font-medium ${log.response_received ? 'text-green-600' : 'text-orange-600'}`}>
+                        {log.response_received ? '✅ Yanıtlandı' : '⏳ Bekliyor'}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t pt-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Yanıt Linki:</span>
+                      <a 
+                        href={log.answer_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-sm underline"
+                      >
+                        Soruyu Yanıtla →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Share Questions Management
 const ShareQuestionsManagement = ({ onBack }) => {
   const [questions, setQuestions] = useState([]);
