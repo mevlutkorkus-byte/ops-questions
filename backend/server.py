@@ -270,6 +270,110 @@ async def get_status_checks(current_user: User = Depends(get_current_user)):
         result.append(StatusCheck(**status_check))
     return result
 
+# Employee Routes
+@api_router.post("/employees", response_model=Employee)
+async def create_employee(employee_data: EmployeeCreate, current_user: User = Depends(get_current_user)):
+    # Validate date formats
+    try:
+        datetime.strptime(employee_data.hire_date, "%Y-%m-%d")
+        datetime.strptime(employee_data.birth_date, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Tarih formatı YYYY-MM-DD olmalıdır"
+        )
+    
+    # Check if employee with same phone already exists
+    existing_employee = await db.employees.find_one({"phone": employee_data.phone})
+    if existing_employee:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bu telefon numarası ile kayıtlı çalışan zaten mevcut"
+        )
+    
+    employee_dict = employee_data.dict()
+    employee_dict["id"] = str(uuid.uuid4())
+    employee_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.employees.insert_one(employee_dict)
+    
+    employee = Employee(**employee_dict)
+    employee.created_at = datetime.fromisoformat(employee_dict["created_at"].replace('Z', '+00:00')) if isinstance(employee_dict["created_at"], str) else employee_dict["created_at"]
+    
+    return employee
+
+@api_router.get("/employees", response_model=List[Employee])
+async def get_employees(current_user: User = Depends(get_current_user)):
+    employees = await db.employees.find().to_list(1000)
+    result = []
+    for employee in employees:
+        if "created_at" in employee:
+            employee["created_at"] = datetime.fromisoformat(employee["created_at"].replace('Z', '+00:00')) if isinstance(employee["created_at"], str) else employee["created_at"]
+        result.append(Employee(**employee))
+    return result
+
+@api_router.get("/employees/{employee_id}", response_model=Employee)
+async def get_employee(employee_id: str, current_user: User = Depends(get_current_user)):
+    employee = await db.employees.find_one({"id": employee_id})
+    if not employee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Çalışan bulunamadı"
+        )
+    
+    if "created_at" in employee:
+        employee["created_at"] = datetime.fromisoformat(employee["created_at"].replace('Z', '+00:00')) if isinstance(employee["created_at"], str) else employee["created_at"]
+    
+    return Employee(**employee)
+
+@api_router.put("/employees/{employee_id}", response_model=Employee)
+async def update_employee(employee_id: str, employee_data: EmployeeCreate, current_user: User = Depends(get_current_user)):
+    # Validate date formats
+    try:
+        datetime.strptime(employee_data.hire_date, "%Y-%m-%d")
+        datetime.strptime(employee_data.birth_date, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Tarih formatı YYYY-MM-DD olmalıdır"
+        )
+    
+    # Check if employee exists
+    existing_employee = await db.employees.find_one({"id": employee_id})
+    if not existing_employee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Çalışan bulunamadı"
+        )
+    
+    # Check if phone is taken by another employee
+    phone_check = await db.employees.find_one({"phone": employee_data.phone, "id": {"$ne": employee_id}})
+    if phone_check:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bu telefon numarası ile kayıtlı başka bir çalışan mevcut"
+        )
+    
+    update_data = employee_data.dict()
+    await db.employees.update_one({"id": employee_id}, {"$set": update_data})
+    
+    updated_employee = await db.employees.find_one({"id": employee_id})
+    if "created_at" in updated_employee:
+        updated_employee["created_at"] = datetime.fromisoformat(updated_employee["created_at"].replace('Z', '+00:00')) if isinstance(updated_employee["created_at"], str) else updated_employee["created_at"]
+    
+    return Employee(**updated_employee)
+
+@api_router.delete("/employees/{employee_id}")
+async def delete_employee(employee_id: str, current_user: User = Depends(get_current_user)):
+    result = await db.employees.delete_one({"id": employee_id})
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Çalışan bulunamadı"
+        )
+    
+    return {"message": "Çalışan başarıyla silindi"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
