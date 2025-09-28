@@ -1534,6 +1534,39 @@ const Dashboard = () => {
     );
   }
 
+  if (currentView === 'share') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
+        <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <Share className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Yöneten Sorular</h1>
+                  <p className="text-sm text-gray-600">Soru paylaşımı</p>
+                </div>
+              </div>
+              <Button 
+                onClick={logout}
+                variant="outline"
+                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+                data-testid="logout-button"
+              >
+                Çıkış Yap
+              </Button>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <ShareQuestionsManagement onBack={() => setCurrentView('dashboard')} />
+        </main>
+      </div>
+    );
+  }
+
   if (currentView === 'constants') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
