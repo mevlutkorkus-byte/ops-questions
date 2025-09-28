@@ -827,18 +827,10 @@ const Dashboard = () => {
             <p className="text-gray-600 mb-6">
               Dashboard'unuz başarıyla yüklendi. Buraya yeni özellikler ekleyebilirsiniz.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
-                onClick={() => setCurrentView('employees')}
-                data-testid="manage-employees-button"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Kişi Ekle
-              </Button>
+            <div className="flex justify-center">
               <Button variant="outline">
                 <Activity className="w-4 h-4 mr-2" />
-                Raporları Görüntüle
+                Sistem Durumu
               </Button>
             </div>
           </CardContent>
