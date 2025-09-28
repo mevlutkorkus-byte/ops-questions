@@ -131,8 +131,8 @@ const AuthProvider = ({ children }) => {
       login, 
       register, 
       logout, 
-      loading,
-      isAuthenticated: !!token 
+      loading: loading || !initialized,
+      isAuthenticated: !!token && initialized
     }}>
       {children}
     </AuthContext.Provider>
