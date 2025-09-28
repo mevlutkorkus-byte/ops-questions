@@ -310,7 +310,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
 
   const fetchQuestionsAndEmployees = async () => {
     try {
-      const response = await axios.get(`${API}/questions/share-list`);
+      const response = await axios.get(`${API}/questions-share-list`);
       setQuestions(response.data.questions);
       setEmployees(response.data.employees);
       
