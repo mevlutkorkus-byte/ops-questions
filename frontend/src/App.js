@@ -129,7 +129,7 @@ const AuthProvider = ({ children }) => {
       register, 
       logout, 
       loading,
-      isAuthenticated: !!token && !!user 
+      isAuthenticated: !!token 
     }}>
       {children}
     </AuthContext.Provider>
