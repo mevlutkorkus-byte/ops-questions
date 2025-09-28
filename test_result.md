@@ -298,6 +298,21 @@ test_plan:
           agent: "testing"
           comment: "✅ 5+ YEAR BULK RESPONSE SYSTEM FULLY TESTED AND WORKING: Comprehensive testing completed successfully! ✅ PUBLIC RESPONSE PAGE: Accessible via answer links, professional UI design ✅ TABLE STRUCTURE: Perfect 64-month table from 2025 Eylül (Sep) to 2030 Aralık (Dec) ✅ PROGRESS INDICATOR: Shows '0 / 64 ay dolduruldu' (months filled) ✅ BULK SUBMISSION: 'Tüm Verileri Gönder' button present and functional ✅ DYNAMIC COLUMNS: Table adapts based on question type (numerical, multi-field, comment) ✅ BACKEND INTEGRATION: /api/monthly-responses/bulk endpoint working correctly ✅ AI PROCESSING: Bulk submissions trigger AI comment generation ✅ DATE RANGE VERIFICATION: Exactly 64 months as expected for 5+ year period ✅ RESPONSIVE DESIGN: Table scrollable with proper styling ✅ All requirements from review request successfully implemented and verified. System ready for production use!"
 
+  - task: "Clean Table-Based System Refactor (Replacing data_fields/response_type)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "MAJOR REFACTOR: Completely refactored question creation system. Replaced old complex data_fields/response_type system with clean table-based approach. New 'Tablo Satırları' section allows 2-10 table rows with name and unit fields. Added 'Günlük' period option. Questions list now shows row count instead of response type."
+        - working: true
+          agent: "testing"
+          comment: "✅ CLEAN TABLE-BASED SYSTEM REFACTOR FULLY TESTED AND WORKING: Major refactor successfully verified! ✅ NEW SYSTEM: 'Tablo Satırları (2-10 satır)' section implemented replacing old complexity ✅ NEW FEATURE: 'Günlük' period option available ✅ NEW FUNCTIONALITY: '+ Satır Ekle' button for adding table rows with name/unit fields ✅ NEW STRUCTURE: Multiple rows can be created (tested: Satış (adet), Pazarlama (TL), İK (kişi)) ✅ NEW DISPLAY: Questions list shows 'Tablo Satırları' column with 'X satır' count ✅ CLEAN REFACTOR: Old data_fields/response_type complexity completely removed ✅ BACKEND INTEGRATION: Questions saved with table_rows structure ✅ UI VERIFICATION: Clean, simple form interface ✅ All test goals from review request successfully completed. The refactored clean table-based system is production-ready and represents a major improvement in code simplicity and user experience!"
+
 agent_communication:
     - agent: "main"
       message: "Completed implementation of Cevaplar feature. Backend models, AI integration, and frontend components are ready. Need to test all functionality including API endpoints, AI comment generation, and chart visualization."
