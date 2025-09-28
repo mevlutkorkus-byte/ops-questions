@@ -3156,45 +3156,127 @@ const PublicQuestionResponse = () => {
 
                 {error && (
                   <Alert className="mb-6 border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-600">
-                      {error}
-                    </AlertDescription>
+                    <AlertDescription className="text-red-600">{error}</AlertDescription>
                   </Alert>
                 )}
 
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-6">
-                    <Label htmlFor="response" className="text-base font-medium text-gray-900">
-                      Yanıtınız
-                    </Label>
-                    <Textarea
-                      id="response"
-                      value={response}
-                      onChange={(e) => setResponse(e.target.value)}
-                      placeholder="Lütfen sorunun yanıtını detaylı bir şekilde yazınız..."
-                      rows={8}
-                      className="mt-2"
-                      required
-                    />
-                  </div>
+                {success && (
+                  <Alert className="mb-6 border-green-200 bg-green-50">
+                    <AlertDescription className="text-green-600">{success}</AlertDescription>
+                  </Alert>
+                )}
 
-                  <div className="flex justify-end">
-                    <Button
-                      type="submit"
-                      disabled={submitting}
-                      className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 px-8 py-2.5"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Gönderiliyor...
-                        </>
-                      ) : (
-                        'Veri Gönder'
-                      )}
-                    </Button>
+                {/* 5+ Year Monthly Data Table */}
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      2025 Eylül - 2030 Aralık Dönem Verileri
+                    </h3>
+                    <span className="text-sm text-gray-500">
+                      {Object.values(bulkResponses).filter(r => r.numerical_value || Object.values(r.data_values || {}).some(v => v) || r.employee_comment.trim()).length} / {monthsData.length} ay dolduruldu
+                    </span>
                   </div>
-                </form>
+                  
+                  <div className="border rounded-lg overflow-hidden">
+                    <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-gray-50 sticky top-0">
+                          <tr>
+                            <th className="px-3 py-2 text-left font-medium text-gray-900">Yıl</th>
+                            <th className="px-3 py-2 text-left font-medium text-gray-900">Ay</th>
+                            
+                            {/* Dynamic headers based on question type */}
+                            {questionData.question.data_fields && questionData.question.data_fields.length > 0 ? (
+                              questionData.question.data_fields.map(field => (
+                                <th key={field.id} className="px-3 py-2 text-left font-medium text-gray-900">
+                                  {field.name} {field.unit && `(${field.unit})`}
+                                </th>
+                              ))
+                            ) : (
+                              questionData.question.response_type === 'Sadece Sayısal' || questionData.question.response_type === 'Her İkisi' ? (
+                                <th className="px-3 py-2 text-left font-medium text-gray-900">Sayısal Değer</th>
+                              ) : null
+                            )}
+                            
+                            {(questionData.question.response_type === 'Sadece Sözel' || questionData.question.response_type === 'Her İkisi') && (
+                              <th className="px-3 py-2 text-left font-medium text-gray-900">Yorum</th>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {monthsData.map(month => (
+                            <tr key={month.key} className="border-t hover:bg-gray-50">
+                              <td className="px-3 py-2 font-medium">{month.year}</td>
+                              <td className="px-3 py-2">{month.monthName}</td>
+                              
+                              {/* Dynamic data fields */}
+                              {questionData.question.data_fields && questionData.question.data_fields.length > 0 ? (
+                                questionData.question.data_fields.map(field => (
+                                  <td key={field.id} className="px-3 py-2">
+                                    <Input
+                                      type="number"
+                                      step="any"
+                                      value={bulkResponses[month.key]?.data_values?.[field.id] || ''}
+                                      onChange={(e) => updateDataValue(month.key, field.id, e.target.value)}
+                                      placeholder="0"
+                                      className="w-20 h-8 text-sm"
+                                    />
+                                  </td>
+                                ))
+                              ) : (
+                                (questionData.question.response_type === 'Sadece Sayısal' || questionData.question.response_type === 'Her İkisi') && (
+                                  <td className="px-3 py-2">
+                                    <Input
+                                      type="number"
+                                      step="any"
+                                      value={bulkResponses[month.key]?.numerical_value || ''}
+                                      onChange={(e) => updateResponseData(month.key, 'numerical_value', e.target.value)}
+                                      placeholder="0"
+                                      className="w-20 h-8 text-sm"
+                                    />
+                                  </td>
+                                )
+                              )}
+                              
+                              {/* Comment field */}
+                              {(questionData.question.response_type === 'Sadece Sözel' || questionData.question.response_type === 'Her İkisi') && (
+                                <td className="px-3 py-2">
+                                  <Input
+                                    value={bulkResponses[month.key]?.employee_comment || ''}
+                                    onChange={(e) => updateResponseData(month.key, 'employee_comment', e.target.value)}
+                                    placeholder="Yorum yazın..."
+                                    className="w-40 h-8 text-sm"
+                                  />
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 İpucu: Sadece veri girdiğiniz aylar kaydedilecektir. Boş bıraktığınız aylar göz ardı edilir.
+                  </p>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleBulkSubmit}
+                    disabled={submitting}
+                    className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 px-8 py-2.5"
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Gönderiliyor...
+                      </>
+                    ) : (
+                      'Tüm Verileri Gönder'
+                    )}
+                  </Button>
+                </div>
               </>
             )}
           </CardContent>
