@@ -1822,7 +1822,7 @@ const ProtectedRoute = ({ children }) => {
 
 // Public Question Response Page
 const PublicQuestionResponse = () => {
-  const { assignmentId } = window.location.pathname.split('/').pop() || {};
+  const assignmentId = window.location.pathname.split('/').pop();
   const [questionData, setQuestionData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [response, setResponse] = useState('');
