@@ -1545,7 +1545,7 @@ const Dashboard = () => {
                   <Share className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Yöneten Sorular</h1>
+                  <h1 className="text-xl font-bold text-gray-900">Dijital Yönetim</h1>
                   <p className="text-sm text-gray-600">Soru paylaşımı</p>
                 </div>
               </div>
@@ -1578,7 +1578,7 @@ const Dashboard = () => {
                   <Settings className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Yöneten Sorular</h1>
+                  <h1 className="text-xl font-bold text-gray-900">Dijital Yönetim</h1>
                   <p className="text-sm text-gray-600">Program sabitleri yönetimi</p>
                 </div>
               </div>
@@ -1614,7 +1614,7 @@ const Dashboard = () => {
                   <FileQuestion className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Yöneten Sorular</h1>
+                  <h1 className="text-xl font-bold text-gray-900">Dijital Yönetim</h1>
                   <p className="text-sm text-gray-600">Soru bankası yönetimi</p>
                 </div>
               </div>
@@ -1647,7 +1647,7 @@ const Dashboard = () => {
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Yöneten Sorular</h1>
+                  <h1 className="text-xl font-bold text-gray-900">Dijital Yönetim</h1>
                   <p className="text-sm text-gray-600">Çalışan bilgilerini yönetin</p>
                 </div>
               </div>
@@ -1690,7 +1690,7 @@ const Dashboard = () => {
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Yöneten Sorular</h1>
+                <h1 className="text-xl font-bold text-gray-900">Dijital Yönetim</h1>
               </div>
             </div>
             <div className="flex items-center space-x-3">
