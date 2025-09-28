@@ -294,6 +294,223 @@ const AuthPage = () => {
   );
 };
 
+// Share Questions Management
+const ShareQuestionsManagement = ({ onBack }) => {
+  const [questions, setQuestions] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sharing, setSharing] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    fetchQuestionsAndEmployees();
+  }, []);
+
+  const fetchQuestionsAndEmployees = async () => {
+    try {
+      const response = await axios.get(`${API}/questions/share-list`);
+      setQuestions(response.data.questions);
+      setEmployees(response.data.employees);
+      
+      // Initialize assignments array
+      const initialAssignments = response.data.questions.map(question => ({
+        question_id: question.id,
+        employee_id: '',
+        department: '',
+        employee_email: ''
+      }));
+      setAssignments(initialAssignments);
+      
+    } catch (error) {
+      console.error('Veri yüklenemedi:', error);
+      setError('Veriler yüklenirken hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmployeeChange = (questionIndex, employeeId) => {
+    const selectedEmployee = employees.find(emp => emp.id === employeeId);
+    
+    setAssignments(prev => {
+      const updated = [...prev];
+      updated[questionIndex] = {
+        ...updated[questionIndex],
+        employee_id: employeeId,
+        department: selectedEmployee ? selectedEmployee.department : '',
+        employee_email: selectedEmployee ? selectedEmployee.email : ''
+      };
+      return updated;
+    });
+  };
+
+  const handleShareQuestions = async () => {
+    // Filter out assignments without selected employees
+    const validAssignments = assignments.filter(assignment => assignment.employee_id);
+    
+    if (validAssignments.length === 0) {
+      setError('Lütfen en az bir soru için çalışan seçin');
+      return;
+    }
+
+    setSharing(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await axios.post(`${API}/questions/share`, {
+        assignments: validAssignments.map(a => ({
+          question_id: a.question_id,
+          employee_id: a.employee_id
+        }))
+      });
+      
+      setSuccess(`${response.data.assignments_created} soru başarıyla paylaşıldı!`);
+      
+    } catch (error) {
+      setError(error.response?.data?.detail || 'Paylaşım sırasında hata oluştu');
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <Button variant="outline" onClick={onBack}>
+            ← Geri Dön
+          </Button>
+          <h2 className="text-2xl font-bold text-gray-900">Soruları Paylaş</h2>
+        </div>
+      </div>
+
+      {/* Status Messages */}
+      {error && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-600">
+            {error}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert className="border-green-200 bg-green-50">
+          <AlertDescription className="text-green-600">
+            {success}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Questions Assignment Table */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-1/3">Soru Metni</TableHead>
+                  <TableHead>İlgili Kişi</TableHead>
+                  <TableHead>Departman</TableHead>
+                  <TableHead>E-posta Adresi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {questions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                      Henüz soru bulunmuyor
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  questions.map((question, index) => (
+                    <TableRow key={question.id}>
+                      <TableCell className="font-medium">
+                        <div className="max-w-xs">
+                          <p className="text-sm font-semibold text-gray-900 mb-1">
+                            {question.category}
+                          </p>
+                          <p className="text-sm text-gray-600 truncate" title={question.question_text}>
+                            {question.question_text.length > 100 
+                              ? question.question_text.substring(0, 100) + '...'
+                              : question.question_text
+                            }
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Select 
+                          onValueChange={(value) => handleEmployeeChange(index, value)}
+                          value={assignments[index]?.employee_id || ''}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Çalışan seçin" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {employees.map((employee) => (
+                              <SelectItem key={employee.id} value={employee.id}>
+                                {employee.first_name} {employee.last_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-600">
+                          {assignments[index]?.department || '-'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-600">
+                          {assignments[index]?.employee_email || '-'}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          
+          {questions.length > 0 && (
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={handleShareQuestions}
+                disabled={sharing}
+                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                data-testid="bulk-share-button"
+              >
+                {sharing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Paylaşılıyor...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Toplu Gönder
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Program Constants Management
 const ProgramConstantsManagement = ({ onBack, type }) => {
   const [items, setItems] = useState([]);
