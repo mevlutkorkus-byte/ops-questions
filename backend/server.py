@@ -973,6 +973,50 @@ async def get_email_logs(current_user: User = Depends(get_current_user)):
     
     return email_logs
 
+@api_router.get("/answer-status")
+async def get_answer_status(current_user: User = Depends(get_current_user)):
+    """Get all question assignments with response status"""
+    assignments = await db.question_assignments.find().sort("assigned_at", -1).to_list(1000)
+    
+    answer_status_list = []
+    for assignment in assignments:
+        question = await db.questions.find_one({"id": assignment["question_id"]})
+        employee = await db.employees.find_one({"id": assignment["employee_id"]})
+        
+        # Get response if exists
+        response = await db.question_responses.find_one({"assignment_id": assignment["id"]})
+        
+        if question and employee:
+            status_item = {
+                "assignment_id": assignment["id"],
+                "question": {
+                    "id": question["id"],
+                    "category": question["category"],
+                    "question_text": question["question_text"],
+                    "importance_reason": question.get("importance_reason", ""),
+                    "expected_action": question.get("expected_action", "")
+                },
+                "employee": {
+                    "id": employee["id"],
+                    "name": f"{employee['first_name']} {employee['last_name']}",
+                    "email": employee.get('email', 'E-posta yok'),
+                    "department": employee["department"]
+                },
+                "assignment_date": assignment["assigned_at"],
+                "year": assignment["year"],
+                "month": assignment["month"],
+                "email_sent": assignment.get("email_sent", False),
+                "response_received": assignment.get("response_received", False),
+                "response": {
+                    "submitted": bool(response),
+                    "text": response.get("response_text", "") if response else "",
+                    "submitted_at": response.get("submitted_at", "") if response else ""
+                }
+            }
+            answer_status_list.append(status_item)
+    
+    return answer_status_list
+
 # Include the router in the main app
 app.include_router(api_router)
 
