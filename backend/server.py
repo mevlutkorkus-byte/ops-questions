@@ -165,21 +165,40 @@ async def generate_ai_comment(employee_comment: str, question_text: str, categor
             1. Çalışanın verdiği yanıtı objektif olarak değerlendirmek
             2. Güçlü yönleri vurgulamak
             3. Gelişim alanları önermek
-            4. Sayısal değer varsa bunu da dikkate almak
+            4. Sayısal değerler için: trend analizi, büyüklük değerlendirmesi, benchmark karşılaştırması
             5. Kısa, net ve yapıcı olmak (maksimum 200 kelime)
             
+            Sayısal değerler milyonlar, yüzdeler, adetler vb. herhangi bir formatda olabilir.
             Yanıtın Türkçe olmalı ve profesyonel bir ton kullanmalısın."""
         ).with_model("openai", "gpt-5")
         
-        # Prepare the prompt
-        numerical_text = f" Sayısal değer: {numerical_value}/10" if numerical_value is not None else ""
-        prompt = f"""
-        Soru Kategorisi: {category}
-        Soru: {question_text}
-        Çalışan Yorumu: {employee_comment}{numerical_text}
-        
-        Lütfen bu yanıtı analiz edip yapıcı bir AI yorumu oluştur.
-        """
+        # Prepare the prompt based on response type
+        if response_type == "Sadece Sayısal":
+            prompt = f"""
+            Soru Kategorisi: {category}
+            Soru: {question_text}
+            Sayısal Değer: {numerical_value}
+            
+            Bu sayısal değeri analiz edip yapıcı bir AI yorumu oluştur. Değerin büyüklüğü, anlamı ve potansiyel iyileştirme alanları hakkında yorum yap.
+            """
+        elif response_type == "Sadece Sözel":
+            prompt = f"""
+            Soru Kategorisi: {category}
+            Soru: {question_text}
+            Çalışan Yorumu: {employee_comment}
+            
+            Bu sözel yanıtı analiz edip yapıcı bir AI yorumu oluştur.
+            """
+        else:  # Her İkisi
+            numerical_text = f" | Sayısal Değer: {numerical_value}" if numerical_value is not None else ""
+            comment_text = f"Çalışan Yorumu: {employee_comment}" if employee_comment else ""
+            prompt = f"""
+            Soru Kategorisi: {category}
+            Soru: {question_text}
+            {comment_text}{numerical_text}
+            
+            Hem sayısal hem sözel yanıtı dikkate alarak yapıcı bir AI yorumu oluştur.
+            """
         
         # Create user message
         user_message = UserMessage(text=prompt)
