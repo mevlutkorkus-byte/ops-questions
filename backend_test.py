@@ -1,9 +1,9 @@
 import requests
 import sys
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
-class AuthAPITester:
+class QuestionBankAPITester:
     def __init__(self, base_url="https://auth-page-3.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
