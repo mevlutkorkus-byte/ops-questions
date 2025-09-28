@@ -783,14 +783,24 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600">Hoş geldiniz, {user?.username}</p>
               </div>
             </div>
-            <Button 
-              onClick={logout}
-              variant="outline"
-              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-              data-testid="logout-button"
-            >
-              Çıkış Yap
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button 
+                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                onClick={() => setCurrentView('employees')}
+                data-testid="manage-employees-button"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Kişi Ekle
+              </Button>
+              <Button 
+                onClick={logout}
+                variant="outline"
+                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+                data-testid="logout-button"
+              >
+                Çıkış Yap
+              </Button>
+            </div>
           </div>
         </div>
       </header>
