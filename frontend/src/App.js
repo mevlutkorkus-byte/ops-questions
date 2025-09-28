@@ -867,6 +867,7 @@ const EmployeeManagement = ({ onBack }) => {
     birth_date: '',
     salary: ''
   });
+  const [departments, setDepartments] = useState([]);
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState('');
 
