@@ -1030,6 +1030,13 @@ const ResponsesComponent = ({ onBack }) => {
                           {question.chart_type}
                         </span>
                       )}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        question.response_type === 'Sadece Sayısal' ? 'bg-yellow-100 text-yellow-800' :
+                        question.response_type === 'Sadece Sözel' ? 'bg-green-100 text-green-800' :
+                        'bg-purple-100 text-purple-800'
+                      }`}>
+                        {question.response_type || 'Her İkisi'}
+                      </span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
                       {question.question_text}
