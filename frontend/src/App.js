@@ -1235,7 +1235,7 @@ const EmployeeManagement = ({ onBack }) => {
               <TableBody>
                 {employees.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={10} className="text-center py-8 text-gray-500">
                       Henüz çalışan eklenmemiş
                     </TableCell>
                   </TableRow>
@@ -1246,6 +1246,7 @@ const EmployeeManagement = ({ onBack }) => {
                         {employee.first_name} {employee.last_name}
                       </TableCell>
                       <TableCell>{employee.phone}</TableCell>
+                      <TableCell>{employee.email}</TableCell>
                       <TableCell>{employee.department}</TableCell>
                       <TableCell>{employee.age}</TableCell>
                       <TableCell>{employee.gender}</TableCell>
