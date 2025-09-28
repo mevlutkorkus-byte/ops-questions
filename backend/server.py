@@ -617,7 +617,7 @@ async def get_questions_for_sharing(current_user: User = Depends(get_current_use
         "employees": formatted_employees
     }
 
-@api_router.post("/questions/share")
+@api_router.post("/questions-share")
 async def share_questions(share_request: ShareQuestionsRequest, current_user: User = Depends(get_current_user)):
     """Share questions via email to assigned employees"""
     current_date = datetime.now(timezone.utc)
