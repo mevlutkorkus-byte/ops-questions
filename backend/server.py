@@ -1301,6 +1301,9 @@ async def get_chart_data(question_id: str, current_user: User = Depends(get_curr
             "month_number": i
         })
     
+    # Remove MongoDB _id field from question
+    question.pop('_id', None)
+    
     return {
         "question": question,
         "chart_data": chart_data,
