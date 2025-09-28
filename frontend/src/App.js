@@ -583,7 +583,6 @@ const QuestionBankManagement = ({ onBack }) => {
                   <TableHead>Kategori</TableHead>
                   <TableHead>Soru Metni</TableHead>
                   <TableHead>Periyot</TableHead>
-                  <TableHead>Son Teslim</TableHead>
                   <TableHead>Grafik Tipi</TableHead>
                   <TableHead>İşlemler</TableHead>
                 </TableRow>
