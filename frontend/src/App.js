@@ -665,15 +665,18 @@ const QuestionBankManagement = ({ onBack }) => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="category">Kategori</Label>
-                  <Input
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Finans, Stok, Kurumsal Kültür"
-                    data-testid="category-input"
-                  />
+                  <Select onValueChange={(value) => handleSelectChange('category', value)} value={formData.category}>
+                    <SelectTrigger data-testid="category-select">
+                      <SelectValue placeholder="Kategori seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.name}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="period">Periyot</Label>
