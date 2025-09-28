@@ -219,9 +219,11 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Share Questions (Soruları Paylaş) functionality"
     - "Test frontend Cevaplar component and navigation"
     - "Test Recharts integration and chart visualization"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Share Questions (Soruları Paylaş) functionality"
   test_all: false
   test_priority: "high_first"
 
