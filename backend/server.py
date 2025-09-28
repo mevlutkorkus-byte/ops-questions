@@ -1091,6 +1091,213 @@ async def get_answer_status(current_user: User = Depends(get_current_user)):
     
     return answer_status_list
 
+# Monthly Response Management for Cevaplar Feature
+@api_router.get("/monthly-responses")
+async def get_monthly_responses(current_user: User = Depends(get_current_user)):
+    """Get all monthly responses with question and employee details"""
+    responses = await db.monthly_responses.find().to_list(1000)
+    
+    formatted_responses = []
+    for response in responses:
+        question = await db.questions.find_one({"id": response["question_id"]})
+        employee = await db.employees.find_one({"id": response["employee_id"]})
+        
+        if question and employee:
+            formatted_response = {
+                **response,
+                "question": {
+                    "id": question["id"],
+                    "question_text": question["question_text"],
+                    "category": question["category"],
+                    "chart_type": question.get("chart_type")
+                },
+                "employee": {
+                    "id": employee["id"],
+                    "name": f"{employee['first_name']} {employee['last_name']}",
+                    "department": employee["department"]
+                }
+            }
+            formatted_responses.append(formatted_response)
+    
+    return formatted_responses
+
+@api_router.get("/monthly-responses/question/{question_id}")
+async def get_responses_by_question(question_id: str, current_user: User = Depends(get_current_user)):
+    """Get all monthly responses for a specific question"""
+    responses = await db.monthly_responses.find({"question_id": question_id}).to_list(1000)
+    
+    # Get question details
+    question = await db.questions.find_one({"id": question_id})
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru bulunamadı"
+        )
+    
+    # Format responses with employee details
+    formatted_responses = []
+    for response in responses:
+        employee = await db.employees.find_one({"id": response["employee_id"]})
+        if employee:
+            formatted_response = {
+                **response,
+                "employee": {
+                    "id": employee["id"],
+                    "name": f"{employee['first_name']} {employee['last_name']}",
+                    "department": employee["department"]
+                }
+            }
+            formatted_responses.append(formatted_response)
+    
+    return {
+        "question": question,
+        "responses": formatted_responses
+    }
+
+@api_router.post("/monthly-responses", response_model=MonthlyResponse)
+async def create_monthly_response(response_data: MonthlyResponseCreate, current_user: User = Depends(get_current_user)):
+    """Create or update a monthly response with AI comment generation"""
+    
+    # Check if question and employee exist
+    question = await db.questions.find_one({"id": response_data.question_id})
+    employee = await db.employees.find_one({"id": response_data.employee_id})
+    
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru bulunamadı"
+        )
+    
+    if not employee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Çalışan bulunamadı"
+        )
+    
+    # Check if response already exists for this month
+    existing_response = await db.monthly_responses.find_one({
+        "question_id": response_data.question_id,
+        "employee_id": response_data.employee_id,
+        "year": response_data.year,
+        "month": response_data.month
+    })
+    
+    # Generate AI comment if employee comment is provided
+    ai_comment = None
+    if response_data.employee_comment and response_data.employee_comment.strip():
+        ai_comment = await generate_ai_comment(
+            employee_comment=response_data.employee_comment,
+            question_text=question["question_text"],
+            category=question["category"],
+            numerical_value=response_data.numerical_value
+        )
+    
+    current_time = datetime.now(timezone.utc)
+    
+    if existing_response:
+        # Update existing response
+        update_data = {
+            "numerical_value": response_data.numerical_value,
+            "employee_comment": response_data.employee_comment,
+            "ai_comment": ai_comment,
+            "updated_at": current_time.isoformat()
+        }
+        
+        await db.monthly_responses.update_one(
+            {"id": existing_response["id"]},
+            {"$set": update_data}
+        )
+        
+        # Get updated response
+        updated_response = await db.monthly_responses.find_one({"id": existing_response["id"]})
+        if "created_at" in updated_response:
+            updated_response["created_at"] = datetime.fromisoformat(updated_response["created_at"].replace('Z', '+00:00')) if isinstance(updated_response["created_at"], str) else updated_response["created_at"]
+        if "updated_at" in updated_response:
+            updated_response["updated_at"] = datetime.fromisoformat(updated_response["updated_at"].replace('Z', '+00:00')) if isinstance(updated_response["updated_at"], str) else updated_response["updated_at"]
+        
+        return MonthlyResponse(**updated_response)
+    
+    else:
+        # Create new response
+        response_dict = response_data.dict()
+        response_dict["id"] = str(uuid.uuid4())
+        response_dict["ai_comment"] = ai_comment
+        response_dict["created_at"] = current_time.isoformat()
+        response_dict["updated_at"] = current_time.isoformat()
+        
+        await db.monthly_responses.insert_one(response_dict)
+        
+        response = MonthlyResponse(**response_dict)
+        response.created_at = datetime.fromisoformat(response_dict["created_at"].replace('Z', '+00:00')) if isinstance(response_dict["created_at"], str) else response_dict["created_at"]
+        response.updated_at = datetime.fromisoformat(response_dict["updated_at"].replace('Z', '+00:00')) if isinstance(response_dict["updated_at"], str) else response_dict["updated_at"]
+        
+        return response
+
+@api_router.get("/questions-for-responses") 
+async def get_questions_for_responses(current_user: User = Depends(get_current_user)):
+    """Get all questions with employee list for response management"""
+    questions = await db.questions.find().to_list(1000)
+    employees = await db.employees.find().to_list(1000)
+    
+    # Format questions
+    formatted_questions = []
+    for question in questions:
+        if "created_at" in question:
+            question["created_at"] = datetime.fromisoformat(question["created_at"].replace('Z', '+00:00')) if isinstance(question["created_at"], str) else question["created_at"]
+        formatted_questions.append(Question(**question))
+    
+    # Format employees  
+    formatted_employees = []
+    for employee in employees:
+        if "created_at" in employee:
+            employee["created_at"] = datetime.fromisoformat(employee["created_at"].replace('Z', '+00:00')) if isinstance(employee["created_at"], str) else employee["created_at"]
+        formatted_employees.append(Employee(**employee))
+    
+    return {
+        "questions": formatted_questions,
+        "employees": formatted_employees
+    }
+
+@api_router.get("/monthly-responses/chart-data/{question_id}")
+async def get_chart_data(question_id: str, current_user: User = Depends(get_current_user)):
+    """Get aggregated chart data for a specific question"""
+    question = await db.questions.find_one({"id": question_id})
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru bulunamadı"
+        )
+    
+    responses = await db.monthly_responses.find({"question_id": question_id}).to_list(1000)
+    
+    # Group by month and calculate averages
+    monthly_averages = {}
+    for month in range(1, 13):
+        month_responses = [r for r in responses if r["month"] == month and r.get("numerical_value") is not None]
+        if month_responses:
+            avg_value = sum(r["numerical_value"] for r in month_responses) / len(month_responses)
+            monthly_averages[month] = round(avg_value, 2)
+        else:
+            monthly_averages[month] = 0
+    
+    # Prepare chart data
+    months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", 
+              "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+    
+    chart_data = []
+    for i, month_name in enumerate(months, 1):
+        chart_data.append({
+            "month": month_name,
+            "value": monthly_averages[i],
+            "month_number": i
+        })
+    
+    return {
+        "question": question,
+        "chart_data": chart_data,
+        "chart_type": question.get("chart_type", "Sütun").lower()
+    }
+
 # Include the router in the main app
 app.include_router(api_router)
 
