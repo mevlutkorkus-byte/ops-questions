@@ -1117,22 +1117,20 @@ async def get_answer_status(current_user: User = Depends(get_current_user)):
     
     return answer_status_list
 
-# Monthly Response Management for Cevaplar Feature
-@api_router.get("/monthly-responses")
-async def get_monthly_responses(current_user: User = Depends(get_current_user)):
-    """Get all monthly responses with question and employee details"""
-    responses = await db.monthly_responses.find().to_list(1000)
+# Table Response Management - Clean System
+@api_router.get("/table-responses")
+async def get_table_responses(current_user: User = Depends(get_current_user)):
+    """Get all table responses with question and employee details"""
+    responses = await db.table_responses.find().to_list(1000)
     
     formatted_responses = []
     for response in responses:
-        # Remove MongoDB _id field
         response.pop('_id', None)
         
         question = await db.questions.find_one({"id": response["question_id"]})
         employee = await db.employees.find_one({"id": response["employee_id"]})
         
         if question and employee:
-            # Remove MongoDB _id fields
             question.pop('_id', None)
             employee.pop('_id', None)
             
@@ -1142,7 +1140,8 @@ async def get_monthly_responses(current_user: User = Depends(get_current_user)):
                     "id": question["id"],
                     "question_text": question["question_text"],
                     "category": question["category"],
-                    "chart_type": question.get("chart_type")
+                    "period": question["period"],
+                    "table_rows": question.get("table_rows", [])
                 },
                 "employee": {
                     "id": employee["id"],
@@ -1154,12 +1153,11 @@ async def get_monthly_responses(current_user: User = Depends(get_current_user)):
     
     return formatted_responses
 
-@api_router.get("/monthly-responses/question/{question_id}")
+@api_router.get("/table-responses/question/{question_id}")
 async def get_responses_by_question(question_id: str, current_user: User = Depends(get_current_user)):
-    """Get all monthly responses for a specific question"""
-    responses = await db.monthly_responses.find({"question_id": question_id}).to_list(1000)
+    """Get all table responses for a specific question"""
+    responses = await db.table_responses.find({"question_id": question_id}).to_list(1000)
     
-    # Get question details
     question = await db.questions.find_one({"id": question_id})
     if not question:
         raise HTTPException(
@@ -1167,17 +1165,12 @@ async def get_responses_by_question(question_id: str, current_user: User = Depen
             detail="Soru bulunamadı"
         )
     
-    # Format responses with employee details
     formatted_responses = []
     for response in responses:
-        # Remove MongoDB _id field
         response.pop('_id', None)
-        
         employee = await db.employees.find_one({"id": response["employee_id"]})
         if employee:
-            # Remove MongoDB _id field from employee
             employee.pop('_id', None)
-            
             formatted_response = {
                 **response,
                 "employee": {
@@ -1188,9 +1181,7 @@ async def get_responses_by_question(question_id: str, current_user: User = Depen
             }
             formatted_responses.append(formatted_response)
     
-    # Remove MongoDB _id field from question
     question.pop('_id', None)
-    
     return {
         "question": question,
         "responses": formatted_responses
