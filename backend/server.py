@@ -1290,30 +1290,27 @@ async def get_questions_for_responses(current_user: User = Depends(get_current_u
         "employees": formatted_employees
     }
 
-@api_router.post("/monthly-responses/bulk")
-async def create_bulk_monthly_responses(responses_data: List[MonthlyResponseCreate], current_user: User = Depends(get_current_user)):
-    """Create multiple monthly responses at once (for 5+ year table submissions)"""
+@api_router.post("/table-responses/bulk")
+async def create_bulk_table_responses(responses_data: List[TableResponseCreate], current_user: User = Depends(get_current_user)):
+    """Create multiple table responses at once"""
     try:
         results = []
         for response_data in responses_data:
             # Skip empty responses
             has_data = (
-                response_data.numerical_value is not None or
-                response_data.data_values or 
-                (response_data.employee_comment and response_data.employee_comment.strip())
+                response_data.table_data or 
+                (response_data.monthly_comment and response_data.monthly_comment.strip())
             )
             if not has_data:
                 continue
             
-            # Check if question and employee exist
             question = await db.questions.find_one({"id": response_data.question_id})
             employee = await db.employees.find_one({"id": response_data.employee_id})
             
             if not question or not employee:
                 continue
             
-            # Check if response already exists
-            existing_response = await db.monthly_responses.find_one({
+            existing_response = await db.table_responses.find_one({
                 "question_id": response_data.question_id,
                 "employee_id": response_data.employee_id,
                 "year": response_data.year,
@@ -1322,43 +1319,40 @@ async def create_bulk_monthly_responses(responses_data: List[MonthlyResponseCrea
             
             # Generate AI comment
             ai_comment = None
-            response_type = question.get("response_type", "Her İkisi")
-            if response_data.employee_comment and response_data.employee_comment.strip():
+            if response_data.table_data or (response_data.monthly_comment and response_data.monthly_comment.strip()):
                 ai_comment = await generate_ai_comment(
-                    employee_comment=response_data.employee_comment,
                     question_text=question["question_text"],
                     category=question["category"],
-                    response_type=response_type,
-                    numerical_value=response_data.numerical_value,
-                    data_values=response_data.data_values,
-                    data_fields=question.get("data_fields", [])
+                    period=question["period"],
+                    table_data=response_data.table_data,
+                    table_rows=question.get("table_rows", []),
+                    monthly_comment=response_data.monthly_comment,
+                    year=response_data.year,
+                    month=response_data.month
                 )
             
             current_time = datetime.now(timezone.utc)
             
             if existing_response:
-                # Update existing
                 update_data = {
-                    "numerical_value": response_data.numerical_value,
-                    "data_values": response_data.data_values,
-                    "employee_comment": response_data.employee_comment,
+                    "table_data": response_data.table_data,
+                    "monthly_comment": response_data.monthly_comment,
                     "ai_comment": ai_comment,
                     "updated_at": current_time.isoformat()
                 }
-                await db.monthly_responses.update_one(
+                await db.table_responses.update_one(
                     {"id": existing_response["id"]},
                     {"$set": update_data}
                 )
                 results.append({"id": existing_response["id"], "action": "updated"})
             else:
-                # Create new
                 response_dict = response_data.dict()
                 response_dict["id"] = str(uuid.uuid4())
                 response_dict["ai_comment"] = ai_comment
                 response_dict["created_at"] = current_time.isoformat()
                 response_dict["updated_at"] = current_time.isoformat()
                 
-                await db.monthly_responses.insert_one(response_dict)
+                await db.table_responses.insert_one(response_dict)
                 results.append({"id": response_dict["id"], "action": "created"})
         
         return {
