@@ -850,15 +850,26 @@ const ResponsesComponent = ({ onBack }) => {
 
     // Validate based on response type
     const responseType = selectedQuestion.response_type || 'Her İkisi';
-    if (responseType === 'Sadece Sayısal' && !formData.numerical_value) {
-      setError('Bu soru için sayısal değer girmeniz gerekiyor');
-      return;
+    const hasDataFields = selectedQuestion.data_fields && selectedQuestion.data_fields.length > 0;
+    const hasDataValues = Object.values(formData.data_values).some(val => val && val.toString().trim());
+    
+    if (responseType === 'Sadece Sayısal') {
+      if (hasDataFields && !hasDataValues) {
+        setError('Bu soru için veri alanlarını doldurmanız gerekiyor');
+        return;
+      } else if (!hasDataFields && !formData.numerical_value) {
+        setError('Bu soru için sayısal değer girmeniz gerekiyor');
+        return;
+      }
     } else if (responseType === 'Sadece Sözel' && !formData.employee_comment.trim()) {
       setError('Bu soru için yorum yazmanız gerekiyor');
       return;
-    } else if (responseType === 'Her İkisi' && !formData.numerical_value && !formData.employee_comment.trim()) {
-      setError('Lütfen sayısal değer veya yorum girin');
-      return;
+    } else if (responseType === 'Her İkisi') {
+      const hasNumericalData = hasDataFields ? hasDataValues : formData.numerical_value;
+      if (!hasNumericalData && !formData.employee_comment.trim()) {
+        setError('Lütfen sayısal değer veya yorum girin');
+        return;
+      }
     }
 
     setSubmitting(true);
