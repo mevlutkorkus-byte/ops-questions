@@ -1271,7 +1271,9 @@ async def create_monthly_response(response_data: MonthlyResponseCreate, current_
             question_text=question["question_text"],
             category=question["category"],
             response_type=response_type,
-            numerical_value=response_data.numerical_value
+            numerical_value=response_data.numerical_value,
+            data_values=response_data.data_values,
+            data_fields=question.get("data_fields", [])
         )
     
     current_time = datetime.now(timezone.utc)
