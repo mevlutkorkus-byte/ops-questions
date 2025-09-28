@@ -1513,7 +1513,8 @@ const QuestionBankManagement = ({ onBack }) => {
       importance_reason: '',
       expected_action: '',
       period: '',
-      chart_type: ''
+      chart_type: '',
+      response_type: 'Her İkisi'
     });
     setError('');
     setEditingQuestion(null);
