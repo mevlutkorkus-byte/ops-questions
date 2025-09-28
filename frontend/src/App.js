@@ -790,6 +790,7 @@ const ResponsesComponent = ({ onBack }) => {
     year: 2025,
     month: new Date().getMonth() + 1,
     numerical_value: '',
+    data_values: {},
     employee_comment: ''
   });
   const [error, setError] = useState('');
