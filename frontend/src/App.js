@@ -1771,6 +1771,95 @@ const QuestionBankManagement = ({ onBack }) => {
                 </Select>
               </div>
 
+              {/* Çoklu Veri Alanları - Sadece Sayısal sorular için */}
+              {formData.response_type === 'Sadece Sayısal' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">Veri Alanları</Label>
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newField = {
+                          id: Date.now().toString(),
+                          name: '',
+                          field_type: 'number',
+                          unit: '',
+                          required: true,
+                          order: formData.data_fields.length
+                        };
+                        setFormData({
+                          ...formData,
+                          data_fields: [...formData.data_fields, newField]
+                        });
+                      }}
+                    >
+                      + Alan Ekle
+                    </Button>
+                  </div>
+                  
+                  {formData.data_fields.map((field, index) => (
+                    <div key={field.id} className="border rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Alan {index + 1}</span>
+                        <Button 
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              data_fields: formData.data_fields.filter(f => f.id !== field.id)
+                            });
+                          }}
+                        >
+                          Sil
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label>Alan Adı</Label>
+                          <Input
+                            value={field.name}
+                            onChange={(e) => {
+                              const updatedFields = formData.data_fields.map(f => 
+                                f.id === field.id ? {...f, name: e.target.value} : f
+                              );
+                              setFormData({...formData, data_fields: updatedFields});
+                            }}
+                            placeholder="örn: Erkek Sayısı"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label>Birim</Label>
+                          <Input
+                            value={field.unit}
+                            onChange={(e) => {
+                              const updatedFields = formData.data_fields.map(f => 
+                                f.id === field.id ? {...f, unit: e.target.value} : f
+                              );
+                              setFormData({...formData, data_fields: updatedFields});
+                            }}
+                            placeholder="örn: kişi, %, TL"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {formData.data_fields.length === 0 && (
+                    <div className="text-center py-4 text-gray-500 border-2 border-dashed rounded-lg">
+                      Veri alanı eklemek için "Alan Ekle" butonuna tıklayın
+                      <br />
+                      <span className="text-xs">Örnek: "Erkek Sayısı (kişi)", "Kadın Sayısı (kişi)"</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
                   İptal
