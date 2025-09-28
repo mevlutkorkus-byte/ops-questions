@@ -476,6 +476,92 @@ async def delete_question(question_id: str, current_user: User = Depends(get_cur
     
     return {"message": "Soru başarıyla silindi"}
 
+# Category Routes
+@api_router.post("/categories", response_model=Category)
+async def create_category(category_data: CategoryCreate, current_user: User = Depends(get_current_user)):
+    # Check if category already exists
+    existing_category = await db.categories.find_one({"name": category_data.name})
+    if existing_category:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bu kategori zaten mevcut"
+        )
+    
+    category_dict = category_data.dict()
+    category_dict["id"] = str(uuid.uuid4())
+    category_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.categories.insert_one(category_dict)
+    
+    category = Category(**category_dict)
+    category.created_at = datetime.fromisoformat(category_dict["created_at"].replace('Z', '+00:00')) if isinstance(category_dict["created_at"], str) else category_dict["created_at"]
+    
+    return category
+
+@api_router.get("/categories", response_model=List[Category])
+async def get_categories(current_user: User = Depends(get_current_user)):
+    categories = await db.categories.find().sort("name", 1).to_list(1000)
+    result = []
+    for category in categories:
+        if "created_at" in category:
+            category["created_at"] = datetime.fromisoformat(category["created_at"].replace('Z', '+00:00')) if isinstance(category["created_at"], str) else category["created_at"]
+        result.append(Category(**category))
+    return result
+
+@api_router.delete("/categories/{category_id}")
+async def delete_category(category_id: str, current_user: User = Depends(get_current_user)):
+    result = await db.categories.delete_one({"id": category_id})
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Kategori bulunamadı"
+        )
+    
+    return {"message": "Kategori başarıyla silindi"}
+
+# Department Routes
+@api_router.post("/departments", response_model=Department)
+async def create_department(department_data: DepartmentCreate, current_user: User = Depends(get_current_user)):
+    # Check if department already exists
+    existing_department = await db.departments.find_one({"name": department_data.name})
+    if existing_department:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bu departman zaten mevcut"
+        )
+    
+    department_dict = department_data.dict()
+    department_dict["id"] = str(uuid.uuid4())
+    department_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.departments.insert_one(department_dict)
+    
+    department = Department(**department_dict)
+    department.created_at = datetime.fromisoformat(department_dict["created_at"].replace('Z', '+00:00')) if isinstance(department_dict["created_at"], str) else department_dict["created_at"]
+    
+    return department
+
+@api_router.get("/departments", response_model=List[Department])
+async def get_departments(current_user: User = Depends(get_current_user)):
+    departments = await db.departments.find().sort("name", 1).to_list(1000)
+    result = []
+    for department in departments:
+        if "created_at" in department:
+            department["created_at"] = datetime.fromisoformat(department["created_at"].replace('Z', '+00:00')) if isinstance(department["created_at"], str) else department["created_at"]
+        result.append(Department(**department))
+    return result
+
+@api_router.delete("/departments/{department_id}")
+async def delete_department(department_id: str, current_user: User = Depends(get_current_user)):
+    result = await db.departments.delete_one({"id": department_id})
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Departman bulunamadı"
+        )
+    
+    return {"message": "Departman başarıyla silindi"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
