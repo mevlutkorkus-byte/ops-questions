@@ -1219,13 +1219,27 @@ async def create_monthly_response(response_data: MonthlyResponseCreate, current_
         "month": response_data.month
     })
     
-    # Generate AI comment if employee comment is provided
+    # Generate AI comment based on response type and available data
     ai_comment = None
-    if response_data.employee_comment and response_data.employee_comment.strip():
+    response_type = question.get("response_type", "Her İkisi")
+    
+    should_generate_ai = False
+    if response_type == "Sadece Sayısal" and response_data.numerical_value is not None:
+        should_generate_ai = True
+    elif response_type == "Sadece Sözel" and response_data.employee_comment and response_data.employee_comment.strip():
+        should_generate_ai = True
+    elif response_type == "Her İkisi" and (
+        (response_data.employee_comment and response_data.employee_comment.strip()) or 
+        response_data.numerical_value is not None
+    ):
+        should_generate_ai = True
+    
+    if should_generate_ai:
         ai_comment = await generate_ai_comment(
-            employee_comment=response_data.employee_comment,
+            employee_comment=response_data.employee_comment or "",
             question_text=question["question_text"],
             category=question["category"],
+            response_type=response_type,
             numerical_value=response_data.numerical_value
         )
     
