@@ -1891,6 +1891,24 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Gönderilen E-postalar Card */}
+          <Card 
+            className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+            onClick={() => setCurrentView('emails')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Gönderilen E-postalar</h3>
+                  <p className="text-sm text-gray-600">E-posta logları ve yanıt durumu takibi</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Content Area - Clean */}
