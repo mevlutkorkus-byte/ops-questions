@@ -2018,12 +2018,24 @@ const PublicQuestionResponse = () => {
 
 // Main App Component
 function App() {
+  // Check if this is a public question response page
+  const isPublicAnswerPage = window.location.pathname.startsWith('/answer/');
+  
+  if (isPublicAnswerPage) {
+    return (
+      <div className="App">
+        <PublicQuestionResponse />
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <AuthProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/answer/:assignmentId" element={<PublicQuestionResponse />} />
             <Route 
               path="/dashboard" 
               element={
