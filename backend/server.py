@@ -144,6 +144,55 @@ async def send_question_email(employee_email: str, employee_name: str, question:
         print(f"Email gönderim hatası: {str(e)}")
         return False
 
+# AI Integration for Comment Generation
+async def generate_ai_comment(employee_comment: str, question_text: str, category: str, numerical_value: float = None) -> str:
+    """Generate AI comment based on employee response"""
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        # Get the API key from environment
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            return "AI yorum oluşturma servisi şu anda kullanılamıyor."
+        
+        # Create AI chat instance
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=f"ai_comment_{str(uuid.uuid4())}",
+            system_message="""Sen bir dijital dönüşüm uzmanısın. Çalışanların verdikleri yanıtları analiz edip yapıcı, profesyonel ve gelişim odaklı yorumlar yapıyorsun. 
+            
+            Görevin:
+            1. Çalışanın verdiği yanıtı objektif olarak değerlendirmek
+            2. Güçlü yönleri vurgulamak
+            3. Gelişim alanları önermek
+            4. Sayısal değer varsa bunu da dikkate almak
+            5. Kısa, net ve yapıcı olmak (maksimum 200 kelime)
+            
+            Yanıtın Türkçe olmalı ve profesyonel bir ton kullanmalısın."""
+        ).with_model("openai", "gpt-5")
+        
+        # Prepare the prompt
+        numerical_text = f" Sayısal değer: {numerical_value}/10" if numerical_value is not None else ""
+        prompt = f"""
+        Soru Kategorisi: {category}
+        Soru: {question_text}
+        Çalışan Yorumu: {employee_comment}{numerical_text}
+        
+        Lütfen bu yanıtı analiz edip yapıcı bir AI yorumu oluştur.
+        """
+        
+        # Create user message
+        user_message = UserMessage(text=prompt)
+        
+        # Get AI response
+        response = await chat.send_message(user_message)
+        
+        return response if response else "AI yorumu oluşturulamadı."
+        
+    except Exception as e:
+        print(f"AI yorum oluşturma hatası: {str(e)}")
+        return f"AI yorum oluşturulurken bir hata oluştu: {str(e)}"
+
 # Create the main app without a prefix
 app = FastAPI(title="Auth System API")
 
