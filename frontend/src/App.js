@@ -1901,7 +1901,7 @@ const PublicQuestionResponse = () => {
             <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
               <FileQuestion className="w-6 h-6 text-white" />
             </div>
-            <CardTitle className="text-2xl text-gray-900">Yöneten Sorular</CardTitle>
+            <CardTitle className="text-2xl text-gray-900">Dijital Yönetim</CardTitle>
             <CardDescription>
               {questionData?.year} {questionData?.month}. Ay Değerlendirmesi
             </CardDescription>
