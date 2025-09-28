@@ -1693,74 +1693,14 @@ const Dashboard = () => {
                 <h1 className="text-xl font-bold text-gray-900">Dijital Dönüşüm</h1>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
-                    data-testid="program-constants-button"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Program Sabitleri
-                    <ChevronDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      setConstantsType('category');
-                      setCurrentView('constants');
-                    }}
-                    data-testid="category-constants-menu"
-                  >
-                    <FileQuestion className="w-4 h-4 mr-2" />
-                    Soru Kategorisi Ekle
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      setConstantsType('department');
-                      setCurrentView('constants');
-                    }}
-                    data-testid="department-constants-menu"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Departman Ekle
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => setCurrentView('employees')}
-                    data-testid="manage-employees-menu"
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    Kişi Ekle
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => setCurrentView('questions')}
-                    data-testid="question-bank-menu"
-                  >
-                    <FileQuestion className="w-4 h-4 mr-2" />
-                    Soru Ekle
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <Button 
-                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
-                onClick={() => setCurrentView('share')}
-                data-testid="share-questions-button"
-              >
-                <Share className="w-4 h-4 mr-2" />
-                Soruları Paylaş
-              </Button>
-              
-              <Button 
-                onClick={logout}
-                variant="outline"
-                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-                data-testid="logout-button"
-              >
-                Çıkış Yap
-              </Button>
-            </div>
+            <Button 
+              onClick={logout}
+              variant="outline"
+              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+              data-testid="logout-button"
+            >
+              Çıkış Yap
+            </Button>
           </div>
         </div>
       </header>
