@@ -277,8 +277,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "5+ Year Bulk Response Table System testing completed successfully"
-    - "All critical features tested and working"
+    - "Clean Table-Based System Refactor testing completed successfully"
+    - "All major refactoring and new features tested and working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
