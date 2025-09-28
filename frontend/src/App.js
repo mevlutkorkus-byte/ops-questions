@@ -1818,108 +1818,91 @@ const QuestionBankManagement = ({ onBack }) => {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="response_type">Cevap Türü</Label>
-                <Select onValueChange={(value) => handleSelectChange('response_type', value)} value={formData.response_type || 'Her İkisi'}>
-                  <SelectTrigger data-testid="response-type-select">
-                    <SelectValue placeholder="Cevap türü seçin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Sadece Sayısal">Sadece Sayısal</SelectItem>
-                    <SelectItem value="Sadece Sözel">Sadece Sözel</SelectItem>
-                    <SelectItem value="Her İkisi">Her İkisi</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Çoklu Veri Alanları - Sadece Sayısal sorular için */}
-              {formData.response_type === 'Sadece Sayısal' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-medium">Veri Alanları</Label>
-                    <Button 
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newField = {
-                          id: Date.now().toString(),
-                          name: '',
-                          field_type: 'number',
-                          unit: '',
-                          required: true,
-                          order: formData.data_fields.length
-                        };
-                        setFormData({
-                          ...formData,
-                          data_fields: [...formData.data_fields, newField]
-                        });
-                      }}
-                    >
-                      + Alan Ekle
-                    </Button>
-                  </div>
-                  
-                  {formData.data_fields.map((field, index) => (
-                    <div key={field.id} className="border rounded-lg p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Alan {index + 1}</span>
-                        <Button 
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setFormData({
-                              ...formData,
-                              data_fields: formData.data_fields.filter(f => f.id !== field.id)
-                            });
+              {/* Tablo Satırları - Temiz Sistem */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Tablo Satırları (2-10 satır)</Label>
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newRow = {
+                        id: Date.now().toString(),
+                        name: '',
+                        unit: '',
+                        order: formData.table_rows.length
+                      };
+                      setFormData({
+                        ...formData,
+                        table_rows: [...formData.table_rows, newRow]
+                      });
+                    }}
+                    disabled={formData.table_rows.length >= 10}
+                  >
+                    + Satır Ekle
+                  </Button>
+                </div>
+                
+                {formData.table_rows.map((row, index) => (
+                  <div key={row.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Satır {index + 1}</span>
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            table_rows: formData.table_rows.filter(r => r.id !== row.id)
+                          });
+                        }}
+                      >
+                        Sil
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label>Satır Adı</Label>
+                        <Input
+                          value={row.name}
+                          onChange={(e) => {
+                            const updatedRows = formData.table_rows.map(r => 
+                              r.id === row.id ? {...r, name: e.target.value} : r
+                            );
+                            setFormData({...formData, table_rows: updatedRows});
                           }}
-                        >
-                          Sil
-                        </Button>
+                          placeholder="örn: Satış, Pazarlama, İK"
+                        />
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <Label>Alan Adı</Label>
-                          <Input
-                            value={field.name}
-                            onChange={(e) => {
-                              const updatedFields = formData.data_fields.map(f => 
-                                f.id === field.id ? {...f, name: e.target.value} : f
-                              );
-                              setFormData({...formData, data_fields: updatedFields});
-                            }}
-                            placeholder="örn: Erkek Sayısı"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label>Birim</Label>
-                          <Input
-                            value={field.unit}
-                            onChange={(e) => {
-                              const updatedFields = formData.data_fields.map(f => 
-                                f.id === field.id ? {...f, unit: e.target.value} : f
-                              );
-                              setFormData({...formData, data_fields: updatedFields});
-                            }}
-                            placeholder="örn: kişi, %, TL"
-                          />
-                        </div>
+                      <div>
+                        <Label>Birim</Label>
+                        <Input
+                          value={row.unit}
+                          onChange={(e) => {
+                            const updatedRows = formData.table_rows.map(r => 
+                              r.id === row.id ? {...r, unit: e.target.value} : r
+                            );
+                            setFormData({...formData, table_rows: updatedRows});
+                          }}
+                          placeholder="örn: adet, TL, %, kişi"
+                        />
                       </div>
                     </div>
-                  ))}
-                  
-                  {formData.data_fields.length === 0 && (
-                    <div className="text-center py-4 text-gray-500 border-2 border-dashed rounded-lg">
-                      Veri alanı eklemek için "Alan Ekle" butonuna tıklayın
-                      <br />
-                      <span className="text-xs">Örnek: "Erkek Sayısı (kişi)", "Kadın Sayısı (kişi)"</span>
-                    </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                ))}
+                
+                {formData.table_rows.length === 0 && (
+                  <div className="text-center py-4 text-gray-500 border-2 border-dashed rounded-lg">
+                    Tablo satırlarını eklemek için "Satır Ekle" butonuna tıklayın
+                    <br />
+                    <span className="text-xs">Örnek: "Satış (adet)", "Pazarlama (TL)", "İK (kişi)"</span>
+                  </div>
+                )}
+              </div>
 
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
