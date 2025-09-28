@@ -643,8 +643,8 @@ class QuestionBankAPITester:
         print(f"\n📊 Results saved to /app/test_reports/backend_api_results.json")
 
     def run_all_tests(self):
-        """Run all Question Bank tests"""
-        print("🚀 Starting Question Bank API Testing...")
+        """Run all API tests including new Cevaplar feature"""
+        print("🚀 Starting Complete API Testing...")
         print(f"Backend URL: {self.base_url}")
         
         # Run authentication first
@@ -656,6 +656,10 @@ class QuestionBankAPITester:
         self.test_question_bank_endpoints()
         self.test_question_validation()
         self.test_dashboard_stats()
+        
+        # NEW: Test Cevaplar (Monthly Responses) feature
+        self.test_cevaplar_responses_feature()
+        self.test_ai_integration()
         
         # Print final results
         print("\n" + "="*50)
