@@ -1222,6 +1222,7 @@ const EmployeeManagement = ({ onBack }) => {
                 <TableRow>
                   <TableHead>Ad Soyad</TableHead>
                   <TableHead>Telefon</TableHead>
+                  <TableHead>E-posta</TableHead>
                   <TableHead>Departman</TableHead>
                   <TableHead>Yaş</TableHead>
                   <TableHead>Cinsiyet</TableHead>
