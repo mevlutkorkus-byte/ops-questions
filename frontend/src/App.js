@@ -834,7 +834,15 @@ const ResponsesComponent = ({ onBack }) => {
       return;
     }
 
-    if (!formData.numerical_value && !formData.employee_comment.trim()) {
+    // Validate based on response type
+    const responseType = selectedQuestion.response_type || 'Her İkisi';
+    if (responseType === 'Sadece Sayısal' && !formData.numerical_value) {
+      setError('Bu soru için sayısal değer girmeniz gerekiyor');
+      return;
+    } else if (responseType === 'Sadece Sözel' && !formData.employee_comment.trim()) {
+      setError('Bu soru için yorum yazmanız gerekiyor');
+      return;
+    } else if (responseType === 'Her İkisi' && !formData.numerical_value && !formData.employee_comment.trim()) {
       setError('Lütfen sayısal değer veya yorum girin');
       return;
     }
