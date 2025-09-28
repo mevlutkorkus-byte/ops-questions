@@ -389,7 +389,6 @@ const QuestionBankManagement = ({ onBack }) => {
       importance_reason: question.importance_reason,
       expected_action: question.expected_action,
       period: question.period,
-      deadline: question.deadline,
       chart_type: question.chart_type || ''
     });
     setShowAddModal(true);
