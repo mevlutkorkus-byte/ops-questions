@@ -233,6 +233,181 @@ class AuthAPITester:
         
         return success
 
+    # Employee Management Tests
+    def test_create_employee(self, employee_data):
+        """Test creating a new employee"""
+        if not self.token:
+            self.log_test("Create Employee", False, "No token available")
+            return False, None
+            
+        success, response = self.run_test(
+            "Create Employee",
+            "POST",
+            "employees",
+            200,
+            data=employee_data
+        )
+        
+        if success and isinstance(response, dict):
+            if 'id' in response and 'first_name' in response:
+                self.log_test("Employee Creation Response", True, "Employee created with ID")
+                return True, response
+            else:
+                self.log_test("Employee Creation Response", False, "Missing required fields in response")
+        
+        return False, None
+
+    def test_get_employees(self):
+        """Test getting all employees"""
+        if not self.token:
+            self.log_test("Get Employees", False, "No token available")
+            return False, None
+            
+        success, response = self.run_test(
+            "Get All Employees",
+            "GET",
+            "employees",
+            200
+        )
+        
+        if success and isinstance(response, list):
+            self.log_test("Employees List Format", True, f"Retrieved {len(response)} employees")
+            return True, response
+        elif success and isinstance(response, dict):
+            self.log_test("Employees List Format", False, "Expected list but got dict")
+        
+        return False, None
+
+    def test_get_employee_by_id(self, employee_id):
+        """Test getting a specific employee by ID"""
+        if not self.token:
+            self.log_test("Get Employee By ID", False, "No token available")
+            return False, None
+            
+        success, response = self.run_test(
+            "Get Employee By ID",
+            "GET",
+            f"employees/{employee_id}",
+            200
+        )
+        
+        if success and isinstance(response, dict):
+            if 'id' in response and response['id'] == employee_id:
+                self.log_test("Employee By ID Response", True, "Correct employee retrieved")
+                return True, response
+            else:
+                self.log_test("Employee By ID Response", False, "Employee ID mismatch")
+        
+        return False, None
+
+    def test_update_employee(self, employee_id, updated_data):
+        """Test updating an employee"""
+        if not self.token:
+            self.log_test("Update Employee", False, "No token available")
+            return False, None
+            
+        success, response = self.run_test(
+            "Update Employee",
+            "PUT",
+            f"employees/{employee_id}",
+            200,
+            data=updated_data
+        )
+        
+        if success and isinstance(response, dict):
+            if 'id' in response and response['id'] == employee_id:
+                self.log_test("Employee Update Response", True, "Employee updated successfully")
+                return True, response
+            else:
+                self.log_test("Employee Update Response", False, "Employee ID mismatch after update")
+        
+        return False, None
+
+    def test_delete_employee(self, employee_id):
+        """Test deleting an employee"""
+        if not self.token:
+            self.log_test("Delete Employee", False, "No token available")
+            return False, None
+            
+        success, response = self.run_test(
+            "Delete Employee",
+            "DELETE",
+            f"employees/{employee_id}",
+            200
+        )
+        
+        if success:
+            self.log_test("Employee Deletion", True, "Employee deleted successfully")
+            return True, response
+        
+        return False, None
+
+    def test_create_employee_invalid_data(self):
+        """Test creating employee with invalid data"""
+        if not self.token:
+            self.log_test("Create Employee Invalid Data", False, "No token available")
+            return False
+            
+        # Test with missing required fields
+        invalid_data = {
+            "first_name": "Test"
+            # Missing other required fields
+        }
+        
+        success, response = self.run_test(
+            "Create Employee Invalid Data",
+            "POST",
+            "employees",
+            422,  # Validation error
+            data=invalid_data
+        )
+        
+        return success
+
+    def test_create_employee_duplicate_phone(self, phone):
+        """Test creating employee with duplicate phone number"""
+        if not self.token:
+            self.log_test("Create Employee Duplicate Phone", False, "No token available")
+            return False
+            
+        duplicate_data = {
+            "first_name": "Duplicate",
+            "last_name": "Test",
+            "phone": phone,
+            "department": "Test Dept",
+            "age": 25,
+            "gender": "Erkek",
+            "hire_date": "2024-01-01",
+            "birth_date": "1999-01-01",
+            "salary": 50000.0
+        }
+        
+        success, response = self.run_test(
+            "Create Employee Duplicate Phone",
+            "POST",
+            "employees",
+            400,
+            data=duplicate_data
+        )
+        
+        return success
+
+    def test_employee_not_found(self):
+        """Test getting non-existent employee"""
+        if not self.token:
+            self.log_test("Employee Not Found", False, "No token available")
+            return False
+            
+        fake_id = "non-existent-id-12345"
+        success, response = self.run_test(
+            "Employee Not Found",
+            "GET",
+            f"employees/{fake_id}",
+            404
+        )
+        
+        return success
+
 def main():
     print("🚀 Starting Auth System API Tests")
     print("=" * 50)
