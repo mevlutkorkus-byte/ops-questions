@@ -506,7 +506,17 @@ const QuestionBankManagement = ({ onBack }) => {
 
   useEffect(() => {
     fetchQuestions();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${API}/categories`);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Kategoriler yüklenemedi:', error);
+    }
+  };
 
   const fetchQuestions = async () => {
     try {
