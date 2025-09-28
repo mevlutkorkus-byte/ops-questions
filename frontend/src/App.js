@@ -1178,7 +1178,6 @@ const ResponsesComponent = ({ onBack }) => {
               </div>
 
               {/* Conditional comment field */}
-              {console.log('Rendering comment field check:', selectedQuestion.response_type, (selectedQuestion.response_type === 'Sadece Sözel' || selectedQuestion.response_type === 'Her İkisi'))}
               {(selectedQuestion.response_type === 'Sadece Sözel' || selectedQuestion.response_type === 'Her İkisi') && (
                 <div>
                   <Label htmlFor="employee_comment">Çalışan Yorumu</Label>
