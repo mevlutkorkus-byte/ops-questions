@@ -2975,6 +2975,19 @@ const PublicQuestionResponse = () => {
       const response = await axios.get(`${API}/public/question-form/${assignmentId}`);
       setQuestionData(response.data);
       
+      // Initialize bulk responses structure
+      const initialResponses = {};
+      monthsData.forEach(month => {
+        initialResponses[month.key] = {
+          year: month.year,
+          month: month.month,
+          numerical_value: '',
+          data_values: {},
+          employee_comment: ''
+        };
+      });
+      setBulkResponses(initialResponses);
+      
       if (response.data.already_responded) {
         setSubmitted(true);
       }
