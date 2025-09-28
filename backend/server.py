@@ -167,7 +167,6 @@ class Question(BaseModel):
     importance_reason: str = Field(..., min_length=10, max_length=1000)
     expected_action: str = Field(..., min_length=10, max_length=1000)
     period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
-    deadline: str  # YYYY-MM-DD format
     chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -177,7 +176,6 @@ class QuestionCreate(BaseModel):
     importance_reason: str = Field(..., min_length=10, max_length=1000)
     expected_action: str = Field(..., min_length=10, max_length=1000)
     period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
-    deadline: str  # YYYY-MM-DD format
     chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
 
 # Auth Routes
