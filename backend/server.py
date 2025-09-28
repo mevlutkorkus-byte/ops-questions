@@ -252,10 +252,12 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
     employee_count = await db.employees.count_documents({})
+    question_count = await db.questions.count_documents({})
     
     return {
         "stats": {
-            "total_employees": employee_count
+            "total_employees": employee_count,
+            "total_questions": question_count
         }
     }
 
