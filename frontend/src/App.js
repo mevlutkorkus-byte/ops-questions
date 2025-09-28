@@ -590,7 +590,7 @@ const QuestionBankManagement = ({ onBack }) => {
               <TableBody>
                 {questions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                       Henüz soru eklenmemiş
                     </TableCell>
                   </TableRow>
@@ -609,7 +609,6 @@ const QuestionBankManagement = ({ onBack }) => {
                         </div>
                       </TableCell>
                       <TableCell>{question.period}</TableCell>
-                      <TableCell>{formatDate(question.deadline)}</TableCell>
                       <TableCell>{question.chart_type || 'Belirlenmemiş'}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
