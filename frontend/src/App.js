@@ -1159,7 +1159,6 @@ const ResponsesComponent = ({ onBack }) => {
                 </div>
 
                 {/* Conditional fields based on response type */}
-                {console.log('Rendering numerical field check:', selectedQuestion.response_type, (selectedQuestion.response_type === 'Sadece Sayısal' || selectedQuestion.response_type === 'Her İkisi'))}
                 {(selectedQuestion.response_type === 'Sadece Sayısal' || selectedQuestion.response_type === 'Her İkisi') && (
                   <div>
                     <Label htmlFor="numerical_value">Sayısal Değer</Label>
