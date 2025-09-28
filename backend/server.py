@@ -333,6 +333,7 @@ class Question(BaseModel):
     expected_action: str = Field(..., min_length=10, max_length=1000)
     period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
     chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
+    response_type: str = Field(default="Her İkisi", pattern="^(Sadece Sayısal|Sadece Sözel|Her İkisi)$")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuestionCreate(BaseModel):
@@ -342,6 +343,7 @@ class QuestionCreate(BaseModel):
     expected_action: str = Field(..., min_length=10, max_length=1000)
     period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
     chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
+    response_type: str = Field(default="Her İkisi", pattern="^(Sadece Sayısal|Sadece Sözel|Her İkisi)$")
 
 class Category(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
