@@ -846,7 +846,7 @@ const QuestionBankManagement = ({ onBack }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">Soru Bankası Yönetimi</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Soru Ekle Yönetimi</h2>
         </div>
         
         <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
