@@ -294,6 +294,155 @@ const AuthPage = () => {
   );
 };
 
+// Answer Status Component
+const AnswerStatusComponent = ({ onBack }) => {
+  const [answerStatus, setAnswerStatus] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAnswerStatus();
+  }, []);
+
+  const fetchAnswerStatus = async () => {
+    try {
+      const response = await axios.get(`${API}/answer-status`);
+      setAnswerStatus(response.data);
+    } catch (error) {
+      console.error('Cevap durumu yüklenemedi:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString('tr-TR');
+  };
+
+  const getStatusBadge = (item) => {
+    if (item.response.submitted) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          ✅ Yanıtlandı
+        </span>
+      );
+    } else if (item.email_sent) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          ⏳ Gönderildi, Yanıt Bekleniyor
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          ❌ E-posta Gönderilemedi
+        </span>
+      );
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <Button variant="outline" onClick={onBack}>
+            ← Geri Dön
+          </Button>
+          <h2 className="text-2xl font-bold text-gray-900">Cevap Durumu</h2>
+        </div>
+      </div>
+
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Soru</TableHead>
+                  <TableHead>İlgili Kişi</TableHead>
+                  <TableHead>Departman</TableHead>
+                  <TableHead>Atanma Tarihi</TableHead>
+                  <TableHead>Durum</TableHead>
+                  <TableHead>Yanıt</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {answerStatus.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      Henüz soru ataması yapılmamış
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  answerStatus.map((item) => (
+                    <TableRow key={item.assignment_id}>
+                      <TableCell className="max-w-xs">
+                        <div>
+                          <div className="font-medium text-gray-900">{item.question.category}</div>
+                          <div className="text-sm text-gray-600 truncate" title={item.question.question_text}>
+                            {item.question.question_text.length > 60 
+                              ? item.question.question_text.substring(0, 60) + '...'
+                              : item.question.question_text
+                            }
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {item.month}/{item.year} dönemi
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium text-gray-900">{item.employee.name}</div>
+                          <div className="text-sm text-gray-600">{item.employee.email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-900">{item.employee.department}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-600">
+                          {formatDate(item.assignment_date)}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(item)}
+                      </TableCell>
+                      <TableCell>
+                        {item.response.submitted ? (
+                          <div className="max-w-xs">
+                            <div className="text-sm text-gray-900 truncate" title={item.response.text}>
+                              {item.response.text.length > 50 
+                                ? item.response.text.substring(0, 50) + '...'
+                                : item.response.text
+                              }
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {formatDate(item.response.submitted_at)}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-400">Henüz yanıt verilmemiş</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Email Logs Component
 const EmailLogsComponent = ({ onBack }) => {
   const [emailLogs, setEmailLogs] = useState([]);
