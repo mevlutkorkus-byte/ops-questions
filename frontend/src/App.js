@@ -1083,15 +1083,18 @@ const EmployeeManagement = ({ onBack }) => {
                 </div>
                 <div>
                   <Label htmlFor="department">Departman</Label>
-                  <Input
-                    id="department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="IT, İK, Muhasebe..."
-                    data-testid="department-input"
-                  />
+                  <Select onValueChange={(value) => handleSelectChange('department', value)} value={formData.department}>
+                    <SelectTrigger data-testid="department-select">
+                      <SelectValue placeholder="Departman seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((department) => (
+                        <SelectItem key={department.id} value={department.name}>
+                          {department.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
