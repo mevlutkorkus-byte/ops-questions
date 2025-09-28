@@ -357,13 +357,11 @@ class EmployeeCreate(BaseModel):
     birth_date: str  # YYYY-MM-DD format
     salary: float = Field(..., ge=0)
 
-# Data Field Model for multiple data points
-class DataField(BaseModel):
+# Table Row Model for dynamic table structure
+class TableRow(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str = Field(..., min_length=1, max_length=100)  # e.g., "Erkek Sayısı"
-    field_type: str = Field(default="number", pattern="^(number|text)$")  # number or text
-    unit: Optional[str] = Field(None, max_length=20)  # e.g., "kişi", "%", "TL"
-    required: bool = Field(default=True)
+    name: str = Field(..., min_length=1, max_length=100)  # e.g., "Satış", "Pazarlama"
+    unit: Optional[str] = Field(None, max_length=20)  # e.g., "adet", "TL", "%"
     order: int = Field(default=0)
 
 class Question(BaseModel):
@@ -372,10 +370,9 @@ class Question(BaseModel):
     question_text: str = Field(..., min_length=10, max_length=1000)
     importance_reason: str = Field(..., min_length=10, max_length=1000)
     expected_action: str = Field(..., min_length=10, max_length=1000)
-    period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
+    period: str = Field(..., pattern="^(Günlük|Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
     chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
-    response_type: str = Field(default="Her İkisi", pattern="^(Sadece Sayısal|Sadece Sözel|Her İkisi)$")
-    data_fields: List[DataField] = Field(default_factory=list)  # Multiple data fields for complex questions
+    table_rows: List[TableRow] = Field(default_factory=list)  # Dynamic table rows (2-10 rows)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuestionCreate(BaseModel):
@@ -383,10 +380,9 @@ class QuestionCreate(BaseModel):
     question_text: str = Field(..., min_length=10, max_length=1000)
     importance_reason: str = Field(..., min_length=10, max_length=1000)
     expected_action: str = Field(..., min_length=10, max_length=1000)
-    period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
+    period: str = Field(..., pattern="^(Günlük|Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
     chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
-    response_type: str = Field(default="Her İkisi", pattern="^(Sadece Sayısal|Sadece Sözel|Her İkisi)$")
-    data_fields: List[DataField] = Field(default_factory=list)
+    table_rows: List[TableRow] = Field(default_factory=list)
 
 class Category(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
