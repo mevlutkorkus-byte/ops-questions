@@ -1594,7 +1594,8 @@ const QuestionBankManagement = ({ onBack }) => {
       expected_action: question.expected_action,
       period: question.period,
       chart_type: question.chart_type || '',
-      response_type: question.response_type || 'Her İkisi'
+      response_type: question.response_type || 'Her İkisi',
+      data_fields: question.data_fields || []
     });
     setShowAddModal(true);
   };
