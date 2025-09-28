@@ -172,46 +172,29 @@ async def generate_ai_comment(question_text: str, category: str, period: str, ta
             Yanıtın Türkçe olmalı ve profesyonel bir ton kullanmalısın."""
         ).with_model("openai", "gpt-5")
         
-        # Prepare data values text for multi-field questions
-        data_text = ""
-        if data_values and data_fields:
-            data_text = "\nVeri Alanları:\n"
-            field_dict = {field["id"]: field for field in data_fields}
-            for field_id, value in data_values.items():
-                if field_id in field_dict:
-                    field = field_dict[field_id]
-                    unit = f" {field['unit']}" if field.get('unit') else ""
-                    data_text += f"- {field['name']}: {value}{unit}\n"
+        # Prepare table data text
+        months_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+                     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+        month_name = months_tr[month - 1] if month and 1 <= month <= 12 else "Bilinmeyen Ay"
         
-        # Legacy single numerical value support
-        elif numerical_value is not None:
-            data_text = f"\nSayısal Değer: {numerical_value}"
+        data_text = f"\n{month_name} {year} Verileri:\n"
+        if table_data and table_rows:
+            row_dict = {row["id"]: row for row in table_rows}
+            for row_id, value in table_data.items():
+                if row_id in row_dict and value:
+                    row = row_dict[row_id]
+                    unit = f" {row['unit']}" if row.get('unit') else ""
+                    data_text += f"- {row['name']}: {value}{unit}\n"
         
-        # Prepare the prompt based on response type
-        if response_type == "Sadece Sayısal":
-            prompt = f"""
-            Soru Kategorisi: {category}
-            Soru: {question_text}{data_text}
-            
-            Bu veriyi analiz edip yapıcı bir AI yorumu oluştur. Değerlerin anlamı, karşılaştırmalı analiz ve potansiyel iyileştirme alanları hakkında yorum yap.
-            """
-        elif response_type == "Sadece Sözel":
-            prompt = f"""
-            Soru Kategorisi: {category}
-            Soru: {question_text}
-            Çalışan Yorumu: {employee_comment}
-            
-            Bu sözel yanıtı analiz edip yapıcı bir AI yorumu oluştur.
-            """
-        else:  # Her İkisi
-            comment_text = f"Çalışan Yorumu: {employee_comment}" if employee_comment else ""
-            prompt = f"""
-            Soru Kategorisi: {category}
-            Soru: {question_text}{data_text}
-            {comment_text}
-            
-            Hem veri değerleri hem sözel yanıtı dikkate alarak kapsamlı bir AI analizi oluştur.
-            """
+        comment_text = f"\nÇalışan Yorumu: {monthly_comment}" if monthly_comment else ""
+        
+        prompt = f"""
+        Soru Kategorisi: {category}
+        Soru: {question_text}
+        Periyot: {period}{data_text}{comment_text}
+        
+        Bu aylık verileri analiz edip yapıcı bir AI yorumu oluştur. Değerlerin anlamı, trendler ve potansiyel iyileştirme alanları hakkında yorum yap.
+        """
         
         # Create user message
         user_message = UserMessage(text=prompt)
