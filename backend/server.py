@@ -172,14 +172,28 @@ async def generate_ai_comment(employee_comment: str, question_text: str, categor
             Yanıtın Türkçe olmalı ve profesyonel bir ton kullanmalısın."""
         ).with_model("openai", "gpt-5")
         
+        # Prepare data values text for multi-field questions
+        data_text = ""
+        if data_values and data_fields:
+            data_text = "\nVeri Alanları:\n"
+            field_dict = {field["id"]: field for field in data_fields}
+            for field_id, value in data_values.items():
+                if field_id in field_dict:
+                    field = field_dict[field_id]
+                    unit = f" {field['unit']}" if field.get('unit') else ""
+                    data_text += f"- {field['name']}: {value}{unit}\n"
+        
+        # Legacy single numerical value support
+        elif numerical_value is not None:
+            data_text = f"\nSayısal Değer: {numerical_value}"
+        
         # Prepare the prompt based on response type
         if response_type == "Sadece Sayısal":
             prompt = f"""
             Soru Kategorisi: {category}
-            Soru: {question_text}
-            Sayısal Değer: {numerical_value}
+            Soru: {question_text}{data_text}
             
-            Bu sayısal değeri analiz edip yapıcı bir AI yorumu oluştur. Değerin büyüklüğü, anlamı ve potansiyel iyileştirme alanları hakkında yorum yap.
+            Bu veriyi analiz edip yapıcı bir AI yorumu oluştur. Değerlerin anlamı, karşılaştırmalı analiz ve potansiyel iyileştirme alanları hakkında yorum yap.
             """
         elif response_type == "Sadece Sözel":
             prompt = f"""
@@ -190,14 +204,13 @@ async def generate_ai_comment(employee_comment: str, question_text: str, categor
             Bu sözel yanıtı analiz edip yapıcı bir AI yorumu oluştur.
             """
         else:  # Her İkisi
-            numerical_text = f" | Sayısal Değer: {numerical_value}" if numerical_value is not None else ""
             comment_text = f"Çalışan Yorumu: {employee_comment}" if employee_comment else ""
             prompt = f"""
             Soru Kategorisi: {category}
-            Soru: {question_text}
-            {comment_text}{numerical_text}
+            Soru: {question_text}{data_text}
+            {comment_text}
             
-            Hem sayısal hem sözel yanıtı dikkate alarak yapıcı bir AI yorumu oluştur.
+            Hem veri değerleri hem sözel yanıtı dikkate alarak kapsamlı bir AI analizi oluştur.
             """
         
         # Create user message
