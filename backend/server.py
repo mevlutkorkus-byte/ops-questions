@@ -1187,11 +1187,10 @@ async def get_responses_by_question(question_id: str, current_user: User = Depen
         "responses": formatted_responses
     }
 
-@api_router.post("/monthly-responses", response_model=MonthlyResponse)
-async def create_monthly_response(response_data: MonthlyResponseCreate, current_user: User = Depends(get_current_user)):
-    """Create or update a monthly response with AI comment generation"""
+@api_router.post("/table-responses", response_model=TableResponse)
+async def create_table_response(response_data: TableResponseCreate, current_user: User = Depends(get_current_user)):
+    """Create or update a table response with AI comment generation"""
     
-    # Check if question and employee exist
     question = await db.questions.find_one({"id": response_data.question_id})
     employee = await db.employees.find_one({"id": response_data.employee_id})
     
@@ -1207,78 +1206,60 @@ async def create_monthly_response(response_data: MonthlyResponseCreate, current_
             detail="Çalışan bulunamadı"
         )
     
-    # Check if response already exists for this month
-    existing_response = await db.monthly_responses.find_one({
+    existing_response = await db.table_responses.find_one({
         "question_id": response_data.question_id,
         "employee_id": response_data.employee_id,
         "year": response_data.year,
         "month": response_data.month
     })
     
-    # Generate AI comment based on response type and available data
+    # Generate AI comment if there's data
     ai_comment = None
-    response_type = question.get("response_type", "Her İkisi")
-    
-    should_generate_ai = False
-    if response_type == "Sadece Sayısal" and response_data.numerical_value is not None:
-        should_generate_ai = True
-    elif response_type == "Sadece Sözel" and response_data.employee_comment and response_data.employee_comment.strip():
-        should_generate_ai = True
-    elif response_type == "Her İkisi" and (
-        (response_data.employee_comment and response_data.employee_comment.strip()) or 
-        response_data.numerical_value is not None or
-        response_data.data_values
-    ):
-        should_generate_ai = True
-    
-    if should_generate_ai:
+    if response_data.table_data or (response_data.monthly_comment and response_data.monthly_comment.strip()):
         ai_comment = await generate_ai_comment(
-            employee_comment=response_data.employee_comment or "",
             question_text=question["question_text"],
             category=question["category"],
-            response_type=response_type,
-            numerical_value=response_data.numerical_value,
-            data_values=response_data.data_values,
-            data_fields=question.get("data_fields", [])
+            period=question["period"],
+            table_data=response_data.table_data,
+            table_rows=question.get("table_rows", []),
+            monthly_comment=response_data.monthly_comment,
+            year=response_data.year,
+            month=response_data.month
         )
     
     current_time = datetime.now(timezone.utc)
     
     if existing_response:
-        # Update existing response
         update_data = {
-            "numerical_value": response_data.numerical_value,
-            "data_values": response_data.data_values,
-            "employee_comment": response_data.employee_comment,
+            "table_data": response_data.table_data,
+            "monthly_comment": response_data.monthly_comment,
             "ai_comment": ai_comment,
             "updated_at": current_time.isoformat()
         }
         
-        await db.monthly_responses.update_one(
+        await db.table_responses.update_one(
             {"id": existing_response["id"]},
             {"$set": update_data}
         )
         
-        # Get updated response
-        updated_response = await db.monthly_responses.find_one({"id": existing_response["id"]})
+        updated_response = await db.table_responses.find_one({"id": existing_response["id"]})
         if "created_at" in updated_response:
             updated_response["created_at"] = datetime.fromisoformat(updated_response["created_at"].replace('Z', '+00:00')) if isinstance(updated_response["created_at"], str) else updated_response["created_at"]
         if "updated_at" in updated_response:
             updated_response["updated_at"] = datetime.fromisoformat(updated_response["updated_at"].replace('Z', '+00:00')) if isinstance(updated_response["updated_at"], str) else updated_response["updated_at"]
         
-        return MonthlyResponse(**updated_response)
+        return TableResponse(**updated_response)
     
     else:
-        # Create new response
         response_dict = response_data.dict()
         response_dict["id"] = str(uuid.uuid4())
         response_dict["ai_comment"] = ai_comment
         response_dict["created_at"] = current_time.isoformat()
         response_dict["updated_at"] = current_time.isoformat()
         
-        await db.monthly_responses.insert_one(response_dict)
+        await db.table_responses.insert_one(response_dict)
         
-        response = MonthlyResponse(**response_dict)
+        response = TableResponse(**response_dict)
         response.created_at = datetime.fromisoformat(response_dict["created_at"].replace('Z', '+00:00')) if isinstance(response_dict["created_at"], str) else response_dict["created_at"]
         response.updated_at = datetime.fromisoformat(response_dict["updated_at"].replace('Z', '+00:00')) if isinstance(response_dict["updated_at"], str) else response_dict["updated_at"]
         
