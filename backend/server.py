@@ -1283,6 +1283,7 @@ async def create_monthly_response(response_data: MonthlyResponseCreate, current_
         # Update existing response
         update_data = {
             "numerical_value": response_data.numerical_value,
+            "data_values": response_data.data_values,
             "employee_comment": response_data.employee_comment,
             "ai_comment": ai_comment,
             "updated_at": current_time.isoformat()
