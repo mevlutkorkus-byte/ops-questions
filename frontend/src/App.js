@@ -2998,28 +2998,69 @@ const PublicQuestionResponse = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!response.trim()) {
-      setError('Lütfen yanıtınızı girin');
+  const handleBulkSubmit = async () => {
+    // Filter and prepare responses with data
+    const responsesToSubmit = [];
+    
+    Object.entries(bulkResponses).forEach(([key, responseData]) => {
+      const hasNumericalData = responseData.numerical_value || 
+        (responseData.data_values && Object.values(responseData.data_values).some(v => v));
+      const hasComment = responseData.employee_comment && responseData.employee_comment.trim();
+      
+      if (hasNumericalData || hasComment) {
+        responsesToSubmit.push({
+          question_id: questionData.question.id,
+          employee_id: questionData.employee.id,
+          year: responseData.year,
+          month: responseData.month,
+          numerical_value: responseData.numerical_value ? parseFloat(responseData.numerical_value) : null,
+          data_values: responseData.data_values || {},
+          employee_comment: responseData.employee_comment || null
+        });
+      }
+    });
+
+    if (responsesToSubmit.length === 0) {
+      setError('Lütfen en az bir aya veri girişi yapın');
       return;
     }
 
     setSubmitting(true);
     setError('');
+    setSuccess('');
 
     try {
-      await axios.post(`${API}/public/question-response`, {
-        assignment_id: assignmentId,
-        response_text: response
-      });
-      
+      const response = await axios.post(`${API}/monthly-responses/bulk`, responsesToSubmit);
+      setSuccess(`${responsesToSubmit.length} aylık veri başarıyla kaydedildi ve AI yorumları oluşturuldu!`);
       setSubmitted(true);
     } catch (error) {
-      setError(error.response?.data?.detail || 'Yanıt gönderilirken hata oluştu');
+      setError(error.response?.data?.detail || 'Veriler gönderilirken hata oluştu');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const updateResponseData = (monthKey, field, value) => {
+    setBulkResponses(prev => ({
+      ...prev,
+      [monthKey]: {
+        ...prev[monthKey],
+        [field]: value
+      }
+    }));
+  };
+
+  const updateDataValue = (monthKey, fieldId, value) => {
+    setBulkResponses(prev => ({
+      ...prev,
+      [monthKey]: {
+        ...prev[monthKey],
+        data_values: {
+          ...prev[monthKey].data_values,
+          [fieldId]: value
+        }
+      }
+    }));
   };
 
   if (loading) {
