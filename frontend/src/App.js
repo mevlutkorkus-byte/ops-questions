@@ -1820,6 +1820,202 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/auth" replace />;
 };
 
+// Public Question Response Page
+const PublicQuestionResponse = () => {
+  const { assignmentId } = window.location.pathname.split('/').pop() || {};
+  const [questionData, setQuestionData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [response, setResponse] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (assignmentId) {
+      fetchQuestionData();
+    }
+  }, [assignmentId]);
+
+  const fetchQuestionData = async () => {
+    try {
+      const response = await axios.get(`${API}/public/question-form/${assignmentId}`);
+      setQuestionData(response.data);
+      
+      if (response.data.already_responded) {
+        setSubmitted(true);
+      }
+    } catch (error) {
+      setError('Soru yüklenirken hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!response.trim()) {
+      setError('Lütfen yanıtınızı girin');
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+
+    try {
+      await axios.post(`${API}/public/question-response`, {
+        assignment_id: assignmentId,
+        response_text: response
+      });
+      
+      setSubmitted(true);
+    } catch (error) {
+      setError(error.response?.data?.detail || 'Yanıt gönderilirken hata oluştu');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
+        <Card className="max-w-lg mx-auto bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
+            <p className="text-gray-600">
+              Yanıtınız başarıyla kaydedildi. Bu sayfayı kapatabilirsiniz.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error && !questionData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
+        <Card className="max-w-lg mx-auto bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Hata</h2>
+            <p className="text-gray-600">{error}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 p-4">
+      <div className="max-w-3xl mx-auto">
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <CardHeader className="text-center border-b border-gray-200">
+            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <FileQuestion className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-2xl text-gray-900">Yöneten Sorular</CardTitle>
+            <CardDescription>
+              {questionData?.year} {questionData?.month}. Ay Değerlendirmesi
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="p-8">
+            {questionData && (
+              <>
+                <div className="bg-emerald-50 border-l-4 border-emerald-400 p-6 mb-6 rounded-r-lg">
+                  <h3 className="text-lg font-semibold text-emerald-800 mb-2">
+                    {questionData.question.category}
+                  </h3>
+                  <p className="text-emerald-700 font-medium mb-4">
+                    {questionData.question.question_text}
+                  </p>
+                  <div className="text-sm text-emerald-600">
+                    <p className="mb-2">
+                      <strong>Önem/Gerekçe:</strong><br />
+                      {questionData.question.importance_reason}
+                    </p>
+                    <p>
+                      <strong>Beklenen Aksiyon:</strong><br />
+                      {questionData.question.expected_action}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-sm text-gray-600">
+                    <strong>Çalışan:</strong> {questionData.employee.first_name} {questionData.employee.last_name}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <strong>Departman:</strong> {questionData.employee.department}
+                  </p>
+                </div>
+
+                {error && (
+                  <Alert className="mb-6 border-red-200 bg-red-50">
+                    <AlertDescription className="text-red-600">
+                      {error}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-6">
+                    <Label htmlFor="response" className="text-base font-medium text-gray-900">
+                      Yanıtınız
+                    </Label>
+                    <Textarea
+                      id="response"
+                      value={response}
+                      onChange={(e) => setResponse(e.target.value)}
+                      placeholder="Lütfen sorunun yanıtını detaylı bir şekilde yazınız..."
+                      rows={8}
+                      className="mt-2"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      disabled={submitting}
+                      className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 px-8 py-2.5"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Gönderiliyor...
+                        </>
+                      ) : (
+                        'Veri Gönder'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   return (
