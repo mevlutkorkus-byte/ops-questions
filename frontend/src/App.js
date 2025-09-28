@@ -842,11 +842,17 @@ const Dashboard = () => {
               Dashboard'unuz başarıyla yüklendi. Buraya yeni özellikler ekleyebilirsiniz.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700">
-                Yeni Özellik Ekle
+              <Button 
+                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                onClick={() => setCurrentView('employees')}
+                data-testid="manage-employees-button"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Kişi Ekle
               </Button>
               <Button variant="outline">
-                Ayarları Görüntüle
+                <Activity className="w-4 h-4 mr-2" />
+                Raporları Görüntüle
               </Button>
             </div>
           </CardContent>
