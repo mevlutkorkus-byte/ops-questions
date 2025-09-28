@@ -1099,10 +1099,17 @@ async def get_monthly_responses(current_user: User = Depends(get_current_user)):
     
     formatted_responses = []
     for response in responses:
+        # Remove MongoDB _id field
+        response.pop('_id', None)
+        
         question = await db.questions.find_one({"id": response["question_id"]})
         employee = await db.employees.find_one({"id": response["employee_id"]})
         
         if question and employee:
+            # Remove MongoDB _id fields
+            question.pop('_id', None)
+            employee.pop('_id', None)
+            
             formatted_response = {
                 **response,
                 "question": {
