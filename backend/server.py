@@ -337,6 +337,31 @@ class QuestionResponseCreate(BaseModel):
 class ShareQuestionsRequest(BaseModel):
     assignments: List[dict]  # [{"question_id": "...", "employee_id": "..."}]
 
+# Response Data Models for Cevaplar Feature
+class MonthlyResponse(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    question_id: str
+    employee_id: str
+    year: int
+    month: int
+    numerical_value: Optional[float] = Field(None, ge=0, le=10)  # Scale 1-10
+    employee_comment: Optional[str] = Field(None, max_length=2000)
+    ai_comment: Optional[str] = Field(None, max_length=3000)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class MonthlyResponseCreate(BaseModel):
+    question_id: str
+    employee_id: str
+    year: int
+    month: int
+    numerical_value: Optional[float] = Field(None, ge=0, le=10)
+    employee_comment: Optional[str] = Field(None, max_length=2000)
+
+class MonthlyResponseUpdate(BaseModel):
+    numerical_value: Optional[float] = Field(None, ge=0, le=10)
+    employee_comment: Optional[str] = Field(None, max_length=2000)
+
 # Auth Routes
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
