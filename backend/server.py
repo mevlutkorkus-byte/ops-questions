@@ -136,6 +136,30 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+class Employee(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    first_name: str = Field(..., min_length=2, max_length=50)
+    last_name: str = Field(..., min_length=2, max_length=50)
+    phone: str = Field(..., min_length=10, max_length=15)
+    department: str = Field(..., min_length=2, max_length=100)
+    age: int = Field(..., ge=16, le=100)
+    gender: str = Field(..., regex="^(Erkek|Kadın|Diğer)$")
+    hire_date: str  # YYYY-MM-DD format
+    birth_date: str  # YYYY-MM-DD format
+    salary: float = Field(..., ge=0)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class EmployeeCreate(BaseModel):
+    first_name: str = Field(..., min_length=2, max_length=50)
+    last_name: str = Field(..., min_length=2, max_length=50)
+    phone: str = Field(..., min_length=10, max_length=15)
+    department: str = Field(..., min_length=2, max_length=100)
+    age: int = Field(..., ge=16, le=100)
+    gender: str = Field(..., regex="^(Erkek|Kadın|Diğer)$")
+    hire_date: str  # YYYY-MM-DD format
+    birth_date: str  # YYYY-MM-DD format
+    salary: float = Field(..., ge=0)
+
 # Auth Routes
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
