@@ -13,6 +13,8 @@ from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 import hashlib
 import secrets
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
+from jinja2 import Template
 
 
 ROOT_DIR = Path(__file__).parent
