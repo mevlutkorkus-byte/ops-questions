@@ -143,7 +143,7 @@ class Employee(BaseModel):
     phone: str = Field(..., min_length=10, max_length=15)
     department: str = Field(..., min_length=2, max_length=100)
     age: int = Field(..., ge=16, le=100)
-    gender: str = Field(..., regex="^(Erkek|Kadın|Diğer)$")
+    gender: str = Field(..., pattern="^(Erkek|Kadın|Diğer)$")
     hire_date: str  # YYYY-MM-DD format
     birth_date: str  # YYYY-MM-DD format
     salary: float = Field(..., ge=0)
@@ -155,7 +155,7 @@ class EmployeeCreate(BaseModel):
     phone: str = Field(..., min_length=10, max_length=15)
     department: str = Field(..., min_length=2, max_length=100)
     age: int = Field(..., ge=16, le=100)
-    gender: str = Field(..., regex="^(Erkek|Kadın|Diğer)$")
+    gender: str = Field(..., pattern="^(Erkek|Kadın|Diğer)$")
     hire_date: str  # YYYY-MM-DD format
     birth_date: str  # YYYY-MM-DD format
     salary: float = Field(..., ge=0)
