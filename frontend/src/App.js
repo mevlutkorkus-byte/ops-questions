@@ -1273,6 +1273,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [constantsType, setConstantsType] = useState(''); // 'category' or 'department'
 
   useEffect(() => {
     fetchDashboardStats();
