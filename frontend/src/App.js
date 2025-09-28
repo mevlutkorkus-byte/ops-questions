@@ -47,6 +47,7 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await axios.get(`${API}/auth/me`);
       setUser(response.data);
+      setLoading(false);
     } catch (error) {
       console.error('Failed to fetch user:', error);
       // Only logout if the error is 401 (unauthorized)
@@ -54,12 +55,8 @@ const AuthProvider = ({ children }) => {
         console.log('Token expired or invalid, logging out');
         logout();
       } else {
-        // For other errors, just log and continue
+        // For other errors, just log and continue with the token
         console.log('Temporary API error, keeping authentication state');
-        setLoading(false);
-      }
-    } finally {
-      if (!error || error.response?.status !== 401) {
         setLoading(false);
       }
     }
