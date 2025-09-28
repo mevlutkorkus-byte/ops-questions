@@ -1,0 +1,95 @@
+{
+  "summary": {
+    "total_tests": 14,
+    "passed_tests": 13,
+    "failed_tests": 1,
+    "success_rate": 92.85714285714286,
+    "timestamp": "2025-09-28T16:48:13.867173"
+  },
+  "test_results": [
+    {
+      "test_name": "API Root",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T16:48:13.491346"
+    },
+    {
+      "test_name": "User Registration",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T16:48:13.595091"
+    },
+    {
+      "test_name": "Registration Token Received",
+      "success": true,
+      "details": "Token and user data received",
+      "timestamp": "2025-09-28T16:48:13.595560"
+    },
+    {
+      "test_name": "Duplicate Registration",
+      "success": true,
+      "details": "Status 400 as expected",
+      "timestamp": "2025-09-28T16:48:13.629851"
+    },
+    {
+      "test_name": "Get Current User",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T16:48:13.666021"
+    },
+    {
+      "test_name": "User Info Format",
+      "success": true,
+      "details": "User info contains required fields",
+      "timestamp": "2025-09-28T16:48:13.666437"
+    },
+    {
+      "test_name": "Dashboard Stats",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T16:48:13.698977"
+    },
+    {
+      "test_name": "Dashboard Stats Format",
+      "success": true,
+      "details": "Dashboard stats contain required fields",
+      "timestamp": "2025-09-28T16:48:13.699407"
+    },
+    {
+      "test_name": "Protected Route Without Token",
+      "success": false,
+      "details": "Expected 401, got 403",
+      "timestamp": "2025-09-28T16:48:13.730771"
+    },
+    {
+      "test_name": "User Login",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T16:48:13.791985"
+    },
+    {
+      "test_name": "Login Token Received",
+      "success": true,
+      "details": "Token and user data received",
+      "timestamp": "2025-09-28T16:48:13.792431"
+    },
+    {
+      "test_name": "Invalid Login",
+      "success": true,
+      "details": "Status 401 as expected",
+      "timestamp": "2025-09-28T16:48:13.831873"
+    },
+    {
+      "test_name": "Dashboard Stats",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T16:48:13.866460"
+    },
+    {
+      "test_name": "Dashboard Stats Format",
+      "success": true,
+      "details": "Dashboard stats contain required fields",
+      "timestamp": "2025-09-28T16:48:13.866912"
+    }
+  ]
+}
