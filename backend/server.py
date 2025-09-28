@@ -54,7 +54,7 @@ EMAIL_TEMPLATE = """
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Yöneten Sorular - Soru Yanıtlama</title>
+    <title>Dijital Yönetim - Soru Yanıtlama</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
