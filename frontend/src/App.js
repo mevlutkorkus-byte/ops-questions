@@ -1556,7 +1556,8 @@ const QuestionBankManagement = ({ onBack }) => {
       importance_reason: question.importance_reason,
       expected_action: question.expected_action,
       period: question.period,
-      chart_type: question.chart_type || ''
+      chart_type: question.chart_type || '',
+      response_type: question.response_type || 'Her İkisi'
     });
     setShowAddModal(true);
   };
