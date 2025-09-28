@@ -1085,20 +1085,34 @@ const EmployeeManagement = ({ onBack }) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="department">Departman</Label>
-                  <Select onValueChange={(value) => handleSelectChange('department', value)} value={formData.department}>
-                    <SelectTrigger data-testid="department-select">
-                      <SelectValue placeholder="Departman seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {departments.map((department) => (
-                        <SelectItem key={department.id} value={department.name}>
-                          {department.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="email">E-posta Adresi</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="email@example.com"
+                    data-testid="email-input"
+                  />
                 </div>
+              </div>
+
+              <div>
+                <Label htmlFor="department">Departman</Label>
+                <Select onValueChange={(value) => handleSelectChange('department', value)} value={formData.department}>
+                  <SelectTrigger data-testid="department-select">
+                    <SelectValue placeholder="Departman seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((department) => (
+                      <SelectItem key={department.id} value={department.name}>
+                        {department.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
