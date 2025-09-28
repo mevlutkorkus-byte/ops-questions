@@ -254,6 +254,21 @@ test_plan:
           agent: "testing"
           comment: "✅ COMPREHENSIVE TESTING COMPLETE: Multi-data fields feature working perfectly! Successfully tested complete workflow: 1) Login/registration works smoothly 2) Navigation to Program Sabitleri → Soru Ekle works correctly 3) Question creation modal opens properly 4) When response type is set to 'Sadece Sayısal', the 'Veri Alanları' section appears automatically 5) 'Alan Ekle' button successfully adds new data fields 6) Multiple fields can be added with custom names and units (tested with 'Erkek Sayısı (kişi)' and 'Kadın Sayısı (kişi)') 7) Field deletion functionality works correctly 8) Questions can be saved successfully with data fields 9) Conditional rendering works perfectly - section only appears for 'Sadece Sayısal' questions. All expected functionality from the review request has been verified and is working correctly."
 
+  - task: "Multi-data fields in Cevaplar (Responses) section"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Multi-data fields functionality integrated into Cevaplar section. Response form dynamically shows individual input fields for each data field based on question.data_fields. Multi-field data submission and display in responses table implemented."
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPREHENSIVE TESTING COMPLETE: Multi-data fields in Cevaplar working perfectly! Successfully tested complete workflow: 1) Navigation to Cevaplar section works correctly 2) Question with multi-data fields displays properly with correct badges (Sütun chart type, Sadece Sayısal response type) 3) Response form dynamically shows individual input fields for each data field: 'Erkek Sayısı (kişi)' and 'Kadın Sayısı (kişi)' 4) Field labels display correctly with proper units 5) Employee selection works properly 6) Multi-field data can be filled and submitted successfully (tested with Erkek Sayısı: 15, Kadın Sayısı: 12) 7) Success message displayed correctly 8) AI comment generation initiated 9) Responses table correctly displays multi-field data in structured format: 'Erkek Sayısı: 15 kişi, Kadın Sayısı: 12 kişi' 10) All expected functionality from review request verified and working correctly. Multi-data fields feature in Cevaplar is production-ready!"
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
