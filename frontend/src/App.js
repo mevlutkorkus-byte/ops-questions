@@ -2932,10 +2932,37 @@ const PublicQuestionResponse = () => {
   const assignmentId = window.location.pathname.split('/').pop();
   const [questionData, setQuestionData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [response, setResponse] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
+  // Bulk responses data (2025 Sep - 2030 Dec)
+  const [bulkResponses, setBulkResponses] = useState({});
+  
+  // Generate all months from 2025 Sep to 2030 Dec
+  const generateMonthsTable = () => {
+    const months = [];
+    const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                       'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    
+    for (let year = 2025; year <= 2030; year++) {
+      const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
+      const endMonth = year === 2030 ? 11 : 11; // Dec = 11
+      
+      for (let month = startMonth; month <= endMonth; month++) {
+        months.push({
+          year,
+          month: month + 1, // Convert to 1-indexed
+          monthName: monthNames[month],
+          key: `${year}-${month + 1}`
+        });
+      }
+    }
+    return months;
+  };
+  
+  const [monthsData] = useState(generateMonthsTable());
 
   useEffect(() => {
     if (assignmentId) {
