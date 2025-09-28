@@ -132,6 +132,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, register } = useAuth();
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({
