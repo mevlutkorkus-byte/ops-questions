@@ -946,6 +946,33 @@ async def get_question_responses(current_user: User = Depends(get_current_user))
     
     return formatted_responses
 
+@api_router.get("/email-logs")
+async def get_email_logs(current_user: User = Depends(get_current_user)):
+    """Get demo email logs"""
+    assignments = await db.question_assignments.find({"email_sent": True}).sort("assigned_at", -1).to_list(20)
+    
+    email_logs = []
+    for assignment in assignments:
+        question = await db.questions.find_one({"id": assignment["question_id"]})
+        employee = await db.employees.find_one({"id": assignment["employee_id"]})
+        
+        if question and employee:
+            email_log = {
+                "assignment_id": assignment["id"],
+                "employee_name": f"{employee['first_name']} {employee['last_name']}",
+                "employee_email": employee.get('email', 'E-posta yok'),
+                "question_category": question["category"],
+                "question_text": question["question_text"],
+                "answer_link": f"{frontend_url}/answer/{assignment['id']}",
+                "sent_date": assignment["assigned_at"],
+                "response_received": assignment.get("response_received", False),
+                "year": assignment["year"],
+                "month": assignment["month"]
+            }
+            email_logs.append(email_log)
+    
+    return email_logs
+
 # Include the router in the main app
 app.include_router(api_router)
 
