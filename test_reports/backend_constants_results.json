@@ -1,0 +1,161 @@
+{
+  "test_summary": {
+    "total_tests": 25,
+    "passed_tests": 24,
+    "failed_tests": 1,
+    "success_rate": "96.0%",
+    "timestamp": "2025-09-28T18:11:52.731503"
+  },
+  "detailed_results": [
+    {
+      "test_name": "User Login",
+      "success": false,
+      "details": "Status: 401, Error: Incorrect username or password",
+      "timestamp": "2025-09-28T18:11:44.854226"
+    },
+    {
+      "test_name": "User Registration",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImV4cCI6MTc1OTA4NDkwNH0.hYoIfgEA7WdOr2QisJHc9zUv1Rp8-5umACLkLTUhA-4\",\n  \"token_type\": \"bearer\",\n  \"user\": {\n    \"id\": ...",
+      "timestamp": "2025-09-28T18:11:44.919510"
+    },
+    {
+      "test_name": "Create Category",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"id\": \"51693e83-41f9-4b0c-82d3-23c2970e19da\",\n  \"name\": \"Test Kategori\",\n  \"created_at\": \"2025-09-28T18:11:44.954278Z\"\n}...",
+      "timestamp": "2025-09-28T18:11:44.957427"
+    },
+    {
+      "test_name": "Create Duplicate Category (should fail)",
+      "success": true,
+      "details": "Status: 400, Response: {\n  \"detail\": \"Bu kategori zaten mevcut\"\n}...",
+      "timestamp": "2025-09-28T18:11:44.992922"
+    },
+    {
+      "test_name": "Get All Categories",
+      "success": true,
+      "details": "Status: 200, Response: [\n  {\n    \"id\": \"71a987ee-5df5-40a9-8024-6d69d761f4d7\",\n    \"name\": \"Finans\",\n    \"created_at\": \"2025-09-28T18:09:48.396421Z\"\n  },\n  {\n    \"id\": \"51693e83-41f9-4b0c-82d3-23c2970e19da\",\n    \"name\": \"Te...",
+      "timestamp": "2025-09-28T18:11:45.028815"
+    },
+    {
+      "test_name": "Verify Category in List",
+      "success": true,
+      "details": "Found 2 categories, Test Kategori present: True",
+      "timestamp": "2025-09-28T18:11:45.029316"
+    },
+    {
+      "test_name": "Create Second Category",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"id\": \"93330731-f4d6-492c-80b9-81178181fcab\",\n  \"name\": \"\\u0130kinci Kategori\",\n  \"created_at\": \"2025-09-28T18:11:45.062348Z\"\n}...",
+      "timestamp": "2025-09-28T18:11:45.065568"
+    },
+    {
+      "test_name": "Delete Category",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"message\": \"Kategori ba\\u015far\\u0131yla silindi\"\n}...",
+      "timestamp": "2025-09-28T18:11:45.098239"
+    },
+    {
+      "test_name": "Delete Non-existent Category (should fail)",
+      "success": true,
+      "details": "Status: 404, Response: {\n  \"detail\": \"Kategori bulunamad\\u0131\"\n}...",
+      "timestamp": "2025-09-28T18:11:45.172525"
+    },
+    {
+      "test_name": "Create Department",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"id\": \"61314429-c161-4d09-ad41-46dc23bdf8d9\",\n  \"name\": \"Test Departman\\u0131\",\n  \"created_at\": \"2025-09-28T18:11:45.206619Z\"\n}...",
+      "timestamp": "2025-09-28T18:11:45.208661"
+    },
+    {
+      "test_name": "Create Duplicate Department (should fail)",
+      "success": true,
+      "details": "Status: 400, Response: {\n  \"detail\": \"Bu departman zaten mevcut\"\n}...",
+      "timestamp": "2025-09-28T18:11:49.234673"
+    },
+    {
+      "test_name": "Get All Departments",
+      "success": true,
+      "details": "Status: 200, Response: [\n  {\n    \"id\": \"8d8e2d9d-547d-432d-aa15-ae04c306077e\",\n    \"name\": \"Bilgi \\u0130\\u015flem\",\n    \"created_at\": \"2025-09-28T18:09:54.868660Z\"\n  },\n  {\n    \"id\": \"61314429-c161-4d09-ad41-46dc23bdf8d9\",\n...",
+      "timestamp": "2025-09-28T18:11:49.267493"
+    },
+    {
+      "test_name": "Verify Department in List",
+      "success": true,
+      "details": "Found 2 departments, Test Departman\u0131 present: True",
+      "timestamp": "2025-09-28T18:11:49.267939"
+    },
+    {
+      "test_name": "Create Second Department",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"id\": \"ea04db90-a78c-4973-a277-2619ea93b90e\",\n  \"name\": \"\\u0130kinci Departman\",\n  \"created_at\": \"2025-09-28T18:11:49.299173Z\"\n}...",
+      "timestamp": "2025-09-28T18:11:49.302630"
+    },
+    {
+      "test_name": "Delete Department",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"message\": \"Departman ba\\u015far\\u0131yla silindi\"\n}...",
+      "timestamp": "2025-09-28T18:11:49.337051"
+    },
+    {
+      "test_name": "Delete Non-existent Department (should fail)",
+      "success": true,
+      "details": "Status: 404, Response: {\n  \"detail\": \"Departman bulunamad\\u0131\"\n}...",
+      "timestamp": "2025-09-28T18:11:49.371070"
+    },
+    {
+      "test_name": "Get Categories for Integration",
+      "success": true,
+      "details": "Status: 200, Response: [\n  {\n    \"id\": \"71a987ee-5df5-40a9-8024-6d69d761f4d7\",\n    \"name\": \"Finans\",\n    \"created_at\": \"2025-09-28T18:09:48.396421Z\"\n  },\n  {\n    \"id\": \"93330731-f4d6-492c-80b9-81178181fcab\",\n    \"name\": \"\\u...",
+      "timestamp": "2025-09-28T18:11:52.535682"
+    },
+    {
+      "test_name": "Create Question with Category",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"id\": \"5e37d2d8-988e-445e-bb40-26a8168a5e4a\",\n  \"category\": \"\\u0130kinci Kategori\",\n  \"question_text\": \"Bu test sorusu kategori entegrasyonu i\\u00e7in olu\\u015fturulmu\\u015ftur?\",\n  \"importance_re...",
+      "timestamp": "2025-09-28T18:11:52.587631"
+    },
+    {
+      "test_name": "Get Departments for Integration",
+      "success": true,
+      "details": "Status: 200, Response: [\n  {\n    \"id\": \"8d8e2d9d-547d-432d-aa15-ae04c306077e\",\n    \"name\": \"Bilgi \\u0130\\u015flem\",\n    \"created_at\": \"2025-09-28T18:09:54.868660Z\"\n  },\n  {\n    \"id\": \"ea04db90-a78c-4973-a277-2619ea93b90e\",\n...",
+      "timestamp": "2025-09-28T18:11:52.663053"
+    },
+    {
+      "test_name": "Create Employee with Department",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"id\": \"8b583e54-a1b9-4f29-bf13-771883c4a2a4\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"\\u00c7al\\u0131\\u015fan\",\n  \"phone\": \"05551234567\",\n  \"department\": \"\\u0130kinci Departman\",\n  \"age\": 30,\n  \"ge...",
+      "timestamp": "2025-09-28T18:11:52.698674"
+    },
+    {
+      "test_name": "Get Dashboard Stats",
+      "success": true,
+      "details": "Status: 200, Response: {\n  \"stats\": {\n    \"total_employees\": 2,\n    \"total_questions\": 2,\n    \"total_categories\": 2,\n    \"total_departments\": 2\n  }\n}...",
+      "timestamp": "2025-09-28T18:11:52.731024"
+    },
+    {
+      "test_name": "Dashboard Stats - total_categories",
+      "success": true,
+      "details": "Value: 2",
+      "timestamp": "2025-09-28T18:11:52.731461"
+    },
+    {
+      "test_name": "Dashboard Stats - total_departments",
+      "success": true,
+      "details": "Value: 2",
+      "timestamp": "2025-09-28T18:11:52.731479"
+    },
+    {
+      "test_name": "Dashboard Stats - total_employees",
+      "success": true,
+      "details": "Value: 2",
+      "timestamp": "2025-09-28T18:11:52.731486"
+    },
+    {
+      "test_name": "Dashboard Stats - total_questions",
+      "success": true,
+      "details": "Value: 2",
+      "timestamp": "2025-09-28T18:11:52.731492"
+    }
+  ]
+}
