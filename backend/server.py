@@ -591,6 +591,194 @@ async def delete_department(department_id: str, current_user: User = Depends(get
     
     return {"message": "Departman başarıyla silindi"}
 
+# Question Sharing Routes
+@api_router.get("/questions/share-list")
+async def get_questions_for_sharing(current_user: User = Depends(get_current_user)):
+    """Get all questions with employees for sharing interface"""
+    questions = await db.questions.find().to_list(1000)
+    employees = await db.employees.find().to_list(1000)
+    
+    # Format questions
+    formatted_questions = []
+    for question in questions:
+        if "created_at" in question:
+            question["created_at"] = datetime.fromisoformat(question["created_at"].replace('Z', '+00:00')) if isinstance(question["created_at"], str) else question["created_at"]
+        formatted_questions.append(Question(**question))
+    
+    # Format employees
+    formatted_employees = []
+    for employee in employees:
+        if "created_at" in employee:
+            employee["created_at"] = datetime.fromisoformat(employee["created_at"].replace('Z', '+00:00')) if isinstance(employee["created_at"], str) else employee["created_at"]
+        formatted_employees.append(Employee(**employee))
+    
+    return {
+        "questions": formatted_questions,
+        "employees": formatted_employees
+    }
+
+@api_router.post("/questions/share")
+async def share_questions(share_request: ShareQuestionsRequest, current_user: User = Depends(get_current_user)):
+    """Share questions via email to assigned employees"""
+    current_date = datetime.now(timezone.utc)
+    year = current_date.year
+    month = current_date.month
+    
+    assignments_created = []
+    
+    for assignment_data in share_request.assignments:
+        question_id = assignment_data.get("question_id")
+        employee_id = assignment_data.get("employee_id")
+        
+        if not question_id or not employee_id:
+            continue
+        
+        # Check if assignment already exists for this month
+        existing_assignment = await db.question_assignments.find_one({
+            "question_id": question_id,
+            "employee_id": employee_id, 
+            "year": year,
+            "month": month
+        })
+        
+        if existing_assignment:
+            continue  # Skip if already assigned
+        
+        # Create assignment
+        assignment_dict = {
+            "id": str(uuid.uuid4()),
+            "question_id": question_id,
+            "employee_id": employee_id,
+            "year": year,
+            "month": month,
+            "email_sent": True,  # Simulating email sent
+            "response_received": False,
+            "assigned_at": current_date.isoformat()
+        }
+        
+        await db.question_assignments.insert_one(assignment_dict)
+        assignments_created.append(assignment_dict)
+    
+    return {
+        "message": f"{len(assignments_created)} soru başarıyla paylaşıldı",
+        "assignments_created": len(assignments_created),
+        "year": year,
+        "month": month
+    }
+
+# Public Question Response Routes (No auth required)
+@api_router.get("/public/question-form/{assignment_id}")
+async def get_public_question_form(assignment_id: str):
+    """Get question form for public response (no auth required)"""
+    assignment = await db.question_assignments.find_one({"id": assignment_id})
+    if not assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru ataması bulunamadı"
+        )
+    
+    # Check if already responded
+    existing_response = await db.question_responses.find_one({"assignment_id": assignment_id})
+    if existing_response:
+        return {"message": "Bu soruya zaten yanıt verilmiş", "already_responded": True}
+    
+    # Get question and employee details
+    question = await db.questions.find_one({"id": assignment["question_id"]})
+    employee = await db.employees.find_one({"id": assignment["employee_id"]})
+    
+    if not question or not employee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru veya çalışan bulunamadı"
+        )
+    
+    return {
+        "assignment_id": assignment_id,
+        "question": {
+            "id": question["id"],
+            "question_text": question["question_text"],
+            "category": question["category"],
+            "importance_reason": question["importance_reason"],
+            "expected_action": question["expected_action"]
+        },
+        "employee": {
+            "first_name": employee["first_name"],
+            "last_name": employee["last_name"],
+            "department": employee["department"]
+        },
+        "year": assignment["year"],
+        "month": assignment["month"],
+        "already_responded": False
+    }
+
+@api_router.post("/public/question-response")
+async def submit_public_question_response(response_data: QuestionResponseCreate):
+    """Submit question response from public form (no auth required)"""
+    # Verify assignment exists and not already responded
+    assignment = await db.question_assignments.find_one({"id": response_data.assignment_id})
+    if not assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru ataması bulunamadı"
+        )
+    
+    # Check if already responded
+    existing_response = await db.question_responses.find_one({"assignment_id": response_data.assignment_id})
+    if existing_response:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bu soruya zaten yanıt verilmiş"
+        )
+    
+    # Create response
+    response_dict = {
+        "id": str(uuid.uuid4()),
+        "assignment_id": response_data.assignment_id,
+        "question_id": assignment["question_id"],
+        "employee_id": assignment["employee_id"],
+        "response_text": response_data.response_text,
+        "year": assignment["year"],
+        "month": assignment["month"],
+        "submitted_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.question_responses.insert_one(response_dict)
+    
+    # Update assignment as responded
+    await db.question_assignments.update_one(
+        {"id": response_data.assignment_id},
+        {"$set": {"response_received": True}}
+    )
+    
+    return {
+        "message": "Yanıtınız başarıyla kaydedildi",
+        "response_id": response_dict["id"]
+    }
+
+# Question Responses Management
+@api_router.get("/question-responses")
+async def get_question_responses(current_user: User = Depends(get_current_user)):
+    """Get all question responses"""
+    responses = await db.question_responses.find().to_list(1000)
+    
+    # Get additional data for each response
+    formatted_responses = []
+    for response in responses:
+        question = await db.questions.find_one({"id": response["question_id"]})
+        employee = await db.employees.find_one({"id": response["employee_id"]})
+        
+        if question and employee:
+            formatted_response = {
+                **response,
+                "question_text": question["question_text"],
+                "question_category": question["category"],
+                "employee_name": f"{employee['first_name']} {employee['last_name']}",
+                "employee_department": employee["department"]
+            }
+            formatted_responses.append(formatted_response)
+    
+    return formatted_responses
+
 # Include the router in the main app
 app.include_router(api_router)
 
