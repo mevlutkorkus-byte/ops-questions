@@ -10,9 +10,9 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 import uuid
 from datetime import datetime, timedelta, timezone
-from passlib.context import CryptContext
 from jose import JWTError, jwt
-import bcrypt
+import hashlib
+import secrets
 
 
 ROOT_DIR = Path(__file__).parent
