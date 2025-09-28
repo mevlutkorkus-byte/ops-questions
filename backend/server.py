@@ -1261,7 +1261,8 @@ async def create_monthly_response(response_data: MonthlyResponseCreate, current_
         should_generate_ai = True
     elif response_type == "Her İkisi" and (
         (response_data.employee_comment and response_data.employee_comment.strip()) or 
-        response_data.numerical_value is not None
+        response_data.numerical_value is not None or
+        response_data.data_values
     ):
         should_generate_ai = True
     
