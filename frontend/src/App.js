@@ -1769,6 +1769,7 @@ const QuestionBankManagement = ({ onBack }) => {
                   <TableHead>Soru Metni</TableHead>
                   <TableHead>Periyot</TableHead>
                   <TableHead>Grafik Tipi</TableHead>
+                  <TableHead>Cevap Türü</TableHead>
                   <TableHead>İşlemler</TableHead>
                 </TableRow>
               </TableHeader>
