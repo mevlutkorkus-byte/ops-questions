@@ -531,35 +531,21 @@ const QuestionBankManagement = ({ onBack }) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="deadline">Son Teslim Süresi</Label>
-                  <Input
-                    id="deadline"
-                    name="deadline"
-                    type="date"
-                    value={formData.deadline}
-                    onChange={handleInputChange}
-                    required
-                    data-testid="deadline-input"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="chart_type">Grafik Tipi (Opsiyonel)</Label>
-                  <Select onValueChange={(value) => handleSelectChange('chart_type', value)} value={formData.chart_type}>
-                    <SelectTrigger data-testid="chart-type-select">
-                      <SelectValue placeholder="Grafik tipi seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Sütun">Sütun Grafiği</SelectItem>
-                      <SelectItem value="Pasta">Pasta Grafiği</SelectItem>
-                      <SelectItem value="Çizgi">Çizgi Grafiği</SelectItem>
-                      <SelectItem value="Alan">Alan Grafiği</SelectItem>
-                      <SelectItem value="Bar">Bar Grafiği</SelectItem>
-                      <SelectItem value="Trend">Trend Çizgisi</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <Label htmlFor="chart_type">Grafik Tipi (Opsiyonel)</Label>
+                <Select onValueChange={(value) => handleSelectChange('chart_type', value)} value={formData.chart_type}>
+                  <SelectTrigger data-testid="chart-type-select">
+                    <SelectValue placeholder="Grafik tipi seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Sütun">Sütun Grafiği</SelectItem>
+                    <SelectItem value="Pasta">Pasta Grafiği</SelectItem>
+                    <SelectItem value="Çizgi">Çizgi Grafiği</SelectItem>
+                    <SelectItem value="Alan">Alan Grafiği</SelectItem>
+                    <SelectItem value="Bar">Bar Grafiği</SelectItem>
+                    <SelectItem value="Trend">Trend Çizgisi</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <DialogFooter>
