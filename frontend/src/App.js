@@ -872,6 +872,7 @@ const ResponsesComponent = ({ onBack }) => {
         year: formData.year,
         month: formData.month,
         numerical_value: formData.numerical_value ? parseFloat(formData.numerical_value) : null,
+        data_values: formData.data_values || {},
         employee_comment: formData.employee_comment.trim() || null
       });
 
