@@ -1217,7 +1217,7 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Stats Cards */}
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <CardContent className="p-6">
@@ -1229,6 +1229,20 @@ const Dashboard = () => {
                   </p>
                 </div>
                 <Users className="w-8 h-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Toplam Soru</p>
+                  <p className="text-3xl font-bold text-emerald-600">
+                    {stats?.stats?.total_questions || 0}
+                  </p>
+                </div>
+                <FileQuestion className="w-8 h-8 text-emerald-600" />
               </div>
             </CardContent>
           </Card>
