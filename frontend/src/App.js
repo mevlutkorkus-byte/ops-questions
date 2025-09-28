@@ -1130,31 +1130,38 @@ const ResponsesComponent = ({ onBack }) => {
                   </Select>
                 </div>
 
-                <div>
-                  <Label htmlFor="numerical_value">Sayısal Değer (0-10)</Label>
-                  <Input
-                    id="numerical_value"
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    value={formData.numerical_value}
-                    onChange={(e) => setFormData({...formData, numerical_value: e.target.value})}
-                    placeholder="0-10 arası değer"
-                  />
-                </div>
+                {/* Conditional fields based on response type */}
+                {(selectedQuestion.response_type === 'Sadece Sayısal' || selectedQuestion.response_type === 'Her İkisi') && (
+                  <div>
+                    <Label htmlFor="numerical_value">Sayısal Değer</Label>
+                    <Input
+                      id="numerical_value"
+                      type="number"
+                      step="any"
+                      value={formData.numerical_value}
+                      onChange={(e) => setFormData({...formData, numerical_value: e.target.value})}
+                      placeholder="Herhangi bir sayısal değer (milyon, yüzde, adet vb.)"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Milyonlar, yüzdeler, adetler vb. herhangi bir sayısal değer girilebilir
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <Label htmlFor="employee_comment">Çalışan Yorumu</Label>
-                <Textarea
-                  id="employee_comment"
-                  value={formData.employee_comment}
-                  onChange={(e) => setFormData({...formData, employee_comment: e.target.value})}
-                  placeholder="Yorumunuzu buraya yazın..."
-                  rows={6}
-                />
-              </div>
+              {/* Conditional comment field */}
+              {(selectedQuestion.response_type === 'Sadece Sözel' || selectedQuestion.response_type === 'Her İkisi') && (
+                <div>
+                  <Label htmlFor="employee_comment">Çalışan Yorumu</Label>
+                  <Textarea
+                    id="employee_comment"
+                    value={formData.employee_comment}
+                    onChange={(e) => setFormData({...formData, employee_comment: e.target.value})}
+                    placeholder="Yorumunuzu buraya yazın..."
+                    rows={6}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end mt-6">
