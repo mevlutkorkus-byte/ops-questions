@@ -390,6 +390,92 @@ async def delete_employee(employee_id: str, current_user: User = Depends(get_cur
     
     return {"message": "Çalışan başarıyla silindi"}
 
+# Question Bank Routes
+@api_router.post("/questions", response_model=Question)
+async def create_question(question_data: QuestionCreate, current_user: User = Depends(get_current_user)):
+    # Validate date format
+    try:
+        datetime.strptime(question_data.deadline, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Son teslim tarihi formatı YYYY-MM-DD olmalıdır"
+        )
+    
+    question_dict = question_data.dict()
+    question_dict["id"] = str(uuid.uuid4())
+    question_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.questions.insert_one(question_dict)
+    
+    question = Question(**question_dict)
+    question.created_at = datetime.fromisoformat(question_dict["created_at"].replace('Z', '+00:00')) if isinstance(question_dict["created_at"], str) else question_dict["created_at"]
+    
+    return question
+
+@api_router.get("/questions", response_model=List[Question])
+async def get_questions(current_user: User = Depends(get_current_user)):
+    questions = await db.questions.find().to_list(1000)
+    result = []
+    for question in questions:
+        if "created_at" in question:
+            question["created_at"] = datetime.fromisoformat(question["created_at"].replace('Z', '+00:00')) if isinstance(question["created_at"], str) else question["created_at"]
+        result.append(Question(**question))
+    return result
+
+@api_router.get("/questions/{question_id}", response_model=Question)
+async def get_question(question_id: str, current_user: User = Depends(get_current_user)):
+    question = await db.questions.find_one({"id": question_id})
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru bulunamadı"
+        )
+    
+    if "created_at" in question:
+        question["created_at"] = datetime.fromisoformat(question["created_at"].replace('Z', '+00:00')) if isinstance(question["created_at"], str) else question["created_at"]
+    
+    return Question(**question)
+
+@api_router.put("/questions/{question_id}", response_model=Question)
+async def update_question(question_id: str, question_data: QuestionCreate, current_user: User = Depends(get_current_user)):
+    # Validate date format
+    try:
+        datetime.strptime(question_data.deadline, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Son teslim tarihi formatı YYYY-MM-DD olmalıdır"
+        )
+    
+    # Check if question exists
+    existing_question = await db.questions.find_one({"id": question_id})
+    if not existing_question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru bulunamadı"
+        )
+    
+    update_data = question_data.dict()
+    await db.questions.update_one({"id": question_id}, {"$set": update_data})
+    
+    updated_question = await db.questions.find_one({"id": question_id})
+    if "created_at" in updated_question:
+        updated_question["created_at"] = datetime.fromisoformat(updated_question["created_at"].replace('Z', '+00:00')) if isinstance(updated_question["created_at"], str) else updated_question["created_at"]
+    
+    return Question(**updated_question)
+
+@api_router.delete("/questions/{question_id}")
+async def delete_question(question_id: str, current_user: User = Depends(get_current_user)):
+    result = await db.questions.delete_one({"id": question_id})
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Soru bulunamadı"
+        )
+    
+    return {"message": "Soru başarıyla silindi"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
