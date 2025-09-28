@@ -1713,6 +1713,7 @@ const Dashboard = () => {
                     }}
                     data-testid="category-constants-menu"
                   >
+                    <FileQuestion className="w-4 h-4 mr-2" />
                     Soru Kategorisi Ekle
                   </DropdownMenuItem>
                   <DropdownMenuItem 
@@ -1722,28 +1723,25 @@ const Dashboard = () => {
                     }}
                     data-testid="department-constants-menu"
                   >
+                    <Users className="w-4 h-4 mr-2" />
                     Departman Ekle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setCurrentView('employees')}
+                    data-testid="manage-employees-menu"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Kişi Ekle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setCurrentView('questions')}
+                    data-testid="question-bank-menu"
+                  >
+                    <FileQuestion className="w-4 h-4 mr-2" />
+                    Soru Ekle
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              
-              <Button 
-                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
-                onClick={() => setCurrentView('employees')}
-                data-testid="manage-employees-button"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Kişi Ekle
-              </Button>
-
-              <Button 
-                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
-                onClick={() => setCurrentView('questions')}
-                data-testid="question-bank-button"
-              >
-                <FileQuestion className="w-4 h-4 mr-2" />
-                Soru Ekle
-              </Button>
 
               <Button 
                 className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
