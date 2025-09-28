@@ -592,7 +592,7 @@ async def delete_department(department_id: str, current_user: User = Depends(get
     return {"message": "Departman başarıyla silindi"}
 
 # Question Sharing Routes
-@api_router.get("/questions/share-list")
+@api_router.get("/questions-share-list")
 async def get_questions_for_sharing(current_user: User = Depends(get_current_user)):
     """Get all questions with employees for sharing interface"""
     questions = await db.questions.find().to_list(1000)
