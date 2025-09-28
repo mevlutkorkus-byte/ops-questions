@@ -1615,7 +1615,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">Dijital Yönetim</h1>
-                  <p className="text-sm text-gray-600">Soru bankası yönetimi</p>
+                  <p className="text-sm text-gray-600">Soru ekleme sistemi</p>
                 </div>
               </div>
               <Button 
