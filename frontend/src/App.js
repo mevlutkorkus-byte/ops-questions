@@ -1163,19 +1163,52 @@ const ResponsesComponent = ({ onBack }) => {
 
                 {/* Conditional fields based on response type */}
                 {(selectedQuestion.response_type === 'Sadece Sayısal' || selectedQuestion.response_type === 'Her İkisi') && (
-                  <div>
-                    <Label htmlFor="numerical_value">Sayısal Değer</Label>
-                    <Input
-                      id="numerical_value"
-                      type="number"
-                      step="any"
-                      value={formData.numerical_value}
-                      onChange={(e) => setFormData({...formData, numerical_value: e.target.value})}
-                      placeholder="Herhangi bir sayısal değer (milyon, yüzde, adet vb.)"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Milyonlar, yüzdeler, adetler vb. herhangi bir sayısal değer girilebilir
-                    </p>
+                  <div className="space-y-4">
+                    {/* Çoklu veri alanları varsa onları göster */}
+                    {selectedQuestion.data_fields && selectedQuestion.data_fields.length > 0 ? (
+                      <div>
+                        <Label className="text-sm font-medium mb-3 block">Veri Alanları</Label>
+                        <div className="space-y-3">
+                          {selectedQuestion.data_fields.map((field) => (
+                            <div key={field.id}>
+                              <Label htmlFor={`field_${field.id}`}>
+                                {field.name} {field.unit && `(${field.unit})`}
+                              </Label>
+                              <Input
+                                id={`field_${field.id}`}
+                                type="number"
+                                step="any"
+                                value={formData.data_values[field.id] || ''}
+                                onChange={(e) => setFormData({
+                                  ...formData,
+                                  data_values: {
+                                    ...formData.data_values,
+                                    [field.id]: e.target.value
+                                  }
+                                })}
+                                placeholder={`${field.name} değerini girin`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      // Çoklu veri alanları yoksa tek sayısal alan
+                      <div>
+                        <Label htmlFor="numerical_value">Sayısal Değer</Label>
+                        <Input
+                          id="numerical_value"
+                          type="number"
+                          step="any"
+                          value={formData.numerical_value}
+                          onChange={(e) => setFormData({...formData, numerical_value: e.target.value})}
+                          placeholder="Herhangi bir sayısal değer (milyon, yüzde, adet vb.)"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Milyonlar, yüzdeler, adetler vb. herhangi bir sayısal değer girilebilir
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
