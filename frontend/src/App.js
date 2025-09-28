@@ -1627,8 +1627,7 @@ const QuestionBankManagement = ({ onBack }) => {
     try {
       const dataToSend = {
         ...formData,
-        chart_type: formData.chart_type || null,
-        response_type: formData.response_type || 'Her İkisi'
+        chart_type: formData.chart_type || null
       };
 
       if (editingQuestion) {
