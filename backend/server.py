@@ -32,6 +32,22 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 security = HTTPBearer()
 
+# Email Configuration
+conf = ConnectionConfig(
+    MAIL_USERNAME=os.environ.get('MAIL_USERNAME'),
+    MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD'),
+    MAIL_FROM=os.environ.get('MAIL_FROM'),
+    MAIL_PORT=int(os.environ.get('MAIL_PORT', 587)),
+    MAIL_SERVER=os.environ.get('MAIL_SERVER'),
+    MAIL_FROM_NAME=os.environ.get('MAIL_FROM_NAME'),
+    MAIL_STARTTLS=os.environ.get('MAIL_STARTTLS', 'true').lower() == 'true',
+    MAIL_SSL_TLS=os.environ.get('MAIL_SSL_TLS', 'false').lower() == 'true',
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True
+)
+
+frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+
 # Create the main app without a prefix
 app = FastAPI(title="Auth System API")
 
