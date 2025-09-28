@@ -1,155 +1,101 @@
 {
   "test_summary": {
-    "total_tests": 24,
-    "passed_tests": 14,
-    "failed_tests": 10,
-    "success_rate": "58.3%",
-    "timestamp": "2025-09-28T19:50:14.863430"
+    "total_tests": 15,
+    "passed_tests": 12,
+    "failed_tests": 3,
+    "success_rate": "80.0%",
+    "timestamp": "2025-09-28T19:52:00.141601"
   },
   "detailed_results": [
     {
       "test_name": "User Registration",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:53.397692"
+      "timestamp": "2025-09-28T19:51:59.540513"
     },
     {
       "test_name": "Create Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:53.435454"
+      "timestamp": "2025-09-28T19:51:59.576805"
     },
     {
       "test_name": "Get All Questions",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:53.469017"
+      "timestamp": "2025-09-28T19:51:59.611772"
     },
     {
       "test_name": "Get Single Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:53.502744"
+      "timestamp": "2025-09-28T19:51:59.652812"
     },
     {
       "test_name": "Update Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.533046"
+      "timestamp": "2025-09-28T19:51:59.685989"
     },
     {
       "test_name": "Delete Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.567734"
+      "timestamp": "2025-09-28T19:51:59.717780"
     },
     {
       "test_name": "Invalid Period Validation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.736052"
+      "timestamp": "2025-09-28T19:51:59.793507"
     },
     {
       "test_name": "Invalid Chart Type Validation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.770554"
+      "timestamp": "2025-09-28T19:51:59.854403"
     },
     {
       "test_name": "Invalid Date Format Validation",
       "success": false,
-      "details": "Expected 400, got 200 - {'id': '81b89f02-7dc7-4394-bfb3-e13ba213ffba', 'category': 'Test', 'question_text': 'Test question with invalid date', 'importance_reason': 'Testing validation', 'expected_action': 'Should fail validation', 'period': 'Haftal\u0131k', 'chart_type': 'S\u00fctun', 'created_at': '2025-09-28T19:48:54.803315Z'}",
-      "timestamp": "2025-09-28T19:48:54.806032"
+      "details": "Expected 400, got 200 - {'id': '64f8a7c3-f449-4a1c-bb1b-4fb102b95f73', 'category': 'Test', 'question_text': 'Test question with invalid date', 'importance_reason': 'Testing validation', 'expected_action': 'Should fail validation', 'period': 'Haftal\u0131k', 'chart_type': 'S\u00fctun', 'created_at': '2025-09-28T19:51:59.886210Z'}",
+      "timestamp": "2025-09-28T19:51:59.888508"
     },
     {
       "test_name": "Missing Required Fields Validation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.839472"
+      "timestamp": "2025-09-28T19:51:59.926097"
     },
     {
       "test_name": "Dashboard Stats with Question Count",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.880975"
+      "timestamp": "2025-09-28T19:51:59.961972"
     },
     {
       "test_name": "Create Test Question for Responses",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:48:54.912459"
+      "timestamp": "2025-09-28T19:52:00.035934"
     },
     {
       "test_name": "Create Test Employee for Responses",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-28T19:48:54.953685"
-    },
-    {
-      "test_name": "Get Questions for Responses",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-28T19:48:54.987550"
-    },
-    {
-      "test_name": "Create Monthly Response with AI Comment",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:49:05.025361"
-    },
-    {
-      "test_name": "Get All Monthly Responses",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-28T19:49:14.428278"
-    },
-    {
-      "test_name": "Get Responses by Question",
-      "success": false,
-      "details": "Expected 200, got 500 - Internal Server Error",
-      "timestamp": "2025-09-28T19:49:14.478428"
-    },
-    {
-      "test_name": "Get Chart Data for Question",
-      "success": false,
-      "details": "Expected 200, got 500 - Internal Server Error",
-      "timestamp": "2025-09-28T19:49:14.512348"
-    },
-    {
-      "test_name": "Monthly Response Test Case 2",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:49:24.548794"
-    },
-    {
-      "test_name": "Monthly Response Test Case 3",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:49:34.616701"
-    },
-    {
-      "test_name": "Monthly Response Test Case 4",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:49:44.675373"
-    },
-    {
-      "test_name": "Monthly Response Test Case 5",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:49:54.731321"
+      "details": "Expected 200, got 400 - {'detail': 'Bu telefon numaras\u0131 ile kay\u0131tl\u0131 \u00e7al\u0131\u015fan zaten mevcut'}",
+      "timestamp": "2025-09-28T19:52:00.073901"
     },
     {
       "test_name": "Create Test Question for Responses",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:50:04.804374"
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T19:52:00.105695"
     },
     {
       "test_name": "Create Test Employee for Responses",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:50:14.863399"
+      "details": "Expected 200, got 400 - {'detail': 'Bu telefon numaras\u0131 ile kay\u0131tl\u0131 \u00e7al\u0131\u015fan zaten mevcut'}",
+      "timestamp": "2025-09-28T19:52:00.140983"
     }
   ]
 }
