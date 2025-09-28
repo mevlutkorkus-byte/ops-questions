@@ -1137,8 +1137,14 @@ async def get_responses_by_question(question_id: str, current_user: User = Depen
     # Format responses with employee details
     formatted_responses = []
     for response in responses:
+        # Remove MongoDB _id field
+        response.pop('_id', None)
+        
         employee = await db.employees.find_one({"id": response["employee_id"]})
         if employee:
+            # Remove MongoDB _id field from employee
+            employee.pop('_id', None)
+            
             formatted_response = {
                 **response,
                 "employee": {
@@ -1148,6 +1154,9 @@ async def get_responses_by_question(question_id: str, current_user: User = Depen
                 }
             }
             formatted_responses.append(formatted_response)
+    
+    # Remove MongoDB _id field from question
+    question.pop('_id', None)
     
     return {
         "question": question,
