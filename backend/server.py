@@ -48,6 +48,92 @@ conf = ConnectionConfig(
 
 frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 
+# Email Templates
+EMAIL_TEMPLATE = """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Yöneten Sorular - Soru Yanıtlama</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 2px solid #10b981; padding-bottom: 20px; margin-bottom: 30px; }
+        .title { color: #1f2937; font-size: 24px; font-weight: bold; margin: 0; }
+        .subtitle { color: #6b7280; font-size: 16px; margin-top: 5px; }
+        .question-box { background: #f0fdfa; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .question-title { font-weight: bold; color: #064e3b; margin-bottom: 10px; }
+        .question-text { color: #374151; line-height: 1.6; }
+        .button { display: inline-block; background: linear-gradient(135deg, #10b981, #3b82f6); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+        .button:hover { opacity: 0.9; }
+        .footer { border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Yöneten Sorular</h1>
+            <p class="subtitle">Soru Yanıtlama Sistemi</p>
+        </div>
+        
+        <p>Merhaba <strong>{{ employee_name }}</strong>,</p>
+        
+        <p>{{ month_year }} dönemi için size atanmış bir soru bulunmaktadır. Lütfen aşağıdaki soruyu inceleyip yanıtlayınız:</p>
+        
+        <div class="question-box">
+            <div class="question-title">{{ question_category }} - {{ question_text }}</div>
+            <div class="question-text">
+                <strong>Önem/Gerekçe:</strong><br>
+                {{ importance_reason }}
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ answer_link }}" class="button">Soruyu Yanıtla</a>
+        </div>
+        
+        <p><strong>Not:</strong> Bu link sadece sizin için oluşturulmuştur ve tek kullanımlıktır.</p>
+        
+        <div class="footer">
+            <p>Bu e-posta Yöneten Sorular sistemi tarafından otomatik olarak gönderilmiştir.</p>
+            <p>Sorularınız için sistem yöneticinizle iletişime geçebilirsiniz.</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+async def send_question_email(employee_email: str, employee_name: str, question: dict, assignment_id: str, month_year: str):
+    """Send question email to employee"""
+    try:
+        # Create email content
+        answer_link = f"{frontend_url}/answer/{assignment_id}"
+        
+        template = Template(EMAIL_TEMPLATE)
+        html_content = template.render(
+            employee_name=employee_name,
+            question_category=question.get('category', ''),
+            question_text=question.get('question_text', ''),
+            importance_reason=question.get('importance_reason', ''),
+            answer_link=answer_link,
+            month_year=month_year
+        )
+        
+        message = MessageSchema(
+            subject=f"Yöneten Sorular - {month_year} Dönemi Soru Yanıtlama",
+            recipients=[employee_email],
+            body=html_content,
+            subtype=MessageType.html
+        )
+        
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        return True
+        
+    except Exception as e:
+        print(f"Email gönderim hatası: {str(e)}")
+        return False
+
 # Create the main app without a prefix
 app = FastAPI(title="Auth System API")
 
