@@ -49,9 +49,19 @@ const AuthProvider = ({ children }) => {
       setUser(response.data);
     } catch (error) {
       console.error('Failed to fetch user:', error);
-      logout();
+      // Only logout if the error is 401 (unauthorized)
+      if (error.response?.status === 401) {
+        console.log('Token expired or invalid, logging out');
+        logout();
+      } else {
+        // For other errors, just log and continue
+        console.log('Temporary API error, keeping authentication state');
+        setLoading(false);
+      }
     } finally {
-      setLoading(false);
+      if (!error || error.response?.status !== 401) {
+        setLoading(false);
+      }
     }
   };
 
