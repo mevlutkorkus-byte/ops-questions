@@ -1702,6 +1702,15 @@ const Dashboard = () => {
                 <FileQuestion className="w-4 h-4 mr-2" />
                 Soru Bankası
               </Button>
+
+              <Button 
+                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                onClick={() => setCurrentView('share')}
+                data-testid="share-questions-button"
+              >
+                <Share className="w-4 h-4 mr-2" />
+                Soruları Paylaş
+              </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
