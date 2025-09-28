@@ -28,7 +28,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-this-in-produc
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 security = HTTPBearer()
 
 # Create the main app without a prefix
@@ -39,13 +38,30 @@ api_router = APIRouter(prefix="/api")
 
 # Helper functions
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    # Extract salt and hash
+    parts = hashed_password.split('$')
+    if len(parts) != 3:
+        return False
+    
+    salt = parts[1]
+    stored_hash = parts[2]
+    
+    # Hash the plain password with the same salt
+    calculated_hash = hashlib.pbkdf2_hmac('sha256', plain_password.encode('utf-8'), salt.encode('utf-8'), 100000)
+    calculated_hash_hex = calculated_hash.hex()
+    
+    return secrets.compare_digest(calculated_hash_hex, stored_hash)
 
 def get_password_hash(password):
-    # Bcrypt has a 72 byte limit, truncate if necessary
-    if len(password.encode('utf-8')) > 72:
-        password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    return pwd_context.hash(password)
+    # Generate a random salt
+    salt = secrets.token_hex(16)
+    
+    # Hash the password with the salt
+    password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
+    password_hash_hex = password_hash.hex()
+    
+    # Return salt$hash format
+    return f"pbkdf2_sha256${salt}${password_hash_hex}"
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
