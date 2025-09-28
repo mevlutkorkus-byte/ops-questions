@@ -1715,6 +1715,20 @@ const QuestionBankManagement = ({ onBack }) => {
                 </Select>
               </div>
 
+              <div>
+                <Label htmlFor="response_type">Cevap Türü</Label>
+                <Select onValueChange={(value) => handleSelectChange('response_type', value)} value={formData.response_type || 'Her İkisi'}>
+                  <SelectTrigger data-testid="response-type-select">
+                    <SelectValue placeholder="Cevap türü seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Sadece Sayısal">Sadece Sayısal</SelectItem>
+                    <SelectItem value="Sadece Sözel">Sadece Sözel</SelectItem>
+                    <SelectItem value="Her İkisi">Her İkisi</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
                   İptal
