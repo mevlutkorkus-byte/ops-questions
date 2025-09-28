@@ -1748,6 +1748,7 @@ const QuestionBankManagement = ({ onBack }) => {
                       <SelectValue placeholder="Sıklık seçin" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="Günlük">Günlük</SelectItem>
                       <SelectItem value="Haftalık">Haftalık</SelectItem>
                       <SelectItem value="Aylık">Aylık</SelectItem>
                       <SelectItem value="Çeyreklik">Çeyreklik</SelectItem>
