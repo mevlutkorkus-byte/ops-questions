@@ -727,8 +727,15 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
     current_date = datetime.now(timezone.utc)
     year = current_date.year
     month = current_date.month
+    month_names = {
+        1: "Ocak", 2: "Şubat", 3: "Mart", 4: "Nisan", 5: "Mayıs", 6: "Haziran",
+        7: "Temmuz", 8: "Ağustos", 9: "Eylül", 10: "Ekim", 11: "Kasım", 12: "Aralık"
+    }
+    month_year = f"{month_names[month]} {year}"
     
     assignments_created = []
+    email_successes = 0
+    email_failures = []
     
     for assignment_data in share_request.assignments:
         question_id = assignment_data.get("question_id")
@@ -748,24 +755,70 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
         if existing_assignment:
             continue  # Skip if already assigned
         
+        # Get question and employee details
+        question = await db.questions.find_one({"id": question_id})
+        employee = await db.employees.find_one({"id": employee_id})
+        
+        if not question or not employee:
+            continue
+        
         # Create assignment
+        assignment_id = str(uuid.uuid4())
         assignment_dict = {
-            "id": str(uuid.uuid4()),
+            "id": assignment_id,
             "question_id": question_id,
             "employee_id": employee_id,
             "year": year,
             "month": month,
-            "email_sent": True,  # Simulating email sent
+            "email_sent": False,
             "response_received": False,
             "assigned_at": current_date.isoformat()
         }
         
+        # Send email if employee has email address
+        email_sent = False
+        if employee.get('email'):
+            employee_name = f"{employee['first_name']} {employee['last_name']}"
+            email_sent = await send_question_email(
+                employee['email'],
+                employee_name,
+                question,
+                assignment_id,
+                month_year
+            )
+            
+            if email_sent:
+                email_successes += 1
+            else:
+                email_failures.append(employee_name)
+        else:
+            # No email address
+            email_failures.append(f"{employee['first_name']} {employee['last_name']} (E-posta adresi yok)")
+        
+        # Update assignment with email status
+        assignment_dict["email_sent"] = email_sent
+        
         await db.question_assignments.insert_one(assignment_dict)
         assignments_created.append(assignment_dict)
     
+    # Prepare response message
+    message_parts = []
+    if assignments_created:
+        message_parts.append(f"{len(assignments_created)} soru atandı")
+    
+    if email_successes:
+        message_parts.append(f"{email_successes} e-posta başarıyla gönderildi")
+    
+    if email_failures:
+        message_parts.append(f"{len(email_failures)} e-posta gönderilemedi")
+    
+    response_message = ", ".join(message_parts) if message_parts else "İşlem tamamlandı"
+    
     return {
-        "message": f"{len(assignments_created)} soru başarıyla paylaşıldı",
+        "message": response_message,
         "assignments_created": len(assignments_created),
+        "emails_sent": email_successes,
+        "email_failures": email_failures,
         "year": year,
         "month": month
     }
