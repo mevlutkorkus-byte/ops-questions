@@ -95,7 +95,7 @@ EMAIL_TEMPLATE = """
         <p><strong>Not:</strong> Bu link sadece sizin için oluşturulmuştur ve tek kullanımlıktır.</p>
         
         <div class="footer">
-            <p>Bu e-posta Yöneten Sorular sistemi tarafından otomatik olarak gönderilmiştir.</p>
+            <p>Bu e-posta Dijital Yönetim sistemi tarafından otomatik olarak gönderilmiştir.</p>
             <p>Sorularınız için sistem yöneticinizle iletişime geçebilirsiniz.</p>
         </div>
     </div>
