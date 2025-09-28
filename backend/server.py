@@ -428,15 +428,6 @@ async def get_question(question_id: str, current_user: User = Depends(get_curren
 
 @api_router.put("/questions/{question_id}", response_model=Question)
 async def update_question(question_id: str, question_data: QuestionCreate, current_user: User = Depends(get_current_user)):
-    # Validate date format
-    try:
-        datetime.strptime(question_data.deadline, "%Y-%m-%d")
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Son teslim tarihi formatı YYYY-MM-DD olmalıdır"
-        )
-    
     # Check if question exists
     existing_question = await db.questions.find_one({"id": question_id})
     if not existing_question:
