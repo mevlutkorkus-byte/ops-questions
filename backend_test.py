@@ -409,8 +409,8 @@ class AuthAPITester:
         return success
 
 def main():
-    print("🚀 Starting Auth System API Tests")
-    print("=" * 50)
+    print("🚀 Starting Employee Management System API Tests")
+    print("=" * 60)
     
     # Setup
     tester = AuthAPITester()
@@ -419,7 +419,7 @@ def main():
     test_password = "TestPass123!"
 
     # Test sequence
-    print("\n📋 Running API Tests...")
+    print("\n📋 Running Auth System Tests...")
     
     # 1. Test API root
     tester.test_api_root()
@@ -453,10 +453,78 @@ def main():
     # 9. Test dashboard stats again after login
     tester.test_dashboard_stats()
 
+    print("\n📋 Running Employee Management Tests...")
+    
+    # Employee test data
+    employee_data = {
+        "first_name": "Ahmet",
+        "last_name": "Yılmaz",
+        "phone": "05551234567",
+        "department": "IT",
+        "age": 30,
+        "gender": "Erkek",
+        "hire_date": "2024-01-15",
+        "birth_date": "1994-05-20",
+        "salary": 75000.0
+    }
+    
+    updated_employee_data = {
+        "first_name": "Ahmet",
+        "last_name": "Yılmaz",
+        "phone": "05551234567",
+        "department": "Software Development",  # Updated department
+        "age": 30,
+        "gender": "Erkek",
+        "hire_date": "2024-01-15",
+        "birth_date": "1994-05-20",
+        "salary": 85000.0  # Updated salary
+    }
+    
+    # 10. Test getting employees (should be empty initially)
+    tester.test_get_employees()
+    
+    # 11. Test creating an employee
+    success, created_employee = tester.test_create_employee(employee_data)
+    employee_id = None
+    if success and created_employee:
+        employee_id = created_employee.get('id')
+    
+    # 12. Test creating employee with invalid data
+    tester.test_create_employee_invalid_data()
+    
+    # 13. Test creating employee with duplicate phone (if first employee was created)
+    if employee_id:
+        tester.test_create_employee_duplicate_phone(employee_data['phone'])
+    
+    # 14. Test getting all employees (should have 1 now)
+    tester.test_get_employees()
+    
+    # 15. Test getting employee by ID
+    if employee_id:
+        tester.test_get_employee_by_id(employee_id)
+    
+    # 16. Test updating employee
+    if employee_id:
+        tester.test_update_employee(employee_id, updated_employee_data)
+    
+    # 17. Test getting employee by ID after update
+    if employee_id:
+        tester.test_get_employee_by_id(employee_id)
+    
+    # 18. Test employee not found
+    tester.test_employee_not_found()
+    
+    # 19. Test deleting employee
+    if employee_id:
+        tester.test_delete_employee(employee_id)
+    
+    # 20. Test getting all employees after deletion (should be empty)
+    tester.test_get_employees()
+
     # Print final results
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 60)
     print("📊 TEST SUMMARY")
-    print("=" * 50)
+    print("=" * 60)
     print(f"Total Tests: {tester.tests_run}")
     print(f"Passed: {tester.tests_passed}")
     print(f"Failed: {tester.tests_run - tester.tests_passed}")
