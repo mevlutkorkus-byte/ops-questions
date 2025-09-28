@@ -294,6 +294,198 @@ const AuthPage = () => {
   );
 };
 
+// Program Constants Management
+const ProgramConstantsManagement = ({ onBack, type }) => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [formLoading, setFormLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const isCategory = type === 'category';
+  const endpoint = isCategory ? 'categories' : 'departments';
+  const title = isCategory ? 'Soru Kategorisi Yönetimi' : 'Departman Yönetimi';
+  const itemName = isCategory ? 'Kategori' : 'Departman';
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get(`${API}/${endpoint}`);
+      setItems(response.data);
+    } catch (error) {
+      console.error(`${itemName} verileri yüklenemedi:`, error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormLoading(true);
+    setError('');
+
+    try {
+      await axios.post(`${API}/${endpoint}`, { name: newItemName });
+      await fetchItems();
+      setShowAddModal(false);
+      setNewItemName('');
+    } catch (error) {
+      setError(error.response?.data?.detail || 'İşlem başarısız');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDelete = async (itemId) => {
+    if (!window.confirm(`Bu ${itemName.toLowerCase()}yı silmek istediğinizden emin misiniz?`)) return;
+
+    try {
+      await axios.delete(`${API}/${endpoint}/${itemId}`);
+      await fetchItems();
+    } catch (error) {
+      console.error('Silme işlemi başarısız:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <Button variant="outline" onClick={onBack}>
+            ← Geri Dön
+          </Button>
+          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+        </div>
+        
+        <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+          <DialogTrigger asChild>
+            <Button 
+              className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+              onClick={() => { setNewItemName(''); setError(''); }}
+              data-testid={`add-${type}-button`}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {itemName} Ekle
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Yeni {itemName} Ekle</DialogTitle>
+              <DialogDescription>
+                {itemName} adını girin.
+              </DialogDescription>
+            </DialogHeader>
+
+            {error && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertDescription className="text-red-600">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="name">{itemName} Adı</Label>
+                <Input
+                  id="name"
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  required
+                  placeholder={`${itemName} adı girin`}
+                  data-testid={`${type}-name-input`}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+                  İptal
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={formLoading}
+                  className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                  data-testid={`save-${type}-button`}
+                >
+                  {formLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Kaydediliyor...
+                    </>
+                  ) : (
+                    'Kaydet'
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Items Table */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{itemName} Adı</TableHead>
+                  <TableHead>Oluşturma Tarihi</TableHead>
+                  <TableHead>İşlemler</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                      Henüz {itemName.toLowerCase()} eklenmemiş
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  items.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">
+                        {item.name}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(item.created_at).toLocaleDateString('tr-TR')}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(item.id)}
+                          className="hover:bg-red-50 hover:border-red-200"
+                          data-testid={`delete-${type}-${item.id}`}
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Question Bank Management Component
 const QuestionBankManagement = ({ onBack }) => {
   const [questions, setQuestions] = useState([]);
