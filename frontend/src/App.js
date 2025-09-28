@@ -1708,8 +1708,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Main Navigation Cards */}
-        <div className="space-y-4 max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Dijital Dönüşüm Yönetimi</h2>
+        <div className="space-y-4 max-w-md">
           
           {/* Program Sabitleri Card */}
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
