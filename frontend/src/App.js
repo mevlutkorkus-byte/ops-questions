@@ -293,6 +293,375 @@ const AuthPage = () => {
   );
 };
 
+// Question Bank Management Component
+const QuestionBankManagement = ({ onBack }) => {
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [formData, setFormData] = useState({
+    category: '',
+    question_text: '',
+    importance_reason: '',
+    expected_action: '',
+    period: '',
+    deadline: '',
+    chart_type: ''
+  });
+  const [formLoading, setFormLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get(`${API}/questions`);
+      setQuestions(response.data);
+    } catch (error) {
+      console.error('Soru verileri yüklenemedi:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setError('');
+  };
+
+  const handleSelectChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    setError('');
+  };
+
+  const resetForm = () => {
+    setFormData({
+      category: '',
+      question_text: '',
+      importance_reason: '',
+      expected_action: '',
+      period: '',
+      deadline: '',
+      chart_type: ''
+    });
+    setError('');
+    setEditingQuestion(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormLoading(true);
+    setError('');
+
+    try {
+      const dataToSend = {
+        ...formData,
+        chart_type: formData.chart_type || null
+      };
+
+      if (editingQuestion) {
+        await axios.put(`${API}/questions/${editingQuestion.id}`, dataToSend);
+      } else {
+        await axios.post(`${API}/questions`, dataToSend);
+      }
+
+      await fetchQuestions();
+      setShowAddModal(false);
+      resetForm();
+    } catch (error) {
+      setError(error.response?.data?.detail || 'İşlem başarısız');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleEdit = (question) => {
+    setEditingQuestion(question);
+    setFormData({
+      category: question.category,
+      question_text: question.question_text,
+      importance_reason: question.importance_reason,
+      expected_action: question.expected_action,
+      period: question.period,
+      deadline: question.deadline,
+      chart_type: question.chart_type || ''
+    });
+    setShowAddModal(true);
+  };
+
+  const handleDelete = async (questionId) => {
+    if (!window.confirm('Bu soruyu silmek istediğinizden emin misiniz?')) return;
+
+    try {
+      await axios.delete(`${API}/questions/${questionId}`);
+      await fetchQuestions();
+    } catch (error) {
+      console.error('Silme işlemi başarısız:', error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('tr-TR');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <Button variant="outline" onClick={onBack}>
+            ← Geri Dön
+          </Button>
+          <h2 className="text-2xl font-bold text-gray-900">Soru Bankası Yönetimi</h2>
+        </div>
+        
+        <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+          <DialogTrigger asChild>
+            <Button 
+              className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+              onClick={() => resetForm()}
+              data-testid="add-question-button"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Soru Ekle
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingQuestion ? 'Soru Düzenle' : 'Yeni Soru Ekle'}
+              </DialogTitle>
+              <DialogDescription>
+                Soru bankası için standardize edilmiş soru bilgilerini doldurun.
+              </DialogDescription>
+            </DialogHeader>
+
+            {error && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertDescription className="text-red-600">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="category">Kategori</Label>
+                  <Input
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Finans, Stok, Kurumsal Kültür"
+                    data-testid="category-input"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="period">Periyot</Label>
+                  <Select onValueChange={(value) => handleSelectChange('period', value)} value={formData.period}>
+                    <SelectTrigger data-testid="period-select">
+                      <SelectValue placeholder="Sıklık seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Haftalık">Haftalık</SelectItem>
+                      <SelectItem value="Aylık">Aylık</SelectItem>
+                      <SelectItem value="Çeyreklik">Çeyreklik</SelectItem>
+                      <SelectItem value="Altı Aylık">Altı Aylık</SelectItem>
+                      <SelectItem value="Yıllık">Yıllık</SelectItem>
+                      <SelectItem value="İhtiyaç Halinde">İhtiyaç Halinde</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="question_text">Soru Metni</Label>
+                <Textarea
+                  id="question_text"
+                  name="question_text"
+                  value={formData.question_text}
+                  onChange={handleInputChange}
+                  required
+                  rows={3}
+                  placeholder="Kullanıcıya yöneltilecek temel soru..."
+                  data-testid="question-text-input"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="importance_reason">Önemi / Gerekçe</Label>
+                <Textarea
+                  id="importance_reason"
+                  name="importance_reason"
+                  value={formData.importance_reason}
+                  onChange={handleInputChange}
+                  required
+                  rows={3}
+                  placeholder="Bu sorunun neden sorulduğu, işletme açısından taşıdığı kritik değer..."
+                  data-testid="importance-input"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="expected_action">Beklenen Aksiyon</Label>
+                <Textarea
+                  id="expected_action"
+                  name="expected_action"
+                  value={formData.expected_action}
+                  onChange={handleInputChange}
+                  required
+                  rows={3}
+                  placeholder="Sorunun yanıtına göre alınması planlanan karar veya yapılacak işlem..."
+                  data-testid="action-input"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="deadline">Son Teslim Süresi</Label>
+                  <Input
+                    id="deadline"
+                    name="deadline"
+                    type="date"
+                    value={formData.deadline}
+                    onChange={handleInputChange}
+                    required
+                    data-testid="deadline-input"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="chart_type">Grafik Tipi (Opsiyonel)</Label>
+                  <Select onValueChange={(value) => handleSelectChange('chart_type', value)} value={formData.chart_type}>
+                    <SelectTrigger data-testid="chart-type-select">
+                      <SelectValue placeholder="Grafik tipi seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Sütun">Sütun Grafiği</SelectItem>
+                      <SelectItem value="Pasta">Pasta Grafiği</SelectItem>
+                      <SelectItem value="Çizgi">Çizgi Grafiği</SelectItem>
+                      <SelectItem value="Alan">Alan Grafiği</SelectItem>
+                      <SelectItem value="Bar">Bar Grafiği</SelectItem>
+                      <SelectItem value="Trend">Trend Çizgisi</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>
+                  İptal
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={formLoading}
+                  className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                  data-testid="save-question-button"
+                >
+                  {formLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Kaydediliyor...
+                    </>
+                  ) : (
+                    editingQuestion ? 'Güncelle' : 'Kaydet'
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Questions Table */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Kategori</TableHead>
+                  <TableHead>Soru Metni</TableHead>
+                  <TableHead>Periyot</TableHead>
+                  <TableHead>Son Teslim</TableHead>
+                  <TableHead>Grafik Tipi</TableHead>
+                  <TableHead>İşlemler</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {questions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      Henüz soru eklenmemiş
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  questions.map((question) => (
+                    <TableRow key={question.id}>
+                      <TableCell className="font-medium">
+                        {question.category}
+                      </TableCell>
+                      <TableCell className="max-w-xs">
+                        <div className="truncate" title={question.question_text}>
+                          {question.question_text.length > 50 
+                            ? question.question_text.substring(0, 50) + '...'
+                            : question.question_text
+                          }
+                        </div>
+                      </TableCell>
+                      <TableCell>{question.period}</TableCell>
+                      <TableCell>{formatDate(question.deadline)}</TableCell>
+                      <TableCell>{question.chart_type || 'Belirlenmemiş'}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(question)}
+                            data-testid={`edit-question-${question.id}`}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(question.id)}
+                            className="hover:bg-red-50 hover:border-red-200"
+                            data-testid={`delete-question-${question.id}`}
+                          >
+                            <Trash2 className="w-4 h-4 text-red-600" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Employee Management Component
 const EmployeeManagement = ({ onBack }) => {
   const [employees, setEmployees] = useState([]);
