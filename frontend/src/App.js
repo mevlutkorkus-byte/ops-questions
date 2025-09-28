@@ -305,7 +305,6 @@ const QuestionBankManagement = ({ onBack }) => {
     importance_reason: '',
     expected_action: '',
     period: '',
-    deadline: '',
     chart_type: ''
   });
   const [formLoading, setFormLoading] = useState(false);
