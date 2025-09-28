@@ -1433,6 +1433,40 @@ const Dashboard = () => {
                 <FileQuestion className="w-4 h-4 mr-2" />
                 Soru Bankası
               </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+                    data-testid="program-constants-button"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Program Sabitleri
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      setConstantsType('category');
+                      setCurrentView('constants');
+                    }}
+                    data-testid="category-constants-menu"
+                  >
+                    Soru Kategorisi Ekle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      setConstantsType('department');
+                      setCurrentView('constants');
+                    }}
+                    data-testid="department-constants-menu"
+                  >
+                    Departman Ekle
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <Button 
                 className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
                 onClick={() => setCurrentView('employees')}
