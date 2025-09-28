@@ -500,6 +500,7 @@ const QuestionBankManagement = ({ onBack }) => {
     period: '',
     chart_type: ''
   });
+  const [categories, setCategories] = useState([]);
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState('');
 
