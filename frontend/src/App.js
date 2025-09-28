@@ -1280,7 +1280,24 @@ const ResponsesComponent = ({ onBack }) => {
                         <TableCell>{months[response.month - 1]}</TableCell>
                         <TableCell>{response.employee?.name}</TableCell>
                         <TableCell>
-                          {response.numerical_value ? `${response.numerical_value}/10` : '-'}
+                          {/* Çoklu veri alanları varsa onları göster */}
+                          {response.data_values && Object.keys(response.data_values).length > 0 ? (
+                            <div className="space-y-1">
+                              {Object.entries(response.data_values).map(([fieldId, value]) => {
+                                const field = selectedQuestion.data_fields?.find(f => f.id === fieldId);
+                                const unit = field?.unit ? ` ${field.unit}` : '';
+                                const name = field?.name || fieldId;
+                                return (
+                                  <div key={fieldId} className="text-xs">
+                                    <span className="font-medium">{name}:</span> {value}{unit}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            // Legacy tek sayısal değer
+                            response.numerical_value || '-'
+                          )}
                         </TableCell>
                         <TableCell className="max-w-xs">
                           <div className="truncate" title={response.employee_comment}>
