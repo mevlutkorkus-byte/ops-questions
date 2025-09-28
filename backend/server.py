@@ -72,7 +72,7 @@ EMAIL_TEMPLATE = """
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">Dijital Yönetim</h1>
+            <h1 class="title">Dijital Dönüşüm</h1>
             <p class="subtitle">Soru Yanıtlama Sistemi</p>
         </div>
         
