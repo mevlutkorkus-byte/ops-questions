@@ -322,6 +322,308 @@ class QuestionBankAPITester:
             else:
                 self.log_test("Question Count in Dashboard Stats", False, "total_questions not found in stats")
 
+    def test_cevaplar_responses_feature(self):
+        """Test the new Cevaplar (Monthly Responses) feature"""
+        print("\n" + "="*50)
+        print("CEVAPLAR (MONTHLY RESPONSES) FEATURE TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping Cevaplar tests")
+            return
+        
+        # First, we need to create test data (question and employee)
+        question_id, employee_id = self.setup_test_data_for_responses()
+        
+        if not question_id or not employee_id:
+            print("❌ Failed to setup test data - skipping Cevaplar tests")
+            return
+        
+        # Test 1: Get questions for responses
+        success, response = self.run_test(
+            "Get Questions for Responses",
+            "GET",
+            "questions-for-responses",
+            200
+        )
+        
+        if success:
+            if 'questions' in response and 'employees' in response:
+                print(f"   ✅ Retrieved {len(response['questions'])} questions and {len(response['employees'])} employees")
+            else:
+                self.log_test("Questions for Responses Structure", False, "Missing questions or employees in response")
+        
+        # Test 2: Create monthly response with AI comment generation
+        monthly_response_data = {
+            "question_id": question_id,
+            "employee_id": employee_id,
+            "year": 2025,
+            "month": 1,
+            "numerical_value": 8.5,
+            "employee_comment": "Bu ay dijital dönüşüm projelerinde önemli ilerlemeler kaydettik. Yeni sistemler başarıyla devreye alındı ve çalışan memnuniyeti arttı."
+        }
+        
+        success, response = self.run_test(
+            "Create Monthly Response with AI Comment",
+            "POST",
+            "monthly-responses",
+            200,
+            data=monthly_response_data
+        )
+        
+        response_id = None
+        if success and 'id' in response:
+            response_id = response['id']
+            print(f"   ✅ Monthly response created with ID: {response_id}")
+            
+            # Check if AI comment was generated
+            if response.get('ai_comment'):
+                print(f"   ✅ AI comment generated: {response['ai_comment'][:100]}...")
+            else:
+                self.log_test("AI Comment Generation", False, "AI comment not generated")
+        
+        # Test 3: Update monthly response
+        if response_id:
+            updated_data = {
+                "numerical_value": 9.0,
+                "employee_comment": "Güncellenmiş yorum: Dijital dönüşüm sürecinde daha da iyi sonuçlar elde ettik."
+            }
+            
+            # Create another response to test update functionality
+            success, response = self.run_test(
+                "Update Monthly Response",
+                "POST",
+                "monthly-responses",
+                200,
+                data={
+                    **monthly_response_data,
+                    "numerical_value": 9.0,
+                    "employee_comment": "Güncellenmiş yorum: Dijital dönüşüm sürecinde daha da iyi sonuçlar elde ettik."
+                }
+            )
+            
+            if success and response.get('ai_comment'):
+                print(f"   ✅ Response updated with new AI comment")
+        
+        # Test 4: Get all monthly responses
+        success, response = self.run_test(
+            "Get All Monthly Responses",
+            "GET",
+            "monthly-responses",
+            200
+        )
+        
+        if success and isinstance(response, list):
+            print(f"   ✅ Retrieved {len(response)} monthly responses")
+            
+            # Check response structure
+            if response and len(response) > 0:
+                first_response = response[0]
+                required_fields = ['id', 'question_id', 'employee_id', 'year', 'month']
+                missing_fields = [field for field in required_fields if field not in first_response]
+                
+                if not missing_fields:
+                    print(f"   ✅ Response structure is correct")
+                else:
+                    self.log_test("Monthly Response Structure", False, f"Missing fields: {missing_fields}")
+        
+        # Test 5: Get responses by question
+        success, response = self.run_test(
+            "Get Responses by Question",
+            "GET",
+            f"monthly-responses/question/{question_id}",
+            200
+        )
+        
+        if success:
+            if 'question' in response and 'responses' in response:
+                print(f"   ✅ Retrieved responses for question: {len(response['responses'])} responses")
+            else:
+                self.log_test("Responses by Question Structure", False, "Missing question or responses in response")
+        
+        # Test 6: Get chart data
+        success, response = self.run_test(
+            "Get Chart Data for Question",
+            "GET",
+            f"monthly-responses/chart-data/{question_id}",
+            200
+        )
+        
+        if success:
+            if 'question' in response and 'chart_data' in response and 'chart_type' in response:
+                chart_data = response['chart_data']
+                if len(chart_data) == 12:  # Should have 12 months
+                    print(f"   ✅ Chart data retrieved with 12 months of data")
+                    
+                    # Check chart data structure
+                    if chart_data[0].get('month') and 'value' in chart_data[0]:
+                        print(f"   ✅ Chart data structure is correct")
+                    else:
+                        self.log_test("Chart Data Structure", False, "Invalid chart data structure")
+                else:
+                    self.log_test("Chart Data Months", False, f"Expected 12 months, got {len(chart_data)}")
+            else:
+                self.log_test("Chart Data Response Structure", False, "Missing required fields in chart data response")
+        
+        # Test 7: Test with different numerical values and comments
+        test_cases = [
+            {"value": 10.0, "comment": "Mükemmel performans gösterdik bu ay."},
+            {"value": 5.0, "comment": "Orta düzeyde ilerleme kaydettik."},
+            {"value": 2.0, "comment": "Bu ay zorluklarla karşılaştık, iyileştirme gerekiyor."},
+            {"value": None, "comment": "Sadece yorum bırakıyorum, sayısal değer yok."}
+        ]
+        
+        for i, test_case in enumerate(test_cases, 2):
+            test_data = {
+                "question_id": question_id,
+                "employee_id": employee_id,
+                "year": 2025,
+                "month": i,
+                "numerical_value": test_case["value"],
+                "employee_comment": test_case["comment"]
+            }
+            
+            success, response = self.run_test(
+                f"Monthly Response Test Case {i}",
+                "POST",
+                "monthly-responses",
+                200,
+                data=test_data
+            )
+            
+            if success and response.get('ai_comment'):
+                print(f"   ✅ AI comment generated for test case {i}")
+
+    def setup_test_data_for_responses(self):
+        """Setup test question and employee for response testing"""
+        print("\n🔧 Setting up test data for Cevaplar tests...")
+        
+        # Create test question
+        test_question_data = {
+            "category": "Dijital Dönüşüm",
+            "question_text": "Bu ay dijital dönüşüm projelerindeki ilerlemenizi nasıl değerlendiriyorsunuz?",
+            "importance_reason": "Dijital dönüşüm sürecinin takibi için kritik önem taşır.",
+            "expected_action": "Aylık ilerleme raporları hazırlanmalı ve aksiyonlar belirlenmelidir.",
+            "period": "Aylık",
+            "chart_type": "Sütun"
+        }
+        
+        success, response = self.run_test(
+            "Create Test Question for Responses",
+            "POST",
+            "questions",
+            200,
+            data=test_question_data
+        )
+        
+        question_id = None
+        if success and 'id' in response:
+            question_id = response['id']
+            print(f"   ✅ Test question created: {question_id}")
+        
+        # Create test employee
+        test_employee_data = {
+            "first_name": "Ahmet",
+            "last_name": "Yılmaz",
+            "phone": "05551234567",
+            "email": "ahmet.yilmaz@test.com",
+            "department": "Bilgi İşlem",
+            "age": 35,
+            "gender": "Erkek",
+            "hire_date": "2020-01-15",
+            "birth_date": "1988-05-20",
+            "salary": 15000.0
+        }
+        
+        success, response = self.run_test(
+            "Create Test Employee for Responses",
+            "POST",
+            "employees",
+            200,
+            data=test_employee_data
+        )
+        
+        employee_id = None
+        if success and 'id' in response:
+            employee_id = response['id']
+            print(f"   ✅ Test employee created: {employee_id}")
+        
+        return question_id, employee_id
+
+    def test_ai_integration(self):
+        """Test AI comment generation specifically"""
+        print("\n" + "="*50)
+        print("AI INTEGRATION TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping AI tests")
+            return
+        
+        # Setup test data
+        question_id, employee_id = self.setup_test_data_for_responses()
+        
+        if not question_id or not employee_id:
+            print("❌ Failed to setup test data - skipping AI tests")
+            return
+        
+        # Test different types of employee comments for AI generation
+        ai_test_cases = [
+            {
+                "comment": "Bu ay çok başarılı geçti, tüm hedeflerimizi aştık.",
+                "value": 9.5,
+                "expected_tone": "positive"
+            },
+            {
+                "comment": "Bazı zorluklar yaşadık ama üstesinden geldik.",
+                "value": 6.0,
+                "expected_tone": "neutral"
+            },
+            {
+                "comment": "Maalesef bu ay hedeflerimize ulaşamadık, ciddi sorunlar var.",
+                "value": 3.0,
+                "expected_tone": "negative"
+            },
+            {
+                "comment": "Yeni teknolojileri öğrenme konusunda ilerleme kaydettik.",
+                "value": 7.5,
+                "expected_tone": "learning"
+            }
+        ]
+        
+        for i, test_case in enumerate(ai_test_cases, 1):
+            test_data = {
+                "question_id": question_id,
+                "employee_id": employee_id,
+                "year": 2025,
+                "month": i + 5,  # Use different months
+                "numerical_value": test_case["value"],
+                "employee_comment": test_case["comment"]
+            }
+            
+            success, response = self.run_test(
+                f"AI Comment Generation - {test_case['expected_tone'].title()} Tone",
+                "POST",
+                "monthly-responses",
+                200,
+                data=test_data
+            )
+            
+            if success:
+                ai_comment = response.get('ai_comment', '')
+                if ai_comment and len(ai_comment) > 10:
+                    print(f"   ✅ AI comment generated ({len(ai_comment)} chars)")
+                    print(f"   📝 AI Comment: {ai_comment[:150]}...")
+                    
+                    # Check if AI comment is in Turkish
+                    turkish_indicators = ['bu', 'bir', 've', 'için', 'ile', 'da', 'de', 'ki', 'olan']
+                    if any(indicator in ai_comment.lower() for indicator in turkish_indicators):
+                        print(f"   ✅ AI comment appears to be in Turkish")
+                    else:
+                        self.log_test(f"AI Comment Turkish Language - {test_case['expected_tone']}", False, "AI comment may not be in Turkish")
+                else:
+                    self.log_test(f"AI Comment Generation - {test_case['expected_tone']}", False, "AI comment not generated or too short")
+
     def save_results(self):
         """Save test results to file"""
         results = {
