@@ -1797,6 +1797,15 @@ const QuestionBankManagement = ({ onBack }) => {
                       <TableCell>{question.period}</TableCell>
                       <TableCell>{question.chart_type || 'Belirlenmemiş'}</TableCell>
                       <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          question.response_type === 'Sadece Sayısal' ? 'bg-blue-100 text-blue-800' :
+                          question.response_type === 'Sadece Sözel' ? 'bg-green-100 text-green-800' :
+                          'bg-purple-100 text-purple-800'
+                        }`}>
+                          {question.response_type || 'Her İkisi'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex space-x-2">
                           <Button
                             variant="outline"
