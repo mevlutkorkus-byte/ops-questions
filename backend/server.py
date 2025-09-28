@@ -391,15 +391,6 @@ async def delete_employee(employee_id: str, current_user: User = Depends(get_cur
 # Question Bank Routes
 @api_router.post("/questions", response_model=Question)
 async def create_question(question_data: QuestionCreate, current_user: User = Depends(get_current_user)):
-    # Validate date format
-    try:
-        datetime.strptime(question_data.deadline, "%Y-%m-%d")
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Son teslim tarihi formatı YYYY-MM-DD olmalıdır"
-        )
-    
     question_dict = question_data.dict()
     question_dict["id"] = str(uuid.uuid4())
     question_dict["created_at"] = datetime.now(timezone.utc).isoformat()
