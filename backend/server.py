@@ -428,36 +428,31 @@ class ShareQuestionsRequest(BaseModel):
     assignments: List[dict]  # [{"question_id": "...", "employee_id": "..."}]
 
 # Response Data Models for Cevaplar Feature
-class MonthlyResponse(BaseModel):
+# Table Response Model - Clean and Simple
+class TableResponse(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     question_id: str
     employee_id: str
     year: int
     month: int
-    # Legacy single value support (for backward compatibility)
-    numerical_value: Optional[float] = None  
-    # New multi-field data support
-    data_values: Dict[str, Any] = Field(default_factory=dict)  # {"field_id": value, ...}
-    employee_comment: Optional[str] = Field(None, max_length=2000)
+    # Table data: {"row_id": value, "row_id": value, ...}
+    table_data: Dict[str, str] = Field(default_factory=dict)  # row_id -> value mapping
+    monthly_comment: Optional[str] = Field(None, max_length=2000)  # Comment for this specific month
     ai_comment: Optional[str] = Field(None, max_length=3000)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class MonthlyResponseCreate(BaseModel):
+class TableResponseCreate(BaseModel):
     question_id: str
-    employee_id: str
+    employee_id: str  
     year: int
     month: int
-    # Legacy support
-    numerical_value: Optional[float] = None
-    # New multi-field support  
-    data_values: Dict[str, Any] = Field(default_factory=dict)
-    employee_comment: Optional[str] = Field(None, max_length=2000)
+    table_data: Dict[str, str] = Field(default_factory=dict)
+    monthly_comment: Optional[str] = Field(None, max_length=2000)
 
-class MonthlyResponseUpdate(BaseModel):
-    numerical_value: Optional[float] = None
-    data_values: Dict[str, Any] = Field(default_factory=dict)
-    employee_comment: Optional[str] = Field(None, max_length=2000)
+class TableResponseUpdate(BaseModel):
+    table_data: Dict[str, str] = Field(default_factory=dict)
+    monthly_comment: Optional[str] = Field(None, max_length=2000)
 
 # Auth Routes
 @api_router.post("/auth/register", response_model=Token)
