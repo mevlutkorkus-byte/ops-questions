@@ -199,6 +199,18 @@ frontend:
           agent: "main"
           comment: "Integrated Recharts with support for Bar, Line, Area, and Pie charts based on question chart_type"
 
+  - task: "Share Questions (Soruları Paylaş) functionality"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: Intermittent authentication persistence issue. Navigation to share questions page sometimes works (shows table with questions, API calls successful) but frequently redirects back to login page. Authentication token is being lost during client-side navigation. Backend API endpoints working correctly (/api/questions-share-list returns data). Frontend authentication state management needs fixing."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
