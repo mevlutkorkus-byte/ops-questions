@@ -36,12 +36,17 @@ const AuthProvider = ({ children }) => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchCurrentUser();
-    } else {
-      setLoading(false);
-    }
+    const initializeAuth = async () => {
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        await fetchCurrentUser();
+      } else {
+        setLoading(false);
+      }
+      setInitialized(true);
+    };
+    
+    initializeAuth();
   }, [token]);
 
   const fetchCurrentUser = async () => {
