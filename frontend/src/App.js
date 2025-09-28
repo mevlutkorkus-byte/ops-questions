@@ -807,12 +807,12 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Durum Kontrolleri</p>
+                  <p className="text-sm font-medium text-gray-600">Toplam Çalışan</p>
                   <p className="text-3xl font-bold text-blue-600">
-                    {stats?.stats?.total_status_checks || 0}
+                    {stats?.stats?.total_employees || 0}
                   </p>
                 </div>
-                <Activity className="w-8 h-8 text-blue-600" />
+                <Users className="w-8 h-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>
