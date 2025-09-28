@@ -762,6 +762,498 @@ const ShareQuestionsManagement = ({ onBack }) => {
   );
 };
 
+// Responses Component for Cevaplar Feature
+const ResponsesComponent = ({ onBack }) => {
+  const [questions, setQuestions] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [currentView, setCurrentView] = useState('list'); // 'list', 'form', 'chart'
+  const [responses, setResponses] = useState([]);
+  const [chartData, setChartData] = useState(null);
+  const [formData, setFormData] = useState({
+    year: 2025,
+    month: new Date().getMonth() + 1,
+    numerical_value: '',
+    employee_comment: ''
+  });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    fetchQuestionsAndEmployees();
+  }, []);
+
+  const fetchQuestionsAndEmployees = async () => {
+    try {
+      const response = await axios.get(`${API}/questions-for-responses`);
+      setQuestions(response.data.questions);
+      setEmployees(response.data.employees);
+    } catch (error) {
+      console.error('Veri yüklenemedi:', error);
+      setError('Veri yüklenirken hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchResponsesByQuestion = async (questionId) => {
+    try {
+      const response = await axios.get(`${API}/monthly-responses/question/${questionId}`);
+      setResponses(response.data.responses);
+      return response.data.responses;
+    } catch (error) {
+      console.error('Cevaplar yüklenemedi:', error);
+      setError('Cevaplar yüklenirken hata oluştu');
+      return [];
+    }
+  };
+
+  const fetchChartData = async (questionId) => {
+    try {
+      const response = await axios.get(`${API}/monthly-responses/chart-data/${questionId}`);
+      setChartData(response.data);
+    } catch (error) {
+      console.error('Grafik verileri yüklenemedi:', error);
+      setError('Grafik verileri yüklenirken hata oluştu');
+    }
+  };
+
+  const handleQuestionSelect = async (question) => {
+    setSelectedQuestion(question);
+    setCurrentView('form');
+    await fetchResponsesByQuestion(question.id);
+    await fetchChartData(question.id);
+  };
+
+  const handleSubmitResponse = async () => {
+    if (!selectedQuestion || !selectedEmployee) {
+      setError('Lütfen soru ve çalışan seçin');
+      return;
+    }
+
+    if (!formData.numerical_value && !formData.employee_comment.trim()) {
+      setError('Lütfen sayısal değer veya yorum girin');
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      await axios.post(`${API}/monthly-responses`, {
+        question_id: selectedQuestion.id,
+        employee_id: selectedEmployee.id,
+        year: formData.year,
+        month: formData.month,
+        numerical_value: formData.numerical_value ? parseFloat(formData.numerical_value) : null,
+        employee_comment: formData.employee_comment.trim() || null
+      });
+
+      setSuccess('Cevap başarıyla kaydedildi ve AI yorumu oluşturuldu');
+      setFormData({
+        year: 2025,
+        month: new Date().getMonth() + 1,
+        numerical_value: '',
+        employee_comment: ''
+      });
+      
+      // Refresh data
+      await fetchResponsesByQuestion(selectedQuestion.id);
+      await fetchChartData(selectedQuestion.id);
+      
+    } catch (error) {
+      setError(error.response?.data?.detail || 'Cevap kaydedilirken hata oluştu');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const renderChart = () => {
+    if (!chartData || !chartData.chart_data) return null;
+
+    const { BarChart, LineChart, PieChart, AreaChart, Bar, Line, Pie, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } = require('recharts');
+    
+    const chartType = chartData.chart_type;
+    const data = chartData.chart_data;
+    const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#f97316'];
+
+    switch (chartType) {
+      case 'sütun':
+      case 'bar':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis domain={[0, 10]} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#10b981" />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+      
+      case 'çizgi':
+      case 'line':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis domain={[0, 10]} />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke="#10b981" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        );
+      
+      case 'alan':
+      case 'area':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis domain={[0, 10]} />
+              <Tooltip />
+              <Legend />
+              <Area type="monotone" dataKey="value" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
+            </AreaChart>
+          </ResponsiveContainer>
+        );
+      
+      case 'pasta':
+      case 'pie':
+        const pieData = data.filter(d => d.value > 0).map((d, index) => ({
+          name: d.month,
+          value: d.value,
+          color: colors[index % colors.length]
+        }));
+        
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                dataKey="value"
+                label={({ name, value }) => `${name}: ${value}`}
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        );
+      
+      default:
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis domain={[0, 10]} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#10b981" />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  if (currentView === 'list') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Cevaplar</h2>
+            <p className="text-gray-600">Sorulara sayısal değer ve yorum ekleyin, AI analizini görün</p>
+          </div>
+          <Button 
+            onClick={onBack}
+            variant="outline"
+            className="hover:bg-gray-50"
+          >
+            Geri Dön
+          </Button>
+        </div>
+
+        {error && (
+          <Alert className="border-red-200 bg-red-50">
+            <AlertDescription className="text-red-600">{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="grid gap-4">
+          {questions.map((question) => (
+            <Card 
+              key={question.id}
+              className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+              onClick={() => handleQuestionSelect(question)}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                        {question.category}
+                      </span>
+                      {question.chart_type && (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {question.chart_type}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {question.question_text}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {question.importance_reason}
+                    </p>
+                  </div>
+                  <div className="ml-4">
+                    <BarChart3 className="w-6 h-6 text-gray-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === 'form' && selectedQuestion) {
+    const months = [
+      'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+      'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+    ];
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Cevap Girişi</h2>
+            <p className="text-gray-600">{selectedQuestion.category}</p>
+          </div>
+          <div className="flex space-x-2">
+            <Button 
+              onClick={() => setCurrentView('chart')}
+              variant="outline"
+              className="hover:bg-blue-50"
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Grafik
+            </Button>
+            <Button 
+              onClick={() => setCurrentView('list')}
+              variant="outline"
+              className="hover:bg-gray-50"
+            >
+              Geri Dön
+            </Button>
+          </div>
+        </div>
+
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold mb-4">{selectedQuestion.question_text}</h3>
+            
+            {error && (
+              <Alert className="mb-4 border-red-200 bg-red-50">
+                <AlertDescription className="text-red-600">{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {success && (
+              <Alert className="mb-4 border-green-200 bg-green-50">
+                <AlertDescription className="text-green-600">{success}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="employee">Çalışan Seçin</Label>
+                  <Select onValueChange={(value) => {
+                    const employee = employees.find(emp => emp.id === value);
+                    setSelectedEmployee(employee);
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Çalışan seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employees.map((employee) => (
+                        <SelectItem key={employee.id} value={employee.id}>
+                          {employee.first_name} {employee.last_name} - {employee.department}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="month">Ay</Label>
+                  <Select 
+                    value={formData.month.toString()} 
+                    onValueChange={(value) => setFormData({...formData, month: parseInt(value)})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {months.map((month, index) => (
+                        <SelectItem key={index + 1} value={(index + 1).toString()}>
+                          {month} {formData.year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="numerical_value">Sayısal Değer (0-10)</Label>
+                  <Input
+                    id="numerical_value"
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={formData.numerical_value}
+                    onChange={(e) => setFormData({...formData, numerical_value: e.target.value})}
+                    placeholder="0-10 arası değer"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="employee_comment">Çalışan Yorumu</Label>
+                <Textarea
+                  id="employee_comment"
+                  value={formData.employee_comment}
+                  onChange={(e) => setFormData({...formData, employee_comment: e.target.value})}
+                  placeholder="Yorumunuzu buraya yazın..."
+                  rows={6}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <Button 
+                onClick={handleSubmitResponse}
+                disabled={submitting}
+                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Kaydediliyor...
+                  </>
+                ) : (
+                  'Cevabı Kaydet'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Display Monthly Responses */}
+        {responses.length > 0 && (
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold mb-4">2025 Yılı Aylık Cevaplar</h3>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Ay</TableHead>
+                      <TableHead>Çalışan</TableHead>
+                      <TableHead>Sayısal Değer</TableHead>
+                      <TableHead>Çalışan Yorumu</TableHead>
+                      <TableHead>AI Yorumu</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {responses.map((response) => (
+                      <TableRow key={response.id}>
+                        <TableCell>{months[response.month - 1]}</TableCell>
+                        <TableCell>{response.employee?.name}</TableCell>
+                        <TableCell>
+                          {response.numerical_value ? `${response.numerical_value}/10` : '-'}
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="truncate" title={response.employee_comment}>
+                            {response.employee_comment || '-'}
+                          </div>
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="truncate" title={response.ai_comment}>
+                            {response.ai_comment || '-'}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  if (currentView === 'chart' && selectedQuestion && chartData) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Grafik Görünümü</h2>
+            <p className="text-gray-600">{selectedQuestion.category} - {selectedQuestion.question_text}</p>
+          </div>
+          <Button 
+            onClick={() => setCurrentView('form')}
+            variant="outline"
+            className="hover:bg-gray-50"
+          >
+            Geri Dön
+          </Button>
+        </div>
+
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold mb-4">
+              2025 Yılı Aylık Ortalama Değerler - {chartData.chart_type || 'Sütun'} Grafik
+            </h3>
+            {renderChart()}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 // Program Constants Management
 const ProgramConstantsManagement = ({ onBack, type }) => {
   const [items, setItems] = useState([]);
