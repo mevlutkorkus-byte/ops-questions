@@ -360,7 +360,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
     setSuccess('');
 
     try {
-      const response = await axios.post(`${API}/questions/share`, {
+      const response = await axios.post(`${API}/questions-share`, {
         assignments: validAssignments.map(a => ({
           question_id: a.question_id,
           employee_id: a.employee_id
