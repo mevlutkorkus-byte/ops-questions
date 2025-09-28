@@ -1550,7 +1550,8 @@ const QuestionBankManagement = ({ onBack }) => {
       expected_action: '',
       period: '',
       chart_type: '',
-      response_type: 'Her İkisi'
+      response_type: 'Her İkisi',
+      data_fields: []
     });
     setError('');
     setEditingQuestion(null);
