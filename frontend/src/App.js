@@ -964,6 +964,7 @@ const EmployeeManagement = ({ onBack }) => {
       first_name: employee.first_name,
       last_name: employee.last_name,
       phone: employee.phone,
+      email: employee.email,
       department: employee.department,
       age: employee.age.toString(),
       gender: employee.gender,
