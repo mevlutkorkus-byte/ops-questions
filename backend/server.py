@@ -196,6 +196,33 @@ class Department(BaseModel):
 class DepartmentCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
 
+class QuestionAssignment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    question_id: str
+    employee_id: str
+    year: int
+    month: int
+    email_sent: bool = False
+    response_received: bool = False
+    assigned_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class QuestionResponse(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    assignment_id: str
+    question_id: str
+    employee_id: str
+    response_text: str = Field(..., min_length=1, max_length=2000)
+    year: int
+    month: int
+    submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class QuestionResponseCreate(BaseModel):
+    assignment_id: str
+    response_text: str = Field(..., min_length=1, max_length=2000)
+
+class ShareQuestionsRequest(BaseModel):
+    assignments: List[dict]  # [{"question_id": "...", "employee_id": "..."}]
+
 # Auth Routes
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
