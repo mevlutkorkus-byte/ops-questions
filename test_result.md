@@ -262,7 +262,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Multi-data fields feature for questions"
+    - "All multi-data fields testing completed successfully"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
