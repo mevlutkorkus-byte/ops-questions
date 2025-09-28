@@ -873,7 +873,17 @@ const EmployeeManagement = ({ onBack }) => {
 
   useEffect(() => {
     fetchEmployees();
+    fetchDepartments();
   }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get(`${API}/departments`);
+      setDepartments(response.data);
+    } catch (error) {
+      console.error('Departmanlar yüklenemedi:', error);
+    }
+  };
 
   const fetchEmployees = async () => {
     try {
