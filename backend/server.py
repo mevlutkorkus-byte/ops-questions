@@ -425,7 +425,10 @@ class MonthlyResponse(BaseModel):
     employee_id: str
     year: int
     month: int
-    numerical_value: Optional[float] = None  # Any numerical value - millions, percentages, etc.
+    # Legacy single value support (for backward compatibility)
+    numerical_value: Optional[float] = None  
+    # New multi-field data support
+    data_values: Dict[str, Any] = Field(default_factory=dict)  # {"field_id": value, ...}
     employee_comment: Optional[str] = Field(None, max_length=2000)
     ai_comment: Optional[str] = Field(None, max_length=3000)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -436,11 +439,15 @@ class MonthlyResponseCreate(BaseModel):
     employee_id: str
     year: int
     month: int
-    numerical_value: Optional[float] = None  # Any numerical value
+    # Legacy support
+    numerical_value: Optional[float] = None
+    # New multi-field support  
+    data_values: Dict[str, Any] = Field(default_factory=dict)
     employee_comment: Optional[str] = Field(None, max_length=2000)
 
 class MonthlyResponseUpdate(BaseModel):
-    numerical_value: Optional[float] = None  # Any numerical value
+    numerical_value: Optional[float] = None
+    data_values: Dict[str, Any] = Field(default_factory=dict)
     employee_comment: Optional[str] = Field(None, max_length=2000)
 
 # Auth Routes
