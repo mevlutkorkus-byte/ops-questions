@@ -233,12 +233,14 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
     user_count = await db.users.count_documents({})
     status_count = await db.status_checks.count_documents({})
+    employee_count = await db.employees.count_documents({})
     
     return {
         "message": f"Hoş geldiniz {current_user.username}!",
         "stats": {
             "total_users": user_count,
             "total_status_checks": status_count,
+            "total_employees": employee_count,
             "user_since": current_user.created_at.strftime("%d/%m/%Y")
         }
     }
