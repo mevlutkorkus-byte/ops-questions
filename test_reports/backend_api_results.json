@@ -1,209 +1,77 @@
 {
-  "summary": {
-    "total_tests": 33,
-    "passed_tests": 32,
-    "failed_tests": 1,
-    "success_rate": 96.96969696969697,
-    "timestamp": "2025-09-28T17:09:52.885377"
+  "test_summary": {
+    "total_tests": 11,
+    "passed_tests": 11,
+    "failed_tests": 0,
+    "success_rate": "100.0%",
+    "timestamp": "2025-09-28T17:26:33.503360"
   },
-  "test_results": [
-    {
-      "test_name": "API Root",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.142353"
-    },
+  "detailed_results": [
     {
       "test_name": "User Registration",
       "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.204427"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.160454"
     },
     {
-      "test_name": "Registration Token Received",
+      "test_name": "Create Question",
       "success": true,
-      "details": "Token and user data received",
-      "timestamp": "2025-09-28T17:09:52.204889"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.194147"
     },
     {
-      "test_name": "Duplicate Registration",
+      "test_name": "Get All Questions",
       "success": true,
-      "details": "Status 400 as expected",
-      "timestamp": "2025-09-28T17:09:52.238694"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.226923"
     },
     {
-      "test_name": "Get Current User",
+      "test_name": "Get Single Question",
       "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.268871"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.261510"
     },
     {
-      "test_name": "User Info Format",
+      "test_name": "Update Question",
       "success": true,
-      "details": "User info contains required fields",
-      "timestamp": "2025-09-28T17:09:52.269290"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.294691"
     },
     {
-      "test_name": "Dashboard Stats",
+      "test_name": "Delete Question",
       "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.305621"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.331104"
     },
     {
-      "test_name": "Dashboard Stats Format",
+      "test_name": "Invalid Period Validation",
       "success": true,
-      "details": "Dashboard stats contain required fields",
-      "timestamp": "2025-09-28T17:09:52.306056"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.366437"
     },
     {
-      "test_name": "Protected Route Without Token",
-      "success": false,
-      "details": "Expected 401, got 403",
-      "timestamp": "2025-09-28T17:09:52.342679"
-    },
-    {
-      "test_name": "User Login",
+      "test_name": "Invalid Chart Type Validation",
       "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.405723"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.399335"
     },
     {
-      "test_name": "Login Token Received",
+      "test_name": "Invalid Date Format Validation",
       "success": true,
-      "details": "Token and user data received",
-      "timestamp": "2025-09-28T17:09:52.406170"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.433146"
     },
     {
-      "test_name": "Invalid Login",
+      "test_name": "Missing Required Fields Validation",
       "success": true,
-      "details": "Status 401 as expected",
-      "timestamp": "2025-09-28T17:09:52.439438"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.468489"
     },
     {
-      "test_name": "Dashboard Stats",
+      "test_name": "Dashboard Stats with Question Count",
       "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.474368"
-    },
-    {
-      "test_name": "Dashboard Stats Format",
-      "success": true,
-      "details": "Dashboard stats contain required fields",
-      "timestamp": "2025-09-28T17:09:52.474809"
-    },
-    {
-      "test_name": "Get All Employees",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.504660"
-    },
-    {
-      "test_name": "Employees List Format",
-      "success": true,
-      "details": "Retrieved 2 employees",
-      "timestamp": "2025-09-28T17:09:52.505084"
-    },
-    {
-      "test_name": "Create Employee",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.581296"
-    },
-    {
-      "test_name": "Employee Creation Response",
-      "success": true,
-      "details": "Employee created with ID",
-      "timestamp": "2025-09-28T17:09:52.581764"
-    },
-    {
-      "test_name": "Create Employee Invalid Data",
-      "success": true,
-      "details": "Status 422 as expected",
-      "timestamp": "2025-09-28T17:09:52.617900"
-    },
-    {
-      "test_name": "Create Employee Duplicate Phone",
-      "success": true,
-      "details": "Status 400 as expected",
-      "timestamp": "2025-09-28T17:09:52.648900"
-    },
-    {
-      "test_name": "Get All Employees",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.682683"
-    },
-    {
-      "test_name": "Employees List Format",
-      "success": true,
-      "details": "Retrieved 3 employees",
-      "timestamp": "2025-09-28T17:09:52.683080"
-    },
-    {
-      "test_name": "Get Employee By ID",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.716430"
-    },
-    {
-      "test_name": "Employee By ID Response",
-      "success": true,
-      "details": "Correct employee retrieved",
-      "timestamp": "2025-09-28T17:09:52.716979"
-    },
-    {
-      "test_name": "Update Employee",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.749038"
-    },
-    {
-      "test_name": "Employee Update Response",
-      "success": true,
-      "details": "Employee updated successfully",
-      "timestamp": "2025-09-28T17:09:52.749468"
-    },
-    {
-      "test_name": "Get Employee By ID",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.783557"
-    },
-    {
-      "test_name": "Employee By ID Response",
-      "success": true,
-      "details": "Correct employee retrieved",
-      "timestamp": "2025-09-28T17:09:52.783985"
-    },
-    {
-      "test_name": "Employee Not Found",
-      "success": true,
-      "details": "Status 404 as expected",
-      "timestamp": "2025-09-28T17:09:52.817180"
-    },
-    {
-      "test_name": "Delete Employee",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.850465"
-    },
-    {
-      "test_name": "Employee Deletion",
-      "success": true,
-      "details": "Employee deleted successfully",
-      "timestamp": "2025-09-28T17:09:52.850933"
-    },
-    {
-      "test_name": "Get All Employees",
-      "success": true,
-      "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T17:09:52.884694"
-    },
-    {
-      "test_name": "Employees List Format",
-      "success": true,
-      "details": "Retrieved 2 employees",
-      "timestamp": "2025-09-28T17:09:52.885109"
+      "details": "",
+      "timestamp": "2025-09-28T17:26:33.502910"
     }
   ]
 }
