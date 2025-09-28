@@ -120,7 +120,7 @@ async def send_question_email(employee_email: str, employee_name: str, question:
         )
         
         message = MessageSchema(
-            subject=f"Yöneten Sorular - {month_year} Dönemi Soru Yanıtlama",
+            subject=f"Dijital Yönetim - {month_year} Dönemi Soru Yanıtlama",
             recipients=[employee_email],
             body=html_content,
             subtype=MessageType.html
