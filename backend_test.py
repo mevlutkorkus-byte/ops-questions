@@ -499,9 +499,10 @@ class QuestionBankAPITester:
         print("\n🔧 Setting up test data for Cevaplar tests...")
         
         # Create test question
+        timestamp = datetime.now().strftime('%H%M%S%f')
         test_question_data = {
             "category": "Dijital Dönüşüm",
-            "question_text": "Bu ay dijital dönüşüm projelerindeki ilerlemenizi nasıl değerlendiriyorsunuz?",
+            "question_text": f"Bu ay dijital dönüşüm projelerindeki ilerlemenizi nasıl değerlendiriyorsunuz? ({timestamp})",
             "importance_reason": "Dijital dönüşüm sürecinin takibi için kritik önem taşır.",
             "expected_action": "Aylık ilerleme raporları hazırlanmalı ve aksiyonlar belirlenmelidir.",
             "period": "Aylık",
@@ -521,12 +522,13 @@ class QuestionBankAPITester:
             question_id = response['id']
             print(f"   ✅ Test question created: {question_id}")
         
-        # Create test employee
+        # Create test employee with unique phone number
+        unique_phone = f"0555{timestamp[-7:]}"  # Use last 7 digits of timestamp
         test_employee_data = {
             "first_name": "Ahmet",
-            "last_name": "Yılmaz",
-            "phone": "05551234567",
-            "email": "ahmet.yilmaz@test.com",
+            "last_name": f"Yılmaz_{timestamp[-4:]}",
+            "phone": unique_phone,
+            "email": f"ahmet.yilmaz.{timestamp}@test.com",
             "department": "Bilgi İşlem",
             "age": 35,
             "gender": "Erkek",
