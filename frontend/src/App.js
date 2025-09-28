@@ -860,6 +860,7 @@ const EmployeeManagement = ({ onBack }) => {
     first_name: '',
     last_name: '',
     phone: '',
+    email: '',
     department: '',
     age: '',
     gender: '',
