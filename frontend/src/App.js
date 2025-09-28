@@ -835,7 +835,6 @@ const ResponsesComponent = ({ onBack }) => {
   };
 
   const handleQuestionSelect = async (question) => {
-    console.log('Selected question response_type:', question.response_type);
     setSelectedQuestion(question);
     setCurrentView('form');
     await fetchResponsesByQuestion(question.id);
