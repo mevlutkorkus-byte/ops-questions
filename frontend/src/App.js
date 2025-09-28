@@ -1700,7 +1700,7 @@ const Dashboard = () => {
                 data-testid="question-bank-button"
               >
                 <FileQuestion className="w-4 h-4 mr-2" />
-                Soru Bankası
+                Soru Ekle
               </Button>
 
               <Button 
