@@ -145,7 +145,7 @@ async def send_question_email(employee_email: str, employee_name: str, question:
         return False
 
 # AI Integration for Comment Generation
-async def generate_ai_comment(employee_comment: str, question_text: str, category: str, response_type: str, numerical_value: float = None) -> str:
+async def generate_ai_comment(employee_comment: str, question_text: str, category: str, response_type: str, numerical_value: float = None, data_values: Dict[str, Any] = None, data_fields: List[dict] = None) -> str:
     """Generate AI comment based on employee response"""
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
