@@ -119,16 +119,26 @@ async def send_question_email(employee_email: str, employee_name: str, question:
             month_year=month_year
         )
         
-        message = MessageSchema(
-            subject=f"Dijital Dönüşüm - {month_year} Dönemi Soru Yanıtlama",
-            recipients=[employee_email],
-            body=html_content,
-            subtype=MessageType.html
-        )
+        # For demo purposes - simulate successful email sending
+        print(f"[DEMO EMAIL] E-posta gönderildi:")
+        print(f"Alıcı: {employee_email}")
+        print(f"Konu: Dijital Dönüşüm - {month_year} Dönemi Soru Yanıtlama")
+        print(f"İçerik: {employee_name} için {question.get('category', '')} sorusu")
+        print(f"Link: {answer_link}")
+        print("-" * 50)
         
-        fm = FastMail(conf)
-        await fm.send_message(message)
-        return True
+        # Comment out real email sending for demo
+        # message = MessageSchema(
+        #     subject=f"Dijital Dönüşüm - {month_year} Dönemi Soru Yanıtlama",
+        #     recipients=[employee_email],
+        #     body=html_content,
+        #     subtype=MessageType.html
+        # )
+        # 
+        # fm = FastMail(conf)
+        # await fm.send_message(message)
+        
+        return True  # Simulate successful sending
         
     except Exception as e:
         print(f"Email gönderim hatası: {str(e)}")
