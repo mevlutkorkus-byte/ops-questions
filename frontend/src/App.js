@@ -1707,7 +1707,90 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Content Area - Clean */}
+        {/* Main Navigation Cards */}
+        <div className="space-y-4 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Dijital Dönüşüm Yönetimi</h2>
+          
+          {/* Program Sabitleri Card */}
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+            <CardContent className="p-0">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="p-6 flex items-center justify-between w-full">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Settings className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">Program Sabitleri</h3>
+                        <p className="text-sm text-gray-600">Sistem ayarları ve veri yönetimi</p>
+                      </div>
+                    </div>
+                    <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      setConstantsType('category');
+                      setCurrentView('constants');
+                    }}
+                    data-testid="category-constants-menu"
+                    className="p-3"
+                  >
+                    <FileQuestion className="w-4 h-4 mr-3" />
+                    Soru Kategorisi Ekle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      setConstantsType('department');
+                      setCurrentView('constants');
+                    }}
+                    data-testid="department-constants-menu"
+                    className="p-3"
+                  >
+                    <Users className="w-4 h-4 mr-3" />
+                    Departman Ekle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setCurrentView('employees')}
+                    data-testid="manage-employees-menu"
+                    className="p-3"
+                  >
+                    <User className="w-4 h-4 mr-3" />
+                    Kişi Ekle
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setCurrentView('questions')}
+                    data-testid="question-bank-menu"
+                    className="p-3"
+                  >
+                    <FileQuestion className="w-4 h-4 mr-3" />
+                    Soru Ekle
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardContent>
+          </Card>
+
+          {/* Soruları Paylaş Card */}
+          <Card 
+            className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+            onClick={() => setCurrentView('share')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Share className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Soruları Paylaş</h3>
+                  <p className="text-sm text-gray-600">Çalışanlara soru ataması ve e-posta gönderimi</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Content Area - Clean */}
       </main>
