@@ -207,8 +207,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Test backend API endpoints for monthly responses"
-    - "Test AI comment generation functionality"
     - "Test frontend Cevaplar component and navigation"
     - "Test Recharts integration and chart visualization"
   stuck_tasks: []
