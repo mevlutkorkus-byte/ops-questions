@@ -1367,9 +1367,9 @@ async def create_bulk_table_responses(responses_data: List[TableResponseCreate],
             detail=f"Toplu cevap kaydetme hatası: {str(e)}"
         )
 
-@api_router.get("/monthly-responses/chart-data/{question_id}")
-async def get_chart_data(question_id: str, current_user: User = Depends(get_current_user)):
-    """Get aggregated chart data for a specific question"""
+@api_router.get("/table-responses/summary/{question_id}")
+async def get_table_summary(question_id: str, current_user: User = Depends(get_current_user)):
+    """Get table response summary for a specific question"""
     question = await db.questions.find_one({"id": question_id})
     if not question:
         raise HTTPException(
@@ -1377,37 +1377,35 @@ async def get_chart_data(question_id: str, current_user: User = Depends(get_curr
             detail="Soru bulunamadı"
         )
     
-    responses = await db.monthly_responses.find({"question_id": question_id}).to_list(1000)
+    responses = await db.table_responses.find({"question_id": question_id}).to_list(1000)
     
-    # Group by month and calculate averages
-    monthly_averages = {}
+    # Group responses by month
+    monthly_data = {}
     for month in range(1, 13):
-        month_responses = [r for r in responses if r["month"] == month and r.get("numerical_value") is not None]
-        if month_responses:
-            avg_value = sum(r["numerical_value"] for r in month_responses) / len(month_responses)
-            monthly_averages[month] = round(avg_value, 2)
-        else:
-            monthly_averages[month] = 0
+        month_responses = [r for r in responses if r["month"] == month]
+        monthly_data[month] = {
+            "count": len(month_responses),
+            "responses": month_responses
+        }
     
-    # Prepare chart data
     months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", 
               "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
     
-    chart_data = []
+    summary_data = []
     for i, month_name in enumerate(months, 1):
-        chart_data.append({
+        summary_data.append({
             "month": month_name,
-            "value": monthly_averages[i],
-            "month_number": i
+            "month_number": i,
+            "response_count": monthly_data[i]["count"],
+            "responses": monthly_data[i]["responses"]
         })
     
-    # Remove MongoDB _id field from question
     question.pop('_id', None)
     
     return {
         "question": question,
-        "chart_data": chart_data,
-        "chart_type": question.get("chart_type", "Sütun").lower()
+        "summary_data": summary_data,
+        "total_responses": len(responses)
     }
 
 # Include the router in the main app
