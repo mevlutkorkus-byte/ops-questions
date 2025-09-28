@@ -161,6 +161,9 @@ const AuthPage = () => {
 
     if (!result.success) {
       setError(result.error);
+    } else {
+      // Redirect to dashboard on success
+      navigate('/dashboard');
     }
     
     setLoading(false);
