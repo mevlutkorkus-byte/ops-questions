@@ -823,23 +823,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Welcome Message */}
-        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              {stats?.message || `Hoş geldiniz ${user?.username}!`}
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Dashboard'unuz başarıyla yüklendi. Buraya yeni özellikler ekleyebilirsiniz.
-            </p>
-            <div className="flex justify-center">
-              <Button variant="outline">
-                <Activity className="w-4 h-4 mr-2" />
-                Sistem Durumu
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Content Area - Clean */}
       </main>
     </div>
   );
