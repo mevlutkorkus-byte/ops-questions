@@ -1,95 +1,209 @@
 {
   "summary": {
-    "total_tests": 14,
-    "passed_tests": 13,
+    "total_tests": 33,
+    "passed_tests": 32,
     "failed_tests": 1,
-    "success_rate": 92.85714285714286,
-    "timestamp": "2025-09-28T16:48:13.867173"
+    "success_rate": 96.96969696969697,
+    "timestamp": "2025-09-28T17:02:03.681128"
   },
   "test_results": [
     {
       "test_name": "API Root",
       "success": true,
       "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T16:48:13.491346"
+      "timestamp": "2025-09-28T17:02:02.450436"
     },
     {
       "test_name": "User Registration",
       "success": true,
       "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T16:48:13.595091"
+      "timestamp": "2025-09-28T17:02:02.517722"
     },
     {
       "test_name": "Registration Token Received",
       "success": true,
       "details": "Token and user data received",
-      "timestamp": "2025-09-28T16:48:13.595560"
+      "timestamp": "2025-09-28T17:02:02.518187"
     },
     {
       "test_name": "Duplicate Registration",
       "success": true,
       "details": "Status 400 as expected",
-      "timestamp": "2025-09-28T16:48:13.629851"
+      "timestamp": "2025-09-28T17:02:02.555867"
     },
     {
       "test_name": "Get Current User",
       "success": true,
       "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T16:48:13.666021"
+      "timestamp": "2025-09-28T17:02:02.589859"
     },
     {
       "test_name": "User Info Format",
       "success": true,
       "details": "User info contains required fields",
-      "timestamp": "2025-09-28T16:48:13.666437"
+      "timestamp": "2025-09-28T17:02:02.590276"
     },
     {
       "test_name": "Dashboard Stats",
       "success": true,
       "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T16:48:13.698977"
+      "timestamp": "2025-09-28T17:02:02.626277"
     },
     {
       "test_name": "Dashboard Stats Format",
       "success": true,
       "details": "Dashboard stats contain required fields",
-      "timestamp": "2025-09-28T16:48:13.699407"
+      "timestamp": "2025-09-28T17:02:02.626733"
     },
     {
       "test_name": "Protected Route Without Token",
       "success": false,
       "details": "Expected 401, got 403",
-      "timestamp": "2025-09-28T16:48:13.730771"
+      "timestamp": "2025-09-28T17:02:02.659975"
     },
     {
       "test_name": "User Login",
       "success": true,
       "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T16:48:13.791985"
+      "timestamp": "2025-09-28T17:02:02.723566"
     },
     {
       "test_name": "Login Token Received",
       "success": true,
       "details": "Token and user data received",
-      "timestamp": "2025-09-28T16:48:13.792431"
+      "timestamp": "2025-09-28T17:02:02.724147"
     },
     {
       "test_name": "Invalid Login",
       "success": true,
       "details": "Status 401 as expected",
-      "timestamp": "2025-09-28T16:48:13.831873"
+      "timestamp": "2025-09-28T17:02:02.764070"
     },
     {
       "test_name": "Dashboard Stats",
       "success": true,
       "details": "Status 200 as expected",
-      "timestamp": "2025-09-28T16:48:13.866460"
+      "timestamp": "2025-09-28T17:02:02.800927"
     },
     {
       "test_name": "Dashboard Stats Format",
       "success": true,
       "details": "Dashboard stats contain required fields",
-      "timestamp": "2025-09-28T16:48:13.866912"
+      "timestamp": "2025-09-28T17:02:02.801344"
+    },
+    {
+      "test_name": "Get All Employees",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:02.872864"
+    },
+    {
+      "test_name": "Employees List Format",
+      "success": true,
+      "details": "Retrieved 1 employees",
+      "timestamp": "2025-09-28T17:02:02.873430"
+    },
+    {
+      "test_name": "Create Employee",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.234897"
+    },
+    {
+      "test_name": "Employee Creation Response",
+      "success": true,
+      "details": "Employee created with ID",
+      "timestamp": "2025-09-28T17:02:03.235531"
+    },
+    {
+      "test_name": "Create Employee Invalid Data",
+      "success": true,
+      "details": "Status 422 as expected",
+      "timestamp": "2025-09-28T17:02:03.271379"
+    },
+    {
+      "test_name": "Create Employee Duplicate Phone",
+      "success": true,
+      "details": "Status 400 as expected",
+      "timestamp": "2025-09-28T17:02:03.310278"
+    },
+    {
+      "test_name": "Get All Employees",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.347221"
+    },
+    {
+      "test_name": "Employees List Format",
+      "success": true,
+      "details": "Retrieved 2 employees",
+      "timestamp": "2025-09-28T17:02:03.347662"
+    },
+    {
+      "test_name": "Get Employee By ID",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.419036"
+    },
+    {
+      "test_name": "Employee By ID Response",
+      "success": true,
+      "details": "Correct employee retrieved",
+      "timestamp": "2025-09-28T17:02:03.419542"
+    },
+    {
+      "test_name": "Update Employee",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.460181"
+    },
+    {
+      "test_name": "Employee Update Response",
+      "success": true,
+      "details": "Employee updated successfully",
+      "timestamp": "2025-09-28T17:02:03.460636"
+    },
+    {
+      "test_name": "Get Employee By ID",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.496638"
+    },
+    {
+      "test_name": "Employee By ID Response",
+      "success": true,
+      "details": "Correct employee retrieved",
+      "timestamp": "2025-09-28T17:02:03.497111"
+    },
+    {
+      "test_name": "Employee Not Found",
+      "success": true,
+      "details": "Status 404 as expected",
+      "timestamp": "2025-09-28T17:02:03.529270"
+    },
+    {
+      "test_name": "Delete Employee",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.607231"
+    },
+    {
+      "test_name": "Employee Deletion",
+      "success": true,
+      "details": "Employee deleted successfully",
+      "timestamp": "2025-09-28T17:02:03.607684"
+    },
+    {
+      "test_name": "Get All Employees",
+      "success": true,
+      "details": "Status 200 as expected",
+      "timestamp": "2025-09-28T17:02:03.680368"
+    },
+    {
+      "test_name": "Employees List Format",
+      "success": true,
+      "details": "Retrieved 1 employees",
+      "timestamp": "2025-09-28T17:02:03.680857"
     }
   ]
 }
