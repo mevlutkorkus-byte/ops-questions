@@ -160,6 +160,26 @@ class EmployeeCreate(BaseModel):
     birth_date: str  # YYYY-MM-DD format
     salary: float = Field(..., ge=0)
 
+class Question(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    category: str = Field(..., min_length=2, max_length=100)
+    question_text: str = Field(..., min_length=10, max_length=1000)
+    importance_reason: str = Field(..., min_length=10, max_length=1000)
+    expected_action: str = Field(..., min_length=10, max_length=1000)
+    period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
+    deadline: str  # YYYY-MM-DD format
+    chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class QuestionCreate(BaseModel):
+    category: str = Field(..., min_length=2, max_length=100)
+    question_text: str = Field(..., min_length=10, max_length=1000)
+    importance_reason: str = Field(..., min_length=10, max_length=1000)
+    expected_action: str = Field(..., min_length=10, max_length=1000)
+    period: str = Field(..., pattern="^(Haftalık|Aylık|Çeyreklik|Altı Aylık|Yıllık|İhtiyaç Halinde)$")
+    deadline: str  # YYYY-MM-DD format
+    chart_type: Optional[str] = Field(None, pattern="^(Sütun|Pasta|Çizgi|Alan|Daire|Bar|Trend)$")
+
 # Auth Routes
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
