@@ -366,9 +366,9 @@ test_plan:
     priority: "high"
     needs_retesting: true
     status_history:
-        - working: "NA"
+        - working: false
           agent: "main"
-          comment: "Will implement dynamic table column structure based on question period. Monthly: 'Yıl | Ay', Weekly: 'Yıl | Hafta', Daily: 'Yıl | Ay | Gün', with active period logic for current data entry and past/future data states."
+          comment: "Implemented dynamic table column structure based on question period. Monthly: 'Yıl | Ay', Weekly: 'Yıl | Hafta', Daily: 'Yıl | Ay | Gün', Quarterly: 'Yıl | Çeyrek', etc. Updated PublicQuestionResponse component with dynamic period array generation and table rendering. Need testing to verify all period types work correctly."
 
 agent_communication:
     - agent: "main"
