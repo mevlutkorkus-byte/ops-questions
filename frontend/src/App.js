@@ -2630,6 +2630,39 @@ const Dashboard = () => {
     }
   };
 
+  const downloadExport = async (type, format) => {
+    try {
+      const response = await axios.get(`${API}/export/${type}/${format}`, {
+        responseType: 'blob'
+      });
+      
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Set filename based on type and format
+      const fileExtension = format === 'pdf' ? 'pdf' : 'xlsx';
+      const fileName = type === 'questions' ? 'sorular' : 
+                     type === 'employees' ? 'calisanlar' : 'cevaplar';
+      link.download = `${fileName}.${fileExtension}`;
+      
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      // Show success message
+      setLoading(false);
+      // Could add toast notification here
+      
+    } catch (error) {
+      console.error('Export error:', error);
+      setLoading(false);
+      // Could add error toast notification here
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
