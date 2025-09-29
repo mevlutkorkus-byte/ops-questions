@@ -2913,11 +2913,12 @@ const PublicQuestionResponse = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
-  // Bulk responses data (2025 Sep - 2030 Dec)
-  const [bulkResponses, setBulkResponses] = useState({});
+  // Table data for months vs categories
+  const [tableData, setTableData] = useState({});
+  const [existingResponses, setExistingResponses] = useState([]);
   
-  // Generate all months from 2025 Sep to 2030 Dec
-  const generateMonthsTable = () => {
+  // Generate months array (2025 Sep - 2030 Dec)
+  const generateMonthsArray = () => {
     const months = [];
     const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
                        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
@@ -2931,14 +2932,24 @@ const PublicQuestionResponse = () => {
           year,
           month: month + 1, // Convert to 1-indexed
           monthName: monthNames[month],
-          key: `${year}-${month + 1}`
+          key: `${year}-${month + 1}`,
+          isCurrentPeriod: false // Will be set based on question period
         });
       }
     }
     return months;
   };
   
-  const [monthsData] = useState(generateMonthsTable());
+  const [monthsArray] = useState(generateMonthsArray());
+  
+  // Determine which month is currently active based on question period
+  const getCurrentActivePeriod = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 1-indexed
+    
+    return { year: currentYear, month: currentMonth };
+  };
 
   useEffect(() => {
     if (assignmentId) {
