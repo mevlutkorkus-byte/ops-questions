@@ -3676,6 +3676,347 @@ const PublicQuestionResponse = () => {
   );
 };
 
+// Demo Question Response Page - Test için
+const DemoQuestionResponse = () => {
+  // Demo data
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
+  // Demo question data
+  const questionData = {
+    question: {
+      id: 'demo-1',
+      question_text: 'Bu ay departmanınızdaki çalışan sayıları ve üretkenlik verileri nelerdir?',
+      category: 'İnsan Kaynakları',
+      importance_reason: 'Çalışan verimliliğini takip etmek ve kapasiteyi değerlendirmek için gereklidir.',
+      expected_action: 'Aylık çalışan sayıları ve üretkenlik verilerini sisteme giriniz.',
+      period: 'Aylık', // Test için aylık seçtik
+      table_rows: [
+        { id: '1', name: 'Erkek Sayısı', unit: 'kişi' },
+        { id: '2', name: 'Kadın Sayısı', unit: 'kişi' },
+        { id: '3', name: 'Üretkenlik Skoru', unit: 'puan' }
+      ]
+    },
+    employee: {
+      first_name: 'Mevlüt',
+      last_name: 'Körkuş',
+      department: 'İnsan Kaynakları'
+    }
+  };
+  
+  // Generate demo periods array
+  const generateDemoPeriodsArray = (questionPeriod) => {
+    const periods = [];
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 1-indexed
+    
+    if (questionPeriod === 'Aylık') {
+      const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                         'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+      
+      for (let year = 2025; year <= 2030; year++) {
+        const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
+        const endMonth = year === 2030 ? 11 : 11; // Dec = 11
+        
+        for (let month = startMonth; month <= endMonth; month++) {
+          periods.push({
+            year,
+            month: month + 1, // Convert to 1-indexed
+            monthName: monthNames[month],
+            key: `${year}-${month + 1}`,
+            displayText: `${monthNames[month]} ${year}`,
+            isCurrentPeriod: (year === currentYear && month + 1 === currentMonth)
+          });
+        }
+      }
+    }
+    
+    return periods;
+  };
+  
+  const [periodsArray] = useState(generateDemoPeriodsArray(questionData.question.period));
+  const [tableData, setTableData] = useState(() => {
+    const initialTableData = {};
+    periodsArray.forEach(periodInfo => {
+      initialTableData[periodInfo.key] = {
+        data: {}, // row_id -> value mapping
+        comment: '',
+        isActive: periodInfo.isCurrentPeriod
+      };
+    });
+    return initialTableData;
+  });
+  
+  const getActivePeriodDisplayText = () => {
+    const activePeriod = periodsArray.find(p => p.isCurrentPeriod);
+    return activePeriod ? activePeriod.displayText : 'Aktif Dönem';
+  };
+  
+  const updateTableCell = (periodKey, rowId, value) => {
+    setTableData(prev => ({
+      ...prev,
+      [periodKey]: {
+        ...prev[periodKey],
+        data: {
+          ...prev[periodKey].data,
+          [rowId]: value
+        }
+      }
+    }));
+  };
+
+  const updatePeriodComment = (periodKey, comment) => {
+    setTableData(prev => ({
+      ...prev,
+      [periodKey]: {
+        ...prev[periodKey],
+        comment: comment
+      }
+    }));
+  };
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setError('');
+    setSuccess('');
+    
+    // Demo submit
+    setTimeout(() => {
+      setSuccess('Demo verileriniz başarıyla kaydedildi!');
+      setSubmitted(true);
+      setSubmitting(false);
+    }, 1500);
+  };
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
+        <Card className="max-w-lg mx-auto bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
+            <p className="text-gray-600">
+              Demo yanıtınız başarıyla kaydedildi. Bu sayfayı kapatabilirsiniz.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <CardHeader className="text-center border-b border-gray-200">
+            <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <FileQuestion className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-2xl text-gray-900">Dijital Dönüşüm - DEMO</CardTitle>
+            <CardDescription>
+              {questionData.question.period} Değerlendirme Formu - {getActivePeriodDisplayText()}
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="p-8">
+            {/* Question Info */}
+            <div className="bg-emerald-50 border-l-4 border-emerald-400 p-6 mb-6 rounded-r-lg">
+              <h3 className="text-lg font-semibold text-emerald-800 mb-2">
+                {questionData.question.category}
+              </h3>
+              <p className="text-emerald-700 font-medium mb-4">
+                {questionData.question.question_text}
+              </p>
+              <div className="text-sm text-emerald-600">
+                <p className="mb-2">
+                  <strong>Önem/Gerekçe:</strong><br />
+                  {questionData.question.importance_reason}
+                </p>
+                <p>
+                  <strong>Beklenen Aksiyon:</strong><br />
+                  {questionData.question.expected_action}
+                </p>
+              </div>
+            </div>
+
+            {/* Employee Info */}
+            <div className="mb-6">
+              <p className="text-sm text-gray-600">
+                <strong>Çalışan:</strong> {questionData.employee.first_name} {questionData.employee.last_name}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Departman:</strong> {questionData.employee.department}
+              </p>
+            </div>
+
+            {error && (
+              <Alert className="mb-6 border-red-200 bg-red-50">
+                <AlertDescription className="text-red-600">{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {success && (
+              <Alert className="mb-6 border-green-200 bg-green-50">
+                <AlertDescription className="text-green-600">{success}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Response Table */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {questionData.question.period} Değerlendirme Tablosu (DEMO)
+                </h3>
+                <div className="text-sm text-gray-500">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                    Aktif: {getActivePeriodDisplayText()}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="border rounded-lg overflow-hidden">
+                <div className="overflow-x-auto max-h-80 overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 sticky top-0">
+                      <tr>
+                        <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                        <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
+                        
+                        {/* Dynamic columns from table_rows */}
+                        {questionData.question.table_rows && questionData.question.table_rows.map(row => (
+                          <th key={row.id} className="px-3 py-3 text-left font-medium text-gray-900 min-w-32">
+                            {row.name}
+                            {row.unit && <span className="text-xs text-gray-500 block">({row.unit})</span>}
+                          </th>
+                        ))}
+                        
+                        <th className="px-3 py-3 text-left font-medium text-gray-900 min-w-40">Yorum</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {periodsArray.map(periodInfo => {
+                        const periodData = tableData[periodInfo.key] || { data: {}, comment: '', isActive: false };
+                        const isActive = periodInfo.isCurrentPeriod;
+                        const hasExistingData = false; // Demo için
+                        
+                        return (
+                          <tr 
+                            key={periodInfo.key} 
+                            className={`border-t ${
+                              isActive ? 'bg-green-50 hover:bg-green-100' : 
+                              hasExistingData ? 'bg-blue-50' : 
+                              'bg-gray-50 hover:bg-gray-100'
+                            }`}
+                          >
+                            <td className="px-3 py-2 font-medium">
+                              <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                {periodInfo.year}
+                              </span>
+                            </td>
+                            
+                            <td className="px-3 py-2 font-medium">
+                              <div className="flex items-center space-x-2">
+                                <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                  {periodInfo.monthName}
+                                </span>
+                                {isActive && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    AKTİF
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            
+                            {/* Data columns */}
+                            {questionData.question.table_rows && questionData.question.table_rows.map(row => (
+                              <td key={row.id} className="px-3 py-2">
+                                <Input
+                                  type="text"
+                                  value={periodData.data[row.id] || ''}
+                                  onChange={(e) => updateTableCell(periodInfo.key, row.id, e.target.value)}
+                                  disabled={!isActive}
+                                  placeholder={isActive ? "0" : ""}
+                                  className={`w-full h-8 text-sm ${
+                                    !isActive ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 
+                                    'bg-white'
+                                  }`}
+                                />
+                              </td>
+                            ))}
+                            
+                            {/* Comment column */}
+                            <td className="px-3 py-2">
+                              <Input
+                                value={periodData.comment || ''}
+                                onChange={(e) => updatePeriodComment(periodInfo.key, e.target.value)}
+                                disabled={!isActive}
+                                placeholder={isActive ? "Yorum yazın..." : ""}
+                                className={`w-full h-8 text-sm ${
+                                  !isActive ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 
+                                  'bg-white'
+                                }`}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center space-x-4 text-xs">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-3 h-3 bg-green-100 border border-green-200 rounded"></div>
+                    <span>Aktif dönem (düzenlenebilir)</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-3 h-3 bg-blue-100 border border-blue-200 rounded"></div>
+                    <span>Geçmiş veri (sadece görüntüleme)</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded"></div>
+                    <span>Gelecek dönemler (kapalı)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white px-8 py-3"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Kaydediliyor...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Verilerinizi Gönder
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   // Check if this is a public question response page
