@@ -2985,27 +2985,145 @@ const PublicQuestionResponse = () => {
   const [tableData, setTableData] = useState({});
   const [existingResponses, setExistingResponses] = useState([]);
   
-  // Generate months array (2025 Sep - 2030 Dec)
-  const generateMonthsArray = () => {
-    const months = [];
-    const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                       'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  // Generate period array based on question period type
+  const generatePeriodsArray = (questionPeriod) => {
+    const periods = [];
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 1-indexed
+    const currentWeek = Math.ceil(now.getDate() / 7);
+    const currentDay = now.getDate();
     
-    for (let year = 2025; year <= 2030; year++) {
-      const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
-      const endMonth = year === 2030 ? 11 : 11; // Dec = 11
-      
-      for (let month = startMonth; month <= endMonth; month++) {
-        months.push({
-          year,
-          month: month + 1, // Convert to 1-indexed
-          monthName: monthNames[month],
-          key: `${year}-${month + 1}`,
-          isCurrentPeriod: false // Will be set based on question period
-        });
+    // Define period configurations
+    switch (questionPeriod) {
+      case 'Aylık': {
+        const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                           'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+        
+        for (let year = 2025; year <= 2030; year++) {
+          const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
+          const endMonth = year === 2030 ? 11 : 11; // Dec = 11
+          
+          for (let month = startMonth; month <= endMonth; month++) {
+            periods.push({
+              year,
+              month: month + 1, // Convert to 1-indexed
+              monthName: monthNames[month],
+              key: `${year}-${month + 1}`,
+              displayText: `${monthNames[month]} ${year}`,
+              isCurrentPeriod: (year === currentYear && month + 1 === currentMonth)
+            });
+          }
+        }
+        break;
       }
+      
+      case 'Haftalık': {
+        for (let year = 2025; year <= 2030; year++) {
+          const startWeek = year === 2025 ? 36 : 1; // Start from Sep week
+          const endWeek = year === 2030 ? 52 : 52;
+          
+          for (let week = startWeek; week <= endWeek; week++) {
+            periods.push({
+              year,
+              week,
+              key: `${year}-W${week}`,
+              displayText: `${week}. Hafta ${year}`,
+              isCurrentPeriod: (year === currentYear && week === Math.ceil((now.getTime() - new Date(year, 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000)))
+            });
+          }
+        }
+        break;
+      }
+      
+      case 'Günlük': {
+        const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                           'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+        
+        for (let year = 2025; year <= 2030; year++) {
+          const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
+          const endMonth = year === 2030 ? 11 : 11; // Dec = 11
+          
+          for (let month = startMonth; month <= endMonth; month++) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+              periods.push({
+                year,
+                month: month + 1,
+                day,
+                monthName: monthNames[month],
+                key: `${year}-${month + 1}-${day}`,
+                displayText: `${day} ${monthNames[month]} ${year}`,
+                isCurrentPeriod: (year === currentYear && month + 1 === currentMonth && day === currentDay)
+              });
+            }
+          }
+        }
+        break;
+      }
+      
+      case 'Çeyreklik': {
+        const quarterNames = ['Q1', 'Q2', 'Q3', 'Q4'];
+        
+        for (let year = 2025; year <= 2030; year++) {
+          const startQuarter = year === 2025 ? 3 : 0; // Start from Q3 (Sep)
+          
+          for (let quarter = startQuarter; quarter < 4; quarter++) {
+            const currentQuarter = Math.floor((currentMonth - 1) / 3);
+            periods.push({
+              year,
+              quarter: quarter + 1,
+              key: `${year}-Q${quarter + 1}`,
+              displayText: `${quarterNames[quarter]} ${year}`,
+              isCurrentPeriod: (year === currentYear && quarter === currentQuarter)
+            });
+          }
+        }
+        break;
+      }
+      
+      case 'Altı Aylık': {
+        for (let year = 2025; year <= 2030; year++) {
+          const startHalf = year === 2025 ? 2 : 1; // Start from H2 (Jul-Dec)
+          
+          for (let half = startHalf; half <= 2; half++) {
+            const currentHalf = Math.ceil(currentMonth / 6);
+            periods.push({
+              year,
+              half,
+              key: `${year}-H${half}`,
+              displayText: `${half}. Yarıyıl ${year}`,
+              isCurrentPeriod: (year === currentYear && half === currentHalf)
+            });
+          }
+        }
+        break;
+      }
+      
+      case 'Yıllık': {
+        for (let year = 2025; year <= 2030; year++) {
+          periods.push({
+            year,
+            key: `${year}`,
+            displayText: `${year}`,
+            isCurrentPeriod: (year === currentYear)
+          });
+        }
+        break;
+      }
+      
+      default: // 'İhtiyaç Halinde'
+        periods.push({
+          year: currentYear,
+          key: 'on-demand',
+          displayText: 'İhtiyaç Halinde',
+          isCurrentPeriod: true
+        });
+        break;
     }
-    return months;
+    
+    return periods;
   };
   
   const [monthsArray] = useState(generateMonthsArray());
