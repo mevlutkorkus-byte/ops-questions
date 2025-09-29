@@ -216,6 +216,23 @@ async def generate_ai_comment(question_text: str, category: str, period: str, ta
 # Create the main app without a prefix
 app = FastAPI(title="Auth System API")
 
+# Add validation error handler
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    error_details = []
+    for error in exc.errors():
+        error_details.append({
+            "field": " -> ".join(str(x) for x in error["loc"]),
+            "message": error["msg"],
+            "type": error["type"]
+        })
+    
+    print(f"Validation Error Details: {error_details}")
+    return HTTPException(
+        status_code=422,
+        detail=f"Validation error: {error_details[0]['message']} in field '{error_details[0]['field']}'"
+    )
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
