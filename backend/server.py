@@ -990,7 +990,7 @@ async def generate_automated_reports(
         "id": f"report_{current_time.strftime('%Y%m%d_%H%M%S')}",
         "type": report_type,
         "generated_at": current_time.isoformat(),
-        "generated_by": current_user.get("username", "system"),
+        "generated_by": current_user.username if current_user else "system",
         "data": report_data,
         "config": report_config
     }
