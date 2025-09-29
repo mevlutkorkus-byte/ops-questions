@@ -1290,6 +1290,86 @@ async def get_questions_for_responses(current_user: User = Depends(get_current_u
         "employees": formatted_employees
     }
 
+@api_router.post("/table-responses")
+async def create_table_response(response_data: TableResponseCreate, current_user: User = Depends(get_current_user)):
+    """Create or update a single table response"""
+    try:
+        # Check if question and employee exist
+        question = await db.questions.find_one({"id": response_data.question_id})
+        employee = await db.employees.find_one({"id": response_data.employee_id})
+        
+        if not question:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Soru bulunamadı"
+            )
+        
+        if not employee:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Çalışan bulunamadı"
+            )
+        
+        # Check if response already exists
+        existing_response = await db.table_responses.find_one({
+            "question_id": response_data.question_id,
+            "employee_id": response_data.employee_id,
+            "year": response_data.year,
+            "month": response_data.month
+        })
+        
+        # Generate AI comment
+        ai_comment = None
+        if response_data.table_data or response_data.monthly_comment:
+            ai_comment = await generate_ai_comment(
+                question_text=question["question_text"],
+                category=question["category"],
+                period=question["period"],
+                table_data=response_data.table_data,
+                table_rows=question.get("table_rows", []),
+                monthly_comment=response_data.monthly_comment,
+                year=response_data.year,
+                month=response_data.month
+            )
+        
+        current_time = datetime.now(timezone.utc)
+        
+        if existing_response:
+            # Update existing response
+            update_data = {
+                "table_data": response_data.table_data,
+                "monthly_comment": response_data.monthly_comment,
+                "ai_comment": ai_comment,
+                "updated_at": current_time.isoformat()
+            }
+            
+            await db.table_responses.update_one(
+                {"id": existing_response["id"]},
+                {"$set": update_data}
+            )
+            
+            return {"success": True, "message": "Cevap güncellendi", "action": "updated"}
+        
+        else:
+            # Create new response
+            response_dict = response_data.dict()
+            response_dict["id"] = str(uuid.uuid4())
+            response_dict["ai_comment"] = ai_comment
+            response_dict["created_at"] = current_time.isoformat()
+            response_dict["updated_at"] = current_time.isoformat()
+            
+            await db.table_responses.insert_one(response_dict)
+            
+            return {"success": True, "message": "Cevap kaydedildi", "action": "created"}
+        
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Cevap kaydetme hatası: {str(e)}"
+        )
+
 @api_router.post("/table-responses/bulk")
 async def create_bulk_table_responses(responses_data: List[TableResponseCreate], current_user: User = Depends(get_current_user)):
     """Create multiple table responses at once"""
