@@ -865,6 +865,8 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
         
         # Allow re-sending: Don't skip if already assigned, just log it
         is_resend = bool(existing_assignment)
+        if is_resend:
+            resend_count += 1
         
         # Get question and employee details
         question = await db.questions.find_one({"id": question_id})
