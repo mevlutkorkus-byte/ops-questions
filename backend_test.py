@@ -1850,6 +1850,686 @@ class QuestionBankAPITester:
         
         return 0 if len(failed_tests) == 0 else 1
 
+    def test_program_sabitleri_constants(self):
+        """Test Program Sabitleri (Constants) functionality comprehensively"""
+        print("\n" + "="*50)
+        print("PROGRAM SABİTLERİ (CONSTANTS) COMPREHENSIVE TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping Program Sabitleri tests")
+            return
+        
+        # Test Categories Management
+        self.test_categories_management()
+        
+        # Test Departments Management  
+        self.test_departments_management()
+        
+        # Test Employees Management
+        self.test_employees_management()
+        
+        # Test Questions Management
+        self.test_questions_management()
+        
+        # Test Data Structure Validation
+        self.test_data_structure_validation()
+
+    def test_categories_management(self):
+        """Test Categories CRUD operations"""
+        print("\n🔍 Testing Categories Management...")
+        
+        # Test 1: GET /api/categories
+        success, response = self.run_test(
+            "GET Categories List",
+            "GET",
+            "categories",
+            200
+        )
+        
+        initial_count = 0
+        if success and isinstance(response, list):
+            initial_count = len(response)
+            print(f"   ✅ Retrieved {initial_count} existing categories")
+        
+        # Test 2: POST /api/categories (create new category)
+        timestamp = datetime.now().strftime('%H%M%S')
+        test_category_data = {
+            "name": f"Test Kategori {timestamp}"
+        }
+        
+        success, response = self.run_test(
+            "POST Create Category",
+            "POST",
+            "categories",
+            200,
+            data=test_category_data
+        )
+        
+        category_id = None
+        if success and 'id' in response:
+            category_id = response['id']
+            print(f"   ✅ Category created with ID: {category_id}")
+            print(f"   ✅ Category name: {response.get('name', 'Unknown')}")
+        
+        # Test 3: GET categories again to verify creation
+        success, response = self.run_test(
+            "GET Categories After Creation",
+            "GET",
+            "categories",
+            200
+        )
+        
+        if success and isinstance(response, list):
+            new_count = len(response)
+            if new_count == initial_count + 1:
+                print(f"   ✅ Category count increased from {initial_count} to {new_count}")
+            else:
+                self.log_test("Category Creation Verification", False, f"Expected {initial_count + 1} categories, got {new_count}")
+        
+        # Test 4: POST duplicate category (should fail)
+        success, response = self.run_test(
+            "POST Duplicate Category (Should Fail)",
+            "POST",
+            "categories",
+            400,
+            data=test_category_data
+        )
+        
+        if success:
+            print("   ✅ Properly prevents duplicate categories")
+        
+        # Test 5: DELETE /api/categories/{id}
+        if category_id:
+            success, response = self.run_test(
+                "DELETE Category",
+                "DELETE",
+                f"categories/{category_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Category deleted successfully")
+                
+                # Verify deletion
+                success, response = self.run_test(
+                    "GET Categories After Deletion",
+                    "GET",
+                    "categories",
+                    200
+                )
+                
+                if success and isinstance(response, list):
+                    final_count = len(response)
+                    if final_count == initial_count:
+                        print(f"   ✅ Category count returned to original: {final_count}")
+                    else:
+                        self.log_test("Category Deletion Verification", False, f"Expected {initial_count} categories, got {final_count}")
+        
+        # Test 6: DELETE non-existent category
+        success, response = self.run_test(
+            "DELETE Non-existent Category",
+            "DELETE",
+            "categories/non-existent-id",
+            404
+        )
+        
+        if success:
+            print("   ✅ Properly handles non-existent category deletion")
+
+    def test_departments_management(self):
+        """Test Departments CRUD operations"""
+        print("\n🔍 Testing Departments Management...")
+        
+        # Test 1: GET /api/departments
+        success, response = self.run_test(
+            "GET Departments List",
+            "GET",
+            "departments",
+            200
+        )
+        
+        initial_count = 0
+        if success and isinstance(response, list):
+            initial_count = len(response)
+            print(f"   ✅ Retrieved {initial_count} existing departments")
+        
+        # Test 2: POST /api/departments (create new department)
+        timestamp = datetime.now().strftime('%H%M%S')
+        test_department_data = {
+            "name": f"Test Departmanı {timestamp}"
+        }
+        
+        success, response = self.run_test(
+            "POST Create Department",
+            "POST",
+            "departments",
+            200,
+            data=test_department_data
+        )
+        
+        department_id = None
+        if success and 'id' in response:
+            department_id = response['id']
+            print(f"   ✅ Department created with ID: {department_id}")
+            print(f"   ✅ Department name: {response.get('name', 'Unknown')}")
+        
+        # Test 3: GET departments again to verify creation
+        success, response = self.run_test(
+            "GET Departments After Creation",
+            "GET",
+            "departments",
+            200
+        )
+        
+        if success and isinstance(response, list):
+            new_count = len(response)
+            if new_count == initial_count + 1:
+                print(f"   ✅ Department count increased from {initial_count} to {new_count}")
+            else:
+                self.log_test("Department Creation Verification", False, f"Expected {initial_count + 1} departments, got {new_count}")
+        
+        # Test 4: POST duplicate department (should fail)
+        success, response = self.run_test(
+            "POST Duplicate Department (Should Fail)",
+            "POST",
+            "departments",
+            400,
+            data=test_department_data
+        )
+        
+        if success:
+            print("   ✅ Properly prevents duplicate departments")
+        
+        # Test 5: DELETE /api/departments/{id}
+        if department_id:
+            success, response = self.run_test(
+                "DELETE Department",
+                "DELETE",
+                f"departments/{department_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Department deleted successfully")
+                
+                # Verify deletion
+                success, response = self.run_test(
+                    "GET Departments After Deletion",
+                    "GET",
+                    "departments",
+                    200
+                )
+                
+                if success and isinstance(response, list):
+                    final_count = len(response)
+                    if final_count == initial_count:
+                        print(f"   ✅ Department count returned to original: {final_count}")
+                    else:
+                        self.log_test("Department Deletion Verification", False, f"Expected {initial_count} departments, got {final_count}")
+        
+        # Test 6: DELETE non-existent department
+        success, response = self.run_test(
+            "DELETE Non-existent Department",
+            "DELETE",
+            "departments/non-existent-id",
+            404
+        )
+        
+        if success:
+            print("   ✅ Properly handles non-existent department deletion")
+
+    def test_employees_management(self):
+        """Test Employees CRUD operations"""
+        print("\n🔍 Testing Employees Management...")
+        
+        # Test 1: GET /api/employees
+        success, response = self.run_test(
+            "GET Employees List",
+            "GET",
+            "employees",
+            200
+        )
+        
+        initial_count = 0
+        if success and isinstance(response, list):
+            initial_count = len(response)
+            print(f"   ✅ Retrieved {initial_count} existing employees")
+        
+        # Test 2: POST /api/employees (create new employee)
+        timestamp = datetime.now().strftime('%H%M%S')
+        unique_phone = f"0555{timestamp[-7:]}"
+        test_employee_data = {
+            "first_name": "Mehmet",
+            "last_name": f"Özkan_{timestamp[-4:]}",
+            "phone": unique_phone,
+            "email": f"mehmet.ozkan.{timestamp}@company.com",
+            "department": "İnsan Kaynakları",
+            "age": 32,
+            "gender": "Erkek",
+            "hire_date": "2023-01-15",
+            "birth_date": "1991-03-10",
+            "salary": 18000.0
+        }
+        
+        success, response = self.run_test(
+            "POST Create Employee",
+            "POST",
+            "employees",
+            200,
+            data=test_employee_data
+        )
+        
+        employee_id = None
+        if success and 'id' in response:
+            employee_id = response['id']
+            print(f"   ✅ Employee created with ID: {employee_id}")
+            print(f"   ✅ Employee name: {response.get('first_name', '')} {response.get('last_name', '')}")
+            print(f"   ✅ Employee phone: {response.get('phone', 'Unknown')}")
+        
+        # Test 3: GET /api/employees/{id} (get single employee)
+        if employee_id:
+            success, response = self.run_test(
+                "GET Single Employee",
+                "GET",
+                f"employees/{employee_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Retrieved employee: {response.get('first_name', '')} {response.get('last_name', '')}")
+                print(f"   ✅ Department: {response.get('department', 'Unknown')}")
+                print(f"   ✅ Salary: {response.get('salary', 0)} TL")
+        
+        # Test 4: PUT /api/employees/{id} (update employee)
+        if employee_id:
+            updated_employee_data = test_employee_data.copy()
+            updated_employee_data['salary'] = 20000.0
+            updated_employee_data['department'] = "Bilgi İşlem"
+            
+            success, response = self.run_test(
+                "PUT Update Employee",
+                "PUT",
+                f"employees/{employee_id}",
+                200,
+                data=updated_employee_data
+            )
+            
+            if success:
+                print(f"   ✅ Employee updated successfully")
+                print(f"   ✅ New salary: {response.get('salary', 0)} TL")
+                print(f"   ✅ New department: {response.get('department', 'Unknown')}")
+        
+        # Test 5: POST duplicate phone (should fail)
+        duplicate_employee_data = test_employee_data.copy()
+        duplicate_employee_data['first_name'] = "Ali"
+        duplicate_employee_data['last_name'] = "Veli"
+        duplicate_employee_data['email'] = f"ali.veli.{timestamp}@company.com"
+        
+        success, response = self.run_test(
+            "POST Duplicate Phone Employee (Should Fail)",
+            "POST",
+            "employees",
+            400,
+            data=duplicate_employee_data
+        )
+        
+        if success:
+            print("   ✅ Properly prevents duplicate phone numbers")
+        
+        # Test 6: POST invalid date format (should fail)
+        invalid_employee_data = test_employee_data.copy()
+        invalid_employee_data['phone'] = f"0555{timestamp[-6:]}"  # Different phone
+        invalid_employee_data['hire_date'] = "invalid-date"
+        
+        success, response = self.run_test(
+            "POST Invalid Date Format (Should Fail)",
+            "POST",
+            "employees",
+            400,
+            data=invalid_employee_data
+        )
+        
+        if success:
+            print("   ✅ Properly validates date formats")
+        
+        # Test 7: DELETE /api/employees/{id}
+        if employee_id:
+            success, response = self.run_test(
+                "DELETE Employee",
+                "DELETE",
+                f"employees/{employee_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Employee deleted successfully")
+                
+                # Verify deletion
+                success, response = self.run_test(
+                    "GET Deleted Employee (Should Fail)",
+                    "GET",
+                    f"employees/{employee_id}",
+                    404
+                )
+                
+                if success:
+                    print(f"   ✅ Employee properly deleted (404 on GET)")
+        
+        # Test 8: DELETE non-existent employee
+        success, response = self.run_test(
+            "DELETE Non-existent Employee",
+            "DELETE",
+            "employees/non-existent-id",
+            404
+        )
+        
+        if success:
+            print("   ✅ Properly handles non-existent employee deletion")
+
+    def test_questions_management(self):
+        """Test Questions CRUD operations"""
+        print("\n🔍 Testing Questions Management...")
+        
+        # Test 1: GET /api/questions
+        success, response = self.run_test(
+            "GET Questions List",
+            "GET",
+            "questions",
+            200
+        )
+        
+        initial_count = 0
+        if success and isinstance(response, list):
+            initial_count = len(response)
+            print(f"   ✅ Retrieved {initial_count} existing questions")
+        
+        # Test 2: POST /api/questions (create new question)
+        timestamp = datetime.now().strftime('%H%M%S')
+        test_question_data = {
+            "category": "Program Sabitleri Test",
+            "question_text": f"Bu bir Program Sabitleri test sorusudur - {timestamp}",
+            "importance_reason": "Program Sabitleri fonksiyonalitesinin test edilmesi için kritik önem taşır.",
+            "expected_action": "Test sonuçlarını değerlendirin ve gerekli düzeltmeleri yapın.",
+            "period": "Aylık",
+            "chart_type": "Sütun",
+            "table_rows": [
+                {
+                    "name": "Performans Skoru",
+                    "unit": "puan",
+                    "order": 1
+                },
+                {
+                    "name": "Başarı Oranı",
+                    "unit": "%",
+                    "order": 2
+                }
+            ]
+        }
+        
+        success, response = self.run_test(
+            "POST Create Question",
+            "POST",
+            "questions",
+            200,
+            data=test_question_data
+        )
+        
+        question_id = None
+        if success and 'id' in response:
+            question_id = response['id']
+            print(f"   ✅ Question created with ID: {question_id}")
+            print(f"   ✅ Question category: {response.get('category', 'Unknown')}")
+            print(f"   ✅ Question period: {response.get('period', 'Unknown')}")
+            print(f"   ✅ Table rows count: {len(response.get('table_rows', []))}")
+        
+        # Test 3: GET /api/questions/{id} (get single question)
+        if question_id:
+            success, response = self.run_test(
+                "GET Single Question",
+                "GET",
+                f"questions/{question_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Retrieved question: {response.get('category', 'Unknown')}")
+                print(f"   ✅ Question text: {response.get('question_text', '')[:50]}...")
+                print(f"   ✅ Chart type: {response.get('chart_type', 'Unknown')}")
+        
+        # Test 4: PUT /api/questions/{id} (update question)
+        if question_id:
+            updated_question_data = test_question_data.copy()
+            updated_question_data['category'] = "Updated Program Sabitleri Test"
+            updated_question_data['period'] = "Haftalık"
+            updated_question_data['chart_type'] = "Çizgi"
+            
+            success, response = self.run_test(
+                "PUT Update Question",
+                "PUT",
+                f"questions/{question_id}",
+                200,
+                data=updated_question_data
+            )
+            
+            if success:
+                print(f"   ✅ Question updated successfully")
+                print(f"   ✅ New category: {response.get('category', 'Unknown')}")
+                print(f"   ✅ New period: {response.get('period', 'Unknown')}")
+                print(f"   ✅ New chart type: {response.get('chart_type', 'Unknown')}")
+        
+        # Test 5: POST invalid period (should fail)
+        invalid_question_data = test_question_data.copy()
+        invalid_question_data['period'] = "InvalidPeriod"
+        
+        success, response = self.run_test(
+            "POST Invalid Period Question (Should Fail)",
+            "POST",
+            "questions",
+            422,
+            data=invalid_question_data
+        )
+        
+        if success:
+            print("   ✅ Properly validates period values")
+        
+        # Test 6: POST invalid chart type (should fail)
+        invalid_chart_data = test_question_data.copy()
+        invalid_chart_data['chart_type'] = "InvalidChart"
+        
+        success, response = self.run_test(
+            "POST Invalid Chart Type (Should Fail)",
+            "POST",
+            "questions",
+            422,
+            data=invalid_chart_data
+        )
+        
+        if success:
+            print("   ✅ Properly validates chart type values")
+        
+        # Test 7: DELETE /api/questions/{id}
+        if question_id:
+            success, response = self.run_test(
+                "DELETE Question",
+                "DELETE",
+                f"questions/{question_id}",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Question deleted successfully")
+                
+                # Verify deletion
+                success, response = self.run_test(
+                    "GET Deleted Question (Should Fail)",
+                    "GET",
+                    f"questions/{question_id}",
+                    404
+                )
+                
+                if success:
+                    print(f"   ✅ Question properly deleted (404 on GET)")
+        
+        # Test 8: DELETE non-existent question
+        success, response = self.run_test(
+            "DELETE Non-existent Question",
+            "DELETE",
+            "questions/non-existent-id",
+            404
+        )
+        
+        if success:
+            print("   ✅ Properly handles non-existent question deletion")
+
+    def test_data_structure_validation(self):
+        """Test data structure validation across all Program Sabitleri entities"""
+        print("\n🔍 Testing Data Structure Validation...")
+        
+        # Test 1: Verify all required fields are present in responses
+        print("\n   📋 Testing Categories Data Structure...")
+        success, response = self.run_test(
+            "Categories Data Structure",
+            "GET",
+            "categories",
+            200
+        )
+        
+        if success and isinstance(response, list) and len(response) > 0:
+            category = response[0]
+            required_fields = ['id', 'name', 'created_at']
+            missing_fields = [field for field in required_fields if field not in category]
+            
+            if not missing_fields:
+                print("   ✅ Categories have all required fields")
+            else:
+                self.log_test("Categories Data Structure", False, f"Missing fields: {missing_fields}")
+        
+        print("\n   📋 Testing Departments Data Structure...")
+        success, response = self.run_test(
+            "Departments Data Structure",
+            "GET",
+            "departments",
+            200
+        )
+        
+        if success and isinstance(response, list) and len(response) > 0:
+            department = response[0]
+            required_fields = ['id', 'name', 'created_at']
+            missing_fields = [field for field in required_fields if field not in department]
+            
+            if not missing_fields:
+                print("   ✅ Departments have all required fields")
+            else:
+                self.log_test("Departments Data Structure", False, f"Missing fields: {missing_fields}")
+        
+        print("\n   📋 Testing Employees Data Structure...")
+        success, response = self.run_test(
+            "Employees Data Structure",
+            "GET",
+            "employees",
+            200
+        )
+        
+        if success and isinstance(response, list) and len(response) > 0:
+            employee = response[0]
+            required_fields = ['id', 'first_name', 'last_name', 'phone', 'department', 'age', 'gender', 'hire_date', 'birth_date', 'salary', 'created_at']
+            missing_fields = [field for field in required_fields if field not in employee]
+            
+            if not missing_fields:
+                print("   ✅ Employees have all required fields")
+                
+                # Validate data types
+                if isinstance(employee.get('age'), int) and employee.get('age') > 0:
+                    print("   ✅ Employee age is valid integer")
+                else:
+                    self.log_test("Employee Age Validation", False, f"Invalid age: {employee.get('age')}")
+                
+                if isinstance(employee.get('salary'), (int, float)) and employee.get('salary') >= 0:
+                    print("   ✅ Employee salary is valid number")
+                else:
+                    self.log_test("Employee Salary Validation", False, f"Invalid salary: {employee.get('salary')}")
+                
+                if employee.get('gender') in ['Erkek', 'Kadın', 'Diğer']:
+                    print("   ✅ Employee gender is valid")
+                else:
+                    self.log_test("Employee Gender Validation", False, f"Invalid gender: {employee.get('gender')}")
+            else:
+                self.log_test("Employees Data Structure", False, f"Missing fields: {missing_fields}")
+        
+        print("\n   📋 Testing Questions Data Structure...")
+        success, response = self.run_test(
+            "Questions Data Structure",
+            "GET",
+            "questions",
+            200
+        )
+        
+        if success and isinstance(response, list) and len(response) > 0:
+            question = response[0]
+            required_fields = ['id', 'category', 'question_text', 'importance_reason', 'expected_action', 'period', 'created_at']
+            missing_fields = [field for field in required_fields if field not in question]
+            
+            if not missing_fields:
+                print("   ✅ Questions have all required fields")
+                
+                # Validate period values
+                valid_periods = ["Günlük", "Haftalık", "Aylık", "Çeyreklik", "Altı Aylık", "Yıllık", "İhtiyaç Halinde"]
+                if question.get('period') in valid_periods:
+                    print("   ✅ Question period is valid")
+                else:
+                    self.log_test("Question Period Validation", False, f"Invalid period: {question.get('period')}")
+                
+                # Validate chart type if present
+                if question.get('chart_type'):
+                    valid_chart_types = ["Sütun", "Pasta", "Çizgi", "Alan", "Daire", "Bar", "Trend"]
+                    if question.get('chart_type') in valid_chart_types:
+                        print("   ✅ Question chart type is valid")
+                    else:
+                        self.log_test("Question Chart Type Validation", False, f"Invalid chart type: {question.get('chart_type')}")
+                
+                # Validate table_rows structure if present
+                if question.get('table_rows'):
+                    table_rows = question.get('table_rows')
+                    if isinstance(table_rows, list):
+                        print(f"   ✅ Question has {len(table_rows)} table rows")
+                        
+                        for i, row in enumerate(table_rows[:2]):  # Check first 2 rows
+                            row_fields = ['id', 'name']
+                            missing_row_fields = [field for field in row_fields if field not in row]
+                            
+                            if not missing_row_fields:
+                                print(f"   ✅ Table row {i+1} structure is valid")
+                            else:
+                                self.log_test(f"Table Row {i+1} Structure", False, f"Missing fields: {missing_row_fields}")
+                    else:
+                        self.log_test("Table Rows Structure", False, "table_rows is not a list")
+            else:
+                self.log_test("Questions Data Structure", False, f"Missing fields: {missing_fields}")
+        
+        # Test 2: Check for any missing CRUD operations
+        print("\n   📋 Testing CRUD Operations Completeness...")
+        
+        crud_operations = [
+            ("Categories GET", "GET", "categories", 200),
+            ("Departments GET", "GET", "departments", 200),
+            ("Employees GET", "GET", "employees", 200),
+            ("Questions GET", "GET", "questions", 200)
+        ]
+        
+        available_operations = 0
+        for operation_name, method, endpoint, expected_status in crud_operations:
+            success, response = self.run_test(
+                f"CRUD Check - {operation_name}",
+                method,
+                endpoint,
+                expected_status
+            )
+            if success:
+                available_operations += 1
+        
+        print(f"   ✅ CRUD operations availability checked: {available_operations} operations tested")
+
     def run_all_tests(self):
         """Run all API tests including Program Sabitleri and Cevaplar features"""
         print("🚀 Starting Complete API Testing...")
