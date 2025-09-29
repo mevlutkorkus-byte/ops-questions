@@ -5151,35 +5151,33 @@ const DataAnalysisPage = () => {
               </div>
             </div>
 
-            {/* AI İçgörüler */}
+            {/* AI İçgörüler - Advanced Analytics Panel */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">🤖 AI İçgörüler & Öneriler</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                  <h4 className="font-semibold text-blue-800 mb-2">📈 Trend Analizi</h4>
-                  <p className="text-blue-700 text-sm">
-                    Son 3 aydaki veriler %12 artış trendi gösteriyor. Bu pozitif gelişimin devam etmesi bekleniyor.
-                  </p>
-                </div>
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-                  <h4 className="font-semibold text-amber-800 mb-2">⚠️ Dikkat Noktaları</h4>
-                  <p className="text-amber-700 text-sm">
-                    Yarı zamanlı çalışan oranı azalıyor. Esnek çalışma politikalarını gözden geçirebilirsiniz.
-                  </p>
-                </div>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <h4 className="font-semibold text-green-800 mb-2">💡 Öneriler</h4>
-                  <p className="text-green-700 text-sm">
-                    İnsan kaynakları planlaması için önümüzdeki dönemde +5 kişilik artış planlanabilir.
-                  </p>
-                </div>
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-                  <h4 className="font-semibold text-purple-800 mb-2">🎯 Hedef Karşılaştırması</h4>
-                  <p className="text-purple-700 text-sm">
-                    Yıllık hedefin %67'sine ulaşıldı. Bu tempo ile hedefe ulaşmak mümkün görünüyor.
-                  </p>
-                </div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">🧠 AI Gelişmiş Analitik</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // Fetch advanced insights
+                    const fetchAdvancedInsights = async () => {
+                      try {
+                        const response = await axios.get(`${API}/analytics/insights/${currentQuestion.id}`);
+                        setAdvancedInsights(response.data);
+                      } catch (error) {
+                        console.error('Advanced insights error:', error);
+                      }
+                    };
+                    fetchAdvancedInsights();
+                  }}
+                  className="bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-200"
+                >
+                  🔄 Analizi Yenile
+                </Button>
               </div>
+              
+              {/* Advanced Insights Content */}
+              <AdvancedInsightsPanel questionId={currentQuestion.id} />
             </div>
 
           </CardContent>
