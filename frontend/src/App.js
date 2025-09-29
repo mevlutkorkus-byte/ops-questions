@@ -2949,6 +2949,11 @@ const Dashboard = () => {
             
             {/* Header Actions */}
             <div className="flex items-center space-x-3 sm:space-x-4">
+              {/* Global Search */}
+              <div className="relative">
+                <GlobalSearch />
+              </div>
+              
               {/* Theme Toggle */}
               <Button
                 variant="ghost"
