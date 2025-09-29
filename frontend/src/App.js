@@ -2874,8 +2874,14 @@ const Dashboard = () => {
                   <div>
                     <p className="text-blue-100 text-sm font-medium">Bu Ay Yanıtları</p>
                     <div className="flex items-baseline space-x-2">
-                      <p className="text-2xl font-bold">24</p>
-                      <span className="text-xs bg-blue-400 px-1.5 py-0.5 rounded-full">+12%</span>
+                      <p className="text-2xl font-bold">{stats?.monthly_responses || 0}</p>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        (stats?.monthly_trend || 0) >= 0 
+                          ? 'bg-blue-400' 
+                          : 'bg-red-400'
+                      }`}>
+                        {stats?.monthly_trend >= 0 ? '+' : ''}{stats?.monthly_trend || 0}%
+                      </span>
                     </div>
                   </div>
                   <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center">
@@ -2892,7 +2898,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-emerald-100 text-sm font-medium">Aktif Kullanıcılar</p>
                     <div className="flex items-baseline space-x-2">
-                      <p className="text-2xl font-bold">8</p>
+                      <p className="text-2xl font-bold">{stats?.active_users || 0}</p>
                       <span className="text-xs bg-emerald-400 px-1.5 py-0.5 rounded-full">Online</span>
                     </div>
                   </div>
@@ -2910,7 +2916,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-amber-100 text-sm font-medium">Tamamlanma Oranı</p>
                     <div className="flex items-baseline space-x-2">
-                      <p className="text-2xl font-bold">85%</p>
+                      <p className="text-2xl font-bold">{stats?.completion_rate || 0}%</p>
                       <span className="text-xs bg-amber-400 px-1.5 py-0.5 rounded-full">Hedef</span>
                     </div>
                   </div>
@@ -2928,7 +2934,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-purple-100 text-sm font-medium">AI Analizleri</p>
                     <div className="flex items-baseline space-x-2">
-                      <p className="text-2xl font-bold">156</p>
+                      <p className="text-2xl font-bold">{stats?.ai_analyses || 0}</p>
                       <span className="text-xs bg-purple-400 px-1.5 py-0.5 rounded-full">Hazır</span>
                     </div>
                   </div>
