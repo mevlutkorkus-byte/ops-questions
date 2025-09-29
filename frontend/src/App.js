@@ -3107,168 +3107,254 @@ const Dashboard = () => {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">🚀 Ana Fonksiyonlar</h2>
         </div>
 
-        {/* Main Navigation Cards */}
-        <div className="space-y-4 max-w-md">
-          
-          {/* Program Sabitleri Card */}
-          <Card className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group">
-            <CardContent className="p-0">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="p-6 flex items-center justify-between w-full">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-slate-600 to-slate-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                        <Settings className="w-6 h-6 text-white" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Sol Taraf - Ana Kartlar */}
+          <div className="lg:col-span-2 space-y-4">
+
+            {/* Program Sabitleri Card */}
+            <Card className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <CardContent className="p-0">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="p-6 flex items-center justify-between w-full">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-slate-600 to-slate-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                          <Settings className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">Program Sabitleri</h3>
+                          <p className="text-sm text-gray-600">Sistem ayarları ve temel veri yönetimi</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full font-medium">
+                          Aktif
+                        </span>
+                        <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                      </div>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-64 shadow-lg border border-gray-200">
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        setConstantsType('category');
+                        setCurrentView('constants');
+                      }}
+                      data-testid="category-constants-menu"
+                      className="p-3 hover:bg-slate-50"
+                    >
+                      <FileQuestion className="w-4 h-4 mr-3 text-slate-600" />
+                      <div>
+                        <p className="font-medium">Soru Kategorileri</p>
+                        <p className="text-xs text-gray-500">Sistemdeki soru kategorilerini yönet</p>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        setConstantsType('department');
+                        setCurrentView('constants');
+                      }}
+                      data-testid="department-constants-menu"
+                      className="p-3 hover:bg-slate-50"
+                    >
+                      <Building className="w-4 h-4 mr-3 text-slate-600" />
+                      <div>
+                        <p className="font-medium">Departmanlar</p>
+                        <p className="text-xs text-gray-500">Şirket departmanlarını düzenle</p>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        setConstantsType('employee');
+                        setCurrentView('constants');
+                      }}
+                      data-testid="employee-constants-menu"
+                      className="p-3 hover:bg-slate-50"
+                    >
+                      <Users className="w-4 h-4 mr-3 text-slate-600" />
+                      <div>
+                        <p className="font-medium">Çalışan Bilgileri</p>
+                        <p className="text-xs text-gray-500">Personel listesini güncelle</p>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        setConstantsType('question');
+                        setCurrentView('constants');
+                      }}
+                      data-testid="question-constants-menu"
+                      className="p-3 hover:bg-slate-50"
+                    >
+                      <Target className="w-4 h-4 mr-3 text-slate-600" />
+                      <div>
+                        <p className="font-medium">Soru Bankası</p>
+                        <p className="text-xs text-gray-500">Değerlendirme sorularını ekle/düzenle</p>
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </CardContent>
+            </Card>
+
+            {/* Soruları Paylaş Card */}
+            <Card 
+              className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              onClick={() => setCurrentView('share')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                      <Share className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Soruları Paylaş</h3>
+                      <p className="text-sm text-gray-600">Çalışanlara soru ataması ve e-posta gönderimi</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-medium">
+                      {stats?.active_questions || 0} Aktif
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* DEMO & VERİ ANALİZİ Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* DEMO SAYFA Card */}
+              <Card 
+                className="bg-white/90 backdrop-blur-sm border-2 border-orange-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                onClick={() => setCurrentView('demo')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                        <FileQuestion className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Program Sabitleri</h3>
-                        <p className="text-sm text-gray-600">Sistem ayarları ve temel veri yönetimi</p>
+                        <h3 className="text-base font-semibold text-gray-900">DEMO SAYFA</h3>
+                        <p className="text-xs text-gray-600">Kullanıcı ekranı demo</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full font-medium">
-                        Aktif
+                      <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-medium">
+                        DEMO
                       </span>
-                      <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                     </div>
                   </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 shadow-lg border border-gray-200">
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      setConstantsType('category');
-                      setCurrentView('constants');
-                    }}
-                    data-testid="category-constants-menu"
-                    className="p-3 hover:bg-slate-50"
-                  >
-                    <FileQuestion className="w-4 h-4 mr-3 text-slate-600" />
-                    <div>
-                      <p className="font-medium">Soru Kategorileri</p>
-                      <p className="text-xs text-gray-500">Sistemdeki soru kategorilerini yönet</p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      setConstantsType('department');
-                      setCurrentView('constants');
-                    }}
-                    data-testid="department-constants-menu"
-                    className="p-3 hover:bg-slate-50"
-                  >
-                    <Building className="w-4 h-4 mr-3 text-slate-600" />
-                    <div>
-                      <p className="font-medium">Departmanlar</p>
-                      <p className="text-xs text-gray-500">Şirket departmanlarını düzenle</p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      setConstantsType('employee');
-                      setCurrentView('constants');
-                    }}
-                    data-testid="employee-constants-menu"
-                    className="p-3 hover:bg-slate-50"
-                  >
-                    <Users className="w-4 h-4 mr-3 text-slate-600" />
-                    <div>
-                      <p className="font-medium">Çalışan Bilgileri</p>
-                      <p className="text-xs text-gray-500">Personel listesini güncelle</p>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => {
-                      setConstantsType('question');
-                      setCurrentView('constants');
-                    }}
-                    data-testid="question-constants-menu"
-                    className="p-3 hover:bg-slate-50"
-                  >
-                    <Target className="w-4 h-4 mr-3 text-slate-600" />
-                    <div>
-                      <p className="font-medium">Soru Bankası</p>
-                      <p className="text-xs text-gray-500">Değerlendirme sorularını ekle/düzenle</p>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
 
-          {/* Soruları Paylaş Card */}
-          <Card 
-            className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
-            onClick={() => setCurrentView('share')}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                    <Share className="w-6 h-6 text-white" />
+              {/* VERİ ANALİZİ Card */}
+              <Card 
+                className="bg-white/90 backdrop-blur-sm border-2 border-emerald-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                onClick={() => setCurrentView('analysis')}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                        <BarChart3 className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">VERİ ANALİZİ</h3>
+                        <p className="text-xs text-gray-600">Grafikler ve AI analizi</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-emerald-100 text-emerald-600 text-xs px-2 py-1 rounded-full font-medium">
+                        {stats?.ai_analyses || 0} Rapor
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Soruları Paylaş</h3>
-                    <p className="text-sm text-gray-600">Çalışanlara soru ataması ve e-posta gönderimi</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-medium">
-                    {stats?.active_questions || 0} Aktif
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
-          {/* DEMO SAYFA Card */}
-          <Card 
-            className="bg-white/90 backdrop-blur-sm border-2 border-orange-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
-            onClick={() => setCurrentView('demo')}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                    <FileQuestion className="w-6 h-6 text-white" />
+          {/* Sağ Taraf - Activity Feed */}
+          <div className="lg:col-span-1">
+            <Card className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md sticky top-4">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <AlertCircle className="w-4 h-4 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">DEMO SAYFA</h3>
-                    <p className="text-sm text-gray-600">Kullanıcı görüntüleme ekranı demo (GEÇİCİ)</p>
+                  <span>Aktivite Feed</span>
+                </CardTitle>
+                <CardDescription>Son sistem hareketleri</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 max-h-96 overflow-y-auto">
+                {/* Real-time aktiviteler */}
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Admin giriş yaptı</p>
+                      <p className="text-xs text-gray-500">Az önce</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-medium">
-                    DEMO
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                  
+                  <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <BarChart3 className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Dashboard verileri güncellendi</p>
+                      <p className="text-xs text-gray-500">2 dk önce</p>
+                    </div>
+                  </div>
 
-          {/* VERİ ANALİZİ Card */}
-          <Card 
-            className="bg-white/90 backdrop-blur-sm border-2 border-emerald-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
-            onClick={() => setCurrentView('analysis')}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                    <BarChart3 className="w-6 h-6 text-white" />
+                  <div className="flex items-start space-x-3 p-3 bg-amber-50 rounded-lg">
+                    <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
+                      <FileQuestion className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{stats?.active_questions || 0} aktif soru mevcut</p>
+                      <p className="text-xs text-gray-500">5 dk önce</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">VERİ ANALİZİ</h3>
-                    <p className="text-sm text-gray-600">Geçmiş veriler, grafikler ve AI analizleri</p>
+
+                  <div className="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                      <Brain className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">AI analiz motoru çalışıyor</p>
+                      <p className="text-xs text-gray-500">10 dk önce</p>
+                    </div>
                   </div>
+
+                  {stats?.notifications?.map((notification, index) => (
+                    <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        notification.type === 'warning' ? 'bg-amber-500' :
+                        notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
+                      }`}>
+                        <AlertCircle className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">{notification.message}</p>
+                        <p className="text-xs text-gray-500">Şimdi</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="bg-emerald-100 text-emerald-600 text-xs px-2 py-1 rounded-full font-medium">
-                    {stats?.ai_analyses || 0} Rapor
-                  </span>
+
+                {/* See more link */}
+                <div className="pt-3 text-center border-t border-gray-200">
+                  <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                    Daha fazla aktivite gör →
+                  </button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Content Area - Clean */}
