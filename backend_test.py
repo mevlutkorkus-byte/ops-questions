@@ -1391,6 +1391,465 @@ class QuestionBankAPITester:
         
         return 0 if self.tests_passed > 0 else 1
 
+    def test_advanced_analytics_system(self):
+        """Test Advanced Analytics System endpoints"""
+        print("\n" + "="*50)
+        print("ADVANCED ANALYTICS SYSTEM TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping analytics tests")
+            return
+        
+        # First, get some questions to test with
+        success, questions_response = self.run_test(
+            "Get Questions for Analytics Testing",
+            "GET",
+            "questions",
+            200
+        )
+        
+        question_ids = []
+        if success and isinstance(questions_response, list) and len(questions_response) > 0:
+            question_ids = [q['id'] for q in questions_response[:3]]  # Get first 3 question IDs
+            print(f"   ✅ Found {len(question_ids)} questions for analytics testing")
+        else:
+            print("   ⚠️  No questions found - creating test question for analytics")
+            # Create a test question
+            test_question = {
+                "category": "Analytics Test",
+                "question_text": "Test question for analytics system",
+                "importance_reason": "Testing analytics functionality",
+                "expected_action": "Analyze the results",
+                "period": "Aylık",
+                "chart_type": "Sütun",
+                "table_rows": [
+                    {"name": "Performance", "unit": "score", "order": 1},
+                    {"name": "Efficiency", "unit": "%", "order": 2}
+                ]
+            }
+            
+            success, response = self.run_test(
+                "Create Test Question for Analytics",
+                "POST",
+                "questions",
+                200,
+                data=test_question
+            )
+            
+            if success and 'id' in response:
+                question_ids = [response['id']]
+                print(f"   ✅ Created test question for analytics: {response['id']}")
+        
+        # Test 1: Advanced Analytics Insights for specific question
+        if question_ids:
+            for i, question_id in enumerate(question_ids[:2]):  # Test first 2 questions
+                success, response = self.run_test(
+                    f"Advanced Analytics Insights - Question {i+1}",
+                    "GET",
+                    f"analytics/insights/{question_id}",
+                    200
+                )
+                
+                if success:
+                    # Verify response structure
+                    required_fields = ['question_id', 'question_text', 'insights', 'generated_at']
+                    missing_fields = [field for field in required_fields if field not in response]
+                    
+                    if not missing_fields:
+                        print(f"   ✅ Analytics insights structure complete for question {i+1}")
+                        
+                        # Check insights structure
+                        insights = response.get('insights', {})
+                        insight_fields = ['data_trends', 'predictions', 'anomalies', 'recommendations', 'performance_score', 'confidence_level']
+                        missing_insight_fields = [field for field in insight_fields if field not in insights]
+                        
+                        if not missing_insight_fields:
+                            print(f"   ✅ Insights structure complete")
+                            print(f"   📊 Performance Score: {insights.get('performance_score', 'N/A')}")
+                            print(f"   📊 Confidence Level: {insights.get('confidence_level', 'N/A')}")
+                            print(f"   📊 Recommendations: {len(insights.get('recommendations', []))}")
+                        else:
+                            self.log_test(f"Analytics Insights Structure - Question {i+1}", False, f"Missing insight fields: {missing_insight_fields}")
+                    else:
+                        self.log_test(f"Analytics Insights Response - Question {i+1}", False, f"Missing fields: {missing_fields}")
+        
+        # Test 2: Comparative Analytics
+        if len(question_ids) >= 2:
+            question_ids_str = ','.join(question_ids[:3])  # Test with up to 3 questions
+            
+            success, response = self.run_test(
+                "Comparative Analytics",
+                "GET",
+                f"analytics/compare?question_ids={question_ids_str}",
+                200
+            )
+            
+            if success:
+                # Verify response structure
+                required_fields = ['comparison_results', 'insights', 'generated_at']
+                missing_fields = [field for field in required_fields if field not in response]
+                
+                if not missing_fields:
+                    print(f"   ✅ Comparative analytics structure complete")
+                    
+                    comparison_results = response.get('comparison_results', [])
+                    insights = response.get('insights', {})
+                    
+                    print(f"   📊 Questions compared: {len(comparison_results)}")
+                    print(f"   📊 Performance ranking available: {'performance_ranking' in insights}")
+                    print(f"   📊 Summary insights: {'summary' in insights}")
+                    
+                    # Check if ranking is working
+                    if 'performance_ranking' in insights and insights['performance_ranking']:
+                        ranking = insights['performance_ranking']
+                        print(f"   📊 Top performer: {ranking[0].get('question_text', 'Unknown')[:50]}...")
+                else:
+                    self.log_test("Comparative Analytics Structure", False, f"Missing fields: {missing_fields}")
+        else:
+            print("   ⚠️  Need at least 2 questions for comparative analytics - skipping")
+        
+        # Test 3: Test with invalid question ID
+        success, response = self.run_test(
+            "Analytics Insights - Invalid Question ID",
+            "GET",
+            "analytics/insights/invalid-question-id",
+            404
+        )
+        
+        if success:
+            print("   ✅ Properly handles invalid question ID")
+        
+        # Test 4: Test comparative analytics with invalid parameters
+        success, response = self.run_test(
+            "Comparative Analytics - Single Question (Should Fail)",
+            "GET",
+            f"analytics/compare?question_ids={question_ids[0] if question_ids else 'test'}",
+            400
+        )
+        
+        if success:
+            print("   ✅ Properly validates comparative analytics parameters")
+
+    def test_automation_services(self):
+        """Test Automation Services endpoints"""
+        print("\n" + "="*50)
+        print("AUTOMATION SERVICES TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping automation tests")
+            return
+        
+        # Test 1: Email Reminders Automation
+        reminder_config = {
+            "reminder_days": 3,
+            "min_reminder_interval": 2,
+            "email_template": "standard"
+        }
+        
+        success, response = self.run_test(
+            "Email Reminders Automation",
+            "POST",
+            "automation/email-reminders",
+            200,
+            data=reminder_config
+        )
+        
+        if success:
+            # Verify response structure
+            required_fields = ['success', 'reminder_count', 'processed_at']
+            missing_fields = [field for field in required_fields if field not in response]
+            
+            if not missing_fields:
+                print(f"   ✅ Email reminders automation structure complete")
+                print(f"   📧 Reminders sent: {response.get('reminder_count', 0)}")
+                print(f"   📧 Success status: {response.get('success', False)}")
+                
+                if 'reminders_sent' in response:
+                    reminders = response['reminders_sent']
+                    print(f"   📧 Reminder details available: {len(reminders)} reminders")
+            else:
+                self.log_test("Email Reminders Structure", False, f"Missing fields: {missing_fields}")
+        
+        # Test 2: Generate Automated Reports - Monthly
+        monthly_report_config = {
+            "type": "monthly",
+            "include_charts": True,
+            "email_recipients": ["admin@test.com"],
+            "format": "detailed"
+        }
+        
+        success, response = self.run_test(
+            "Generate Automated Reports - Monthly",
+            "POST",
+            "automation/generate-reports",
+            200,
+            data=monthly_report_config
+        )
+        
+        if success:
+            # Verify response structure
+            required_fields = ['success', 'report_id', 'report_data', 'generated_at']
+            missing_fields = [field for field in required_fields if field not in response]
+            
+            if not missing_fields:
+                print(f"   ✅ Monthly report generation structure complete")
+                print(f"   📊 Report ID: {response.get('report_id', 'N/A')}")
+                
+                report_data = response.get('report_data', {})
+                if report_data:
+                    print(f"   📊 Report period: {report_data.get('period', 'Unknown')}")
+                    print(f"   📊 Total responses: {report_data.get('total_responses', 0)}")
+                    print(f"   📊 Questions analyzed: {report_data.get('questions_analyzed', 0)}")
+                    print(f"   📊 Insights count: {len(report_data.get('insights', []))}")
+            else:
+                self.log_test("Monthly Report Structure", False, f"Missing fields: {missing_fields}")
+        
+        # Test 3: Generate Automated Reports - Weekly
+        weekly_report_config = {
+            "type": "weekly",
+            "include_charts": False,
+            "format": "summary"
+        }
+        
+        success, response = self.run_test(
+            "Generate Automated Reports - Weekly",
+            "POST",
+            "automation/generate-reports",
+            200,
+            data=weekly_report_config
+        )
+        
+        if success:
+            print(f"   ✅ Weekly report generation working")
+            report_data = response.get('report_data', {})
+            if report_data:
+                print(f"   📊 Weekly report period: {report_data.get('period', 'Unknown')}")
+        
+        # Test 4: Generate Automated Reports - Quarterly
+        quarterly_report_config = {
+            "type": "quarterly",
+            "include_trends": True,
+            "detailed_analysis": True
+        }
+        
+        success, response = self.run_test(
+            "Generate Automated Reports - Quarterly",
+            "POST",
+            "automation/generate-reports",
+            200,
+            data=quarterly_report_config
+        )
+        
+        if success:
+            print(f"   ✅ Quarterly report generation working")
+
+    def test_legacy_endpoints(self):
+        """Test legacy endpoints to ensure they still work"""
+        print("\n" + "="*50)
+        print("LEGACY ENDPOINTS TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping legacy tests")
+            return
+        
+        # Test 1: Questions Share List (with period filtering)
+        success, response = self.run_test(
+            "Legacy - Questions Share List",
+            "GET",
+            "questions-share-list",
+            200
+        )
+        
+        if success:
+            if 'questions' in response and 'employees' in response:
+                print(f"   ✅ Questions share list working: {len(response['questions'])} questions, {len(response['employees'])} employees")
+            else:
+                self.log_test("Legacy Questions Share List Structure", False, "Missing questions or employees")
+        
+        # Test 2: Questions Share List with period filter
+        success, response = self.run_test(
+            "Legacy - Questions Share List with Period Filter",
+            "GET",
+            "questions-share-list?period=Aylık",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Period filtering working on legacy endpoint")
+        
+        # Test 3: Table Responses endpoint (if we have test data)
+        # First create some test data
+        question_id, employee_id = self.setup_test_data_for_responses()
+        
+        if question_id and employee_id:
+            table_response_data = {
+                "question_id": question_id,
+                "employee_id": employee_id,
+                "year": 2025,
+                "month": 1,
+                "table_data": {
+                    "row1": "100",
+                    "row2": "85"
+                },
+                "monthly_comment": "Test comment for legacy endpoint testing"
+            }
+            
+            success, response = self.run_test(
+                "Legacy - Table Responses Submission",
+                "POST",
+                "table-responses",
+                200,
+                data=table_response_data
+            )
+            
+            if success:
+                print(f"   ✅ Table responses submission working")
+                if 'ai_comment' in response:
+                    print(f"   ✅ AI comment generation still working in legacy endpoint")
+
+    def test_error_handling_and_edge_cases(self):
+        """Test error handling and edge cases"""
+        print("\n" + "="*50)
+        print("ERROR HANDLING & EDGE CASES TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping error handling tests")
+            return
+        
+        # Test 1: Dashboard stats with invalid token
+        temp_token = self.token
+        self.token = "invalid-token"
+        
+        success, response = self.run_test(
+            "Dashboard Stats - Invalid Token",
+            "GET",
+            "dashboard/stats",
+            401
+        )
+        
+        if success:
+            print("   ✅ Properly rejects invalid tokens")
+        
+        self.token = temp_token
+        
+        # Test 2: Analytics with non-existent question
+        success, response = self.run_test(
+            "Analytics Insights - Non-existent Question",
+            "GET",
+            "analytics/insights/non-existent-id",
+            404
+        )
+        
+        if success:
+            print("   ✅ Properly handles non-existent question in analytics")
+        
+        # Test 3: Comparative analytics with too many questions
+        many_question_ids = ','.join(['id1', 'id2', 'id3', 'id4', 'id5', 'id6'])  # 6 questions (max is 5)
+        
+        success, response = self.run_test(
+            "Comparative Analytics - Too Many Questions",
+            "GET",
+            f"analytics/compare?question_ids={many_question_ids}",
+            400
+        )
+        
+        if success:
+            print("   ✅ Properly validates maximum questions limit in comparative analytics")
+        
+        # Test 4: Automation with invalid config
+        invalid_config = {
+            "invalid_field": "invalid_value"
+        }
+        
+        success, response = self.run_test(
+            "Email Reminders - Invalid Config",
+            "POST",
+            "automation/email-reminders",
+            200  # Should still work but with default values
+        )
+        
+        if success:
+            print("   ✅ Email reminders handles invalid config gracefully")
+
+    def run_comprehensive_system_tests(self):
+        """Run comprehensive system tests for all recently implemented features"""
+        print("🚀 Starting Comprehensive System Testing...")
+        print("Testing all recently implemented features and endpoints")
+        print(f"Backend URL: {self.base_url}")
+        print("="*70)
+        
+        # Test 1: Authentication System
+        if not self.test_authentication_system():
+            print("\n❌ Authentication failed - cannot proceed with comprehensive tests")
+            return 1
+        
+        # Test 2: Core Dashboard Stats
+        print("\n🔍 Testing Core Dashboard Stats...")
+        self.test_dashboard_stats()
+        
+        # Test 3: Advanced Analytics System
+        print("\n🔍 Testing Advanced Analytics System...")
+        self.test_advanced_analytics_system()
+        
+        # Test 4: Automation Services
+        print("\n🔍 Testing Automation Services...")
+        self.test_automation_services()
+        
+        # Test 5: Legacy Endpoints
+        print("\n🔍 Testing Legacy Endpoints...")
+        self.test_legacy_endpoints()
+        
+        # Test 6: Error Handling and Edge Cases
+        print("\n🔍 Testing Error Handling and Edge Cases...")
+        self.test_error_handling_and_edge_cases()
+        
+        # Print comprehensive results
+        print("\n" + "="*70)
+        print("COMPREHENSIVE SYSTEM TEST RESULTS")
+        print("="*70)
+        print(f"📊 Total tests run: {self.tests_run}")
+        print(f"📊 Tests passed: {self.tests_passed}")
+        print(f"📊 Tests failed: {self.tests_run - self.tests_passed}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        # Categorize test results
+        dashboard_tests = [r for r in self.test_results if 'dashboard' in r['test_name'].lower()]
+        analytics_tests = [r for r in self.test_results if 'analytics' in r['test_name'].lower()]
+        automation_tests = [r for r in self.test_results if 'automation' in r['test_name'].lower()]
+        legacy_tests = [r for r in self.test_results if 'legacy' in r['test_name'].lower()]
+        error_tests = [r for r in self.test_results if 'error' in r['test_name'].lower() or 'invalid' in r['test_name'].lower()]
+        
+        print(f"\n📋 TEST BREAKDOWN BY CATEGORY:")
+        print(f"   🎯 Dashboard Stats: {len([t for t in dashboard_tests if t['success']])}/{len(dashboard_tests)} passed")
+        print(f"   📊 Advanced Analytics: {len([t for t in analytics_tests if t['success']])}/{len(analytics_tests)} passed")
+        print(f"   🤖 Automation Services: {len([t for t in automation_tests if t['success']])}/{len(automation_tests)} passed")
+        print(f"   🔄 Legacy Endpoints: {len([t for t in legacy_tests if t['success']])}/{len(legacy_tests)} passed")
+        print(f"   ⚠️  Error Handling: {len([t for t in error_tests if t['success']])}/{len(error_tests)} passed")
+        
+        # Show failed tests
+        failed_tests = [r for r in self.test_results if not r['success']]
+        if failed_tests:
+            print(f"\n❌ FAILED TESTS:")
+            for test in failed_tests:
+                print(f"   • {test['test_name']}: {test['details']}")
+        else:
+            print(f"\n🎉 ALL TESTS PASSED!")
+        
+        # Save results
+        self.save_results()
+        
+        return 0 if len(failed_tests) == 0 else 1
+
     def run_all_tests(self):
         """Run all API tests including new Cevaplar feature"""
         print("🚀 Starting Complete API Testing...")
@@ -1409,6 +1868,11 @@ class QuestionBankAPITester:
         # NEW: Test Cevaplar (Monthly Responses) feature
         self.test_cevaplar_responses_feature()
         self.test_ai_integration()
+        
+        # NEW: Test Advanced Analytics and Automation
+        self.test_advanced_analytics_system()
+        self.test_automation_services()
+        self.test_legacy_endpoints()
         
         # Print final results
         print("\n" + "="*50)
