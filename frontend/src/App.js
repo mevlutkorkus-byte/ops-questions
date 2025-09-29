@@ -4075,7 +4075,7 @@ const DemoQuestionResponse = () => {
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {questionData.question.period} Değerlendirme Tablosu (DEMO)
+                  {currentQuestion.period} Değerlendirme Tablosu (DEMO)
                 </h3>
                 <div className="text-sm text-gray-500">
                   <span className="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800">
@@ -4089,11 +4089,31 @@ const DemoQuestionResponse = () => {
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50 sticky top-0">
                       <tr>
-                        <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
-                        <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
+                        {/* Dynamic period headers based on question period */}
+                        {currentQuestion.period === 'Aylık' && (
+                          <>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
+                          </>
+                        )}
+                        {currentQuestion.period === 'Çeyreklik' && (
+                          <>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-32">Çeyrek</th>
+                          </>
+                        )}
+                        {currentQuestion.period === 'Altı Aylık' && (
+                          <>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-32">Yarıyıl</th>
+                          </>
+                        )}
+                        {currentQuestion.period === 'Yıllık' && (
+                          <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                        )}
                         
                         {/* Dynamic columns from table_rows */}
-                        {questionData.question.table_rows && questionData.question.table_rows.map(row => (
+                        {currentQuestion.table_rows && currentQuestion.table_rows.map(row => (
                           <th key={row.id} className="px-3 py-3 text-left font-medium text-gray-900 min-w-32">
                             {row.name}
                             {row.unit && <span className="text-xs text-gray-500 block">({row.unit})</span>}
@@ -4118,27 +4138,90 @@ const DemoQuestionResponse = () => {
                               'bg-gray-50 hover:bg-gray-100'
                             }`}
                           >
-                            <td className="px-3 py-2 font-medium">
-                              <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
-                                {periodInfo.year}
-                              </span>
-                            </td>
-                            
-                            <td className="px-3 py-2 font-medium">
-                              <div className="flex items-center space-x-2">
-                                <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
-                                  {periodInfo.monthName}
-                                </span>
-                                {isActive && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                    AKTİF
+                            {/* Dynamic period columns */}
+                            {currentQuestion.period === 'Aylık' && (
+                              <>
+                                <td className="px-3 py-2 font-medium">
+                                  <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                    {periodInfo.year}
                                   </span>
-                                )}
-                              </div>
-                            </td>
+                                </td>
+                                <td className="px-3 py-2 font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                      {periodInfo.monthName}
+                                    </span>
+                                    {isActive && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        AKTİF
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                              </>
+                            )}
+                            
+                            {currentQuestion.period === 'Çeyreklik' && (
+                              <>
+                                <td className="px-3 py-2 font-medium">
+                                  <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                    {periodInfo.year}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-2 font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                      Q{periodInfo.quarter}
+                                    </span>
+                                    {isActive && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        AKTİF
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                              </>
+                            )}
+                            
+                            {currentQuestion.period === 'Altı Aylık' && (
+                              <>
+                                <td className="px-3 py-2 font-medium">
+                                  <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                    {periodInfo.year}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-2 font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                      H{periodInfo.half}
+                                    </span>
+                                    {isActive && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        AKTİF
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                              </>
+                            )}
+                            
+                            {currentQuestion.period === 'Yıllık' && (
+                              <td className="px-3 py-2 font-medium">
+                                <div className="flex items-center space-x-2">
+                                  <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                    {periodInfo.year}
+                                  </span>
+                                  {isActive && (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                      AKTİF
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                            )}
                             
                             {/* Data columns */}
-                            {questionData.question.table_rows && questionData.question.table_rows.map(row => (
+                            {currentQuestion.table_rows && currentQuestion.table_rows.map(row => (
                               <td key={row.id} className="px-3 py-2">
                                 <Input
                                   type="text"
