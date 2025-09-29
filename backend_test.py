@@ -2723,7 +2723,7 @@ class QuestionBankAPITester:
                 f"Export Auth Test - {endpoint.split('/')[-1].upper()}",
                 "GET",
                 endpoint,
-                401  # Should require authentication
+                403  # FastAPI returns 403 for authentication failures
             )
             
             if success:
