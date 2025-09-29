@@ -875,39 +875,227 @@ class QuestionBankAPITester:
                 print(f"   ✅ Created {period} question")
 
     def test_period_based_filtering(self):
-        """Test if there are any period-based filtering endpoints"""
+        """Test the newly implemented period filtering functionality in questions-share-list endpoint"""
         print("\n" + "="*50)
-        print("PERIOD-BASED FILTERING TESTS")
+        print("PERIOD-BASED FILTERING TESTS - QUESTIONS-SHARE-LIST ENDPOINT")
         print("="*50)
         
         if not self.token:
             print("❌ No authentication token - cannot test filtering")
             return
         
-        # Test if questions can be filtered by period (this might not exist yet)
-        periods_to_test = ["Aylık", "Haftalık", "Günlük"]
+        # First, ensure we have test questions with different periods
+        self.ensure_test_questions_exist()
+        
+        # Test 1: Get all questions without period parameter (baseline)
+        print("\n🔍 Test 1: Get all questions without period parameter")
+        success, all_response = self.run_test(
+            "Questions Share List - No Period Filter",
+            "GET",
+            "questions-share-list",
+            200
+        )
+        
+        all_questions = []
+        if success and 'questions' in all_response:
+            all_questions = all_response['questions']
+            print(f"   ✅ Total questions without filter: {len(all_questions)}")
+            
+            # Show period distribution
+            period_counts = {}
+            for q in all_questions:
+                period = q.get('period', 'Unknown')
+                period_counts[period] = period_counts.get(period, 0) + 1
+            
+            print("   📊 Period distribution in all questions:")
+            for period, count in period_counts.items():
+                print(f"      - {period}: {count} questions")
+        else:
+            print("   ❌ Failed to get baseline questions")
+            return
+        
+        # Test 2: Test specific period filters
+        periods_to_test = ["Aylık", "Günlük", "Haftalık"]
         
         for period in periods_to_test:
-            # Try different possible filtering endpoints
-            possible_endpoints = [
-                f"questions?period={period}",
-                f"questions-share-list?period={period}",
-                f"questions/filter?period={period}"
-            ]
+            print(f"\n🔍 Test 2.{periods_to_test.index(period)+1}: Filter by period '{period}'")
             
-            for endpoint in possible_endpoints:
-                success, response = self.run_test(
-                    f"Period Filter Test - {period} ({endpoint})",
-                    "GET",
-                    endpoint,
-                    200
-                )
+            success, filtered_response = self.run_test(
+                f"Questions Share List - Period Filter: {period}",
+                "GET",
+                f"questions-share-list?period={period}",
+                200
+            )
+            
+            if success and 'questions' in filtered_response:
+                filtered_questions = filtered_response['questions']
+                print(f"   ✅ Filtered questions for '{period}': {len(filtered_questions)}")
                 
-                if success:
-                    print(f"   ✅ Period filtering endpoint found: {endpoint}")
-                    break
+                # Verify all returned questions have the correct period
+                correct_period_count = 0
+                for question in filtered_questions:
+                    if question.get('period') == period:
+                        correct_period_count += 1
+                    else:
+                        print(f"   ❌ Question with wrong period found: {question.get('period')} (expected: {period})")
+                
+                if correct_period_count == len(filtered_questions) and len(filtered_questions) > 0:
+                    print(f"   ✅ All {len(filtered_questions)} questions have correct period: {period}")
+                elif len(filtered_questions) == 0:
+                    print(f"   ⚠️  No questions found for period '{period}' - this might be expected")
+                else:
+                    self.log_test(f"Period Filter Accuracy - {period}", False, 
+                                f"Only {correct_period_count}/{len(filtered_questions)} questions have correct period")
+                
+                # Verify response structure is maintained
+                if 'employees' in filtered_response:
+                    print(f"   ✅ Response structure maintained - employees list present ({len(filtered_response['employees'])} employees)")
+                else:
+                    self.log_test(f"Period Filter Response Structure - {period}", False, "Missing employees array in response")
+                
+                # Show sample questions for this period
+                for i, question in enumerate(filtered_questions[:2]):  # Show first 2
+                    print(f"   📋 Sample Question {i+1}: {question.get('question_text', '')[:60]}...")
+                    print(f"      Category: {question.get('category', 'Unknown')}")
+                    print(f"      Period: {question.get('period', 'Unknown')}")
             else:
-                print(f"   ⚠️  No period filtering endpoint found for {period}")
+                self.log_test(f"Period Filter - {period}", False, "Failed to get filtered response or missing questions array")
+        
+        # Test 3: Test invalid period parameter
+        print(f"\n🔍 Test 3: Test invalid period parameter")
+        
+        success, invalid_response = self.run_test(
+            "Questions Share List - Invalid Period Filter",
+            "GET",
+            "questions-share-list?period=InvalidPeriod",
+            200  # Should still return 200 but with no results or all results
+        )
+        
+        if success and 'questions' in invalid_response:
+            invalid_questions = invalid_response['questions']
+            print(f"   ✅ Invalid period handled gracefully: {len(invalid_questions)} questions returned")
+            
+            if len(invalid_questions) == 0:
+                print("   ✅ Invalid period correctly returns no results")
+            else:
+                print("   ⚠️  Invalid period returns all results (acceptable behavior)")
+        else:
+            self.log_test("Invalid Period Handling", False, "Failed to handle invalid period parameter")
+        
+        # Test 4: Test authentication requirement
+        print(f"\n🔍 Test 4: Test authentication requirement")
+        
+        temp_token = self.token
+        self.token = None
+        
+        success, auth_response = self.run_test(
+            "Questions Share List Period Filter - No Auth (Should Fail)",
+            "GET",
+            "questions-share-list?period=Aylık",
+            401
+        )
+        
+        if success:
+            print("   ✅ Period filtering properly requires authentication")
+        else:
+            self.log_test("Period Filter Authentication", False, "Period filtering should require authentication")
+        
+        self.token = temp_token
+        
+        # Test 5: Performance and response time check
+        print(f"\n🔍 Test 5: Performance and response time check")
+        
+        import time
+        start_time = time.time()
+        
+        success, perf_response = self.run_test(
+            "Questions Share List - Performance Test",
+            "GET",
+            "questions-share-list?period=Aylık",
+            200
+        )
+        
+        end_time = time.time()
+        response_time = end_time - start_time
+        
+        if success:
+            print(f"   ✅ Response time: {response_time:.2f} seconds")
+            if response_time < 5.0:
+                print("   ✅ Response time is acceptable (< 5 seconds)")
+            else:
+                print("   ⚠️  Response time is slow (> 5 seconds)")
+        
+        # Summary
+        print(f"\n📋 PERIOD FILTERING TEST SUMMARY:")
+        print(f"   - Baseline test (no filter): {'✅ PASSED' if all_questions else '❌ FAILED'}")
+        print(f"   - Period-specific filtering: Tested {len(periods_to_test)} periods")
+        print(f"   - Invalid period handling: ✅ TESTED")
+        print(f"   - Authentication requirement: ✅ TESTED")
+        print(f"   - Performance check: ✅ TESTED")
+
+    def ensure_test_questions_exist(self):
+        """Ensure we have test questions with different periods for filtering tests"""
+        print("\n🔧 Ensuring test questions exist for period filtering...")
+        
+        # Check current questions
+        success, response = self.run_test(
+            "Check Existing Questions",
+            "GET",
+            "questions-share-list",
+            200
+        )
+        
+        if not success or 'questions' not in response:
+            print("   ❌ Cannot check existing questions")
+            return
+        
+        existing_questions = response['questions']
+        existing_periods = set(q.get('period') for q in existing_questions)
+        
+        required_periods = ["Aylık", "Günlük", "Haftalık"]
+        missing_periods = [p for p in required_periods if p not in existing_periods]
+        
+        if missing_periods:
+            print(f"   ⚠️  Missing questions for periods: {missing_periods}")
+            print("   🔧 Creating missing test questions...")
+            
+            for period in missing_periods:
+                self.create_single_test_question(period)
+        else:
+            print(f"   ✅ All required periods have questions: {required_periods}")
+
+    def create_single_test_question(self, period):
+        """Create a single test question for a specific period"""
+        timestamp = datetime.now().strftime('%H%M%S%f')
+        
+        question_data = {
+            "category": "Test Kategori",
+            "question_text": f"Bu bir {period} test sorusudur - {timestamp}",
+            "importance_reason": f"{period} periyotta test amaçlı oluşturulmuştur.",
+            "expected_action": f"{period} bazında test sonuçlarını değerlendirin.",
+            "period": period,
+            "chart_type": "Sütun",
+            "table_rows": [
+                {
+                    "name": "Test Değeri",
+                    "unit": "adet",
+                    "order": 1
+                }
+            ]
+        }
+        
+        success, response = self.run_test(
+            f"Create Test Question - {period}",
+            "POST",
+            "questions",
+            200,
+            data=question_data
+        )
+        
+        if success:
+            print(f"   ✅ Created test question for period: {period}")
+        else:
+            print(f"   ❌ Failed to create test question for period: {period}")
 
     def run_authentication_and_sharing_tests(self):
         """Run focused tests for authentication and question sharing"""
