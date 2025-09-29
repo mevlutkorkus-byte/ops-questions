@@ -3439,50 +3439,189 @@ const PublicQuestionResponse = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {monthsArray.map(monthInfo => {
-                            const monthData = tableData[monthInfo.key] || { data: {}, comment: '', isActive: false };
-                            const isActive = monthInfo.isCurrentPeriod;
-                            const hasExistingData = existingResponses.some(r => 
-                              r.year === monthInfo.year && r.month === monthInfo.month
-                            );
+                          {periodsArray.map(periodInfo => {
+                            const periodData = tableData[periodInfo.key] || { data: {}, comment: '', isActive: false };
+                            const isActive = periodInfo.isCurrentPeriod;
+                            const hasExistingData = existingResponses.some(r => {
+                              // Check based on period type
+                              if (periodInfo.year && periodInfo.month && periodInfo.day) {
+                                return r.year === periodInfo.year && r.month === periodInfo.month && r.day === periodInfo.day;
+                              } else if (periodInfo.year && periodInfo.month) {
+                                return r.year === periodInfo.year && r.month === periodInfo.month;
+                              } else if (periodInfo.year && periodInfo.week) {
+                                return r.year === periodInfo.year && r.week === periodInfo.week;
+                              } else if (periodInfo.year && periodInfo.quarter) {
+                                return r.year === periodInfo.year && r.quarter === periodInfo.quarter;
+                              } else if (periodInfo.year && periodInfo.half) {
+                                return r.year === periodInfo.year && r.half === periodInfo.half;
+                              } else if (periodInfo.year) {
+                                return r.year === periodInfo.year;
+                              }
+                              return false;
+                            });
                             
                             return (
                               <tr 
-                                key={monthInfo.key} 
+                                key={periodInfo.key} 
                                 className={`border-t ${
                                   isActive ? 'bg-green-50 hover:bg-green-100' : 
                                   hasExistingData ? 'bg-blue-50' : 
                                   'bg-gray-50 hover:bg-gray-100'
                                 }`}
                               >
-                                {/* Year column */}
-                                <td className="px-3 py-2 font-medium">
-                                  <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
-                                    {monthInfo.year}
-                                  </span>
-                                </td>
-                                
-                                {/* Month column */}
-                                <td className="px-3 py-2 font-medium">
-                                  <div className="flex items-center space-x-2">
-                                    <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
-                                      {monthInfo.monthName}
-                                    </span>
-                                    {isActive && (
-                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                        AKTİF
+                                {/* Dynamic period columns */}
+                                {questionData.question.period === 'Günlük' && (
+                                  <>
+                                    <td className="px-3 py-2 font-medium">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.year}
                                       </span>
-                                    )}
-                                  </div>
-                                </td>
+                                    </td>
+                                    <td className="px-3 py-2 font-medium">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.monthName}
+                                      </span>
+                                    </td>
+                                    <td className="px-3 py-2 font-medium">
+                                      <div className="flex items-center space-x-2">
+                                        <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                          {periodInfo.day}
+                                        </span>
+                                        {isActive && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            AKTİF
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </>
+                                )}
+                                
+                                {questionData.question.period === 'Haftalık' && (
+                                  <>
+                                    <td className="px-3 py-2 font-medium">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.year}
+                                      </span>
+                                    </td>
+                                    <td className="px-3 py-2 font-medium">
+                                      <div className="flex items-center space-x-2">
+                                        <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                          {periodInfo.week}
+                                        </span>
+                                        {isActive && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            AKTİF
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </>
+                                )}
+                                
+                                {questionData.question.period === 'Aylık' && (
+                                  <>
+                                    <td className="px-3 py-2 font-medium">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.year}
+                                      </span>
+                                    </td>
+                                    <td className="px-3 py-2 font-medium">
+                                      <div className="flex items-center space-x-2">
+                                        <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                          {periodInfo.monthName}
+                                        </span>
+                                        {isActive && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            AKTİF
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </>
+                                )}
+                                
+                                {questionData.question.period === 'Çeyreklik' && (
+                                  <>
+                                    <td className="px-3 py-2 font-medium">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.year}
+                                      </span>
+                                    </td>
+                                    <td className="px-3 py-2 font-medium">
+                                      <div className="flex items-center space-x-2">
+                                        <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                          Q{periodInfo.quarter}
+                                        </span>
+                                        {isActive && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            AKTİF
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </>
+                                )}
+                                
+                                {questionData.question.period === 'Altı Aylık' && (
+                                  <>
+                                    <td className="px-3 py-2 font-medium">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.year}
+                                      </span>
+                                    </td>
+                                    <td className="px-3 py-2 font-medium">
+                                      <div className="flex items-center space-x-2">
+                                        <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                          H{periodInfo.half}
+                                        </span>
+                                        {isActive && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            AKTİF
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </>
+                                )}
+                                
+                                {questionData.question.period === 'Yıllık' && (
+                                  <td className="px-3 py-2 font-medium">
+                                    <div className="flex items-center space-x-2">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.year}
+                                      </span>
+                                      {isActive && (
+                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          AKTİF
+                                        </span>
+                                      )}
+                                    </div>
+                                  </td>
+                                )}
+                                
+                                {questionData.question.period === 'İhtiyaç Halinde' && (
+                                  <td className="px-3 py-2 font-medium">
+                                    <div className="flex items-center space-x-2">
+                                      <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                        {periodInfo.displayText}
+                                      </span>
+                                      {isActive && (
+                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          AKTİF
+                                        </span>
+                                      )}
+                                    </div>
+                                  </td>
+                                )}
                                 
                                 {/* Data columns */}
                                 {questionData.question.table_rows && questionData.question.table_rows.map(row => (
                                   <td key={row.id} className="px-3 py-2">
                                     <Input
                                       type="text"
-                                      value={monthData.data[row.id] || ''}
-                                      onChange={(e) => updateTableCell(monthInfo.key, row.id, e.target.value)}
+                                      value={periodData.data[row.id] || ''}
+                                      onChange={(e) => updateTableCell(periodInfo.key, row.id, e.target.value)}
                                       disabled={!isActive}
                                       placeholder={isActive ? "0" : ""}
                                       className={`w-full h-8 text-sm ${
@@ -3496,8 +3635,8 @@ const PublicQuestionResponse = () => {
                                 {/* Comment column */}
                                 <td className="px-3 py-2">
                                   <Input
-                                    value={monthData.comment || ''}
-                                    onChange={(e) => updateMonthComment(monthInfo.key, e.target.value)}
+                                    value={periodData.comment || ''}
+                                    onChange={(e) => updateMonthComment(periodInfo.key, e.target.value)}
                                     disabled={!isActive}
                                     placeholder={isActive ? "Yorum yazın..." : ""}
                                     className={`w-full h-8 text-sm ${
