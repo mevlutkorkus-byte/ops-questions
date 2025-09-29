@@ -854,7 +854,7 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
         if not question_id or not employee_id:
             continue
         
-        # Check if assignment already exists for this month
+        # Check if assignment already exists for this month  
         existing_assignment = await db.question_assignments.find_one({
             "question_id": question_id,
             "employee_id": employee_id, 
@@ -862,8 +862,8 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
             "month": month
         })
         
-        if existing_assignment:
-            continue  # Skip if already assigned
+        # Allow re-sending: Don't skip if already assigned, just log it
+        is_resend = bool(existing_assignment)
         
         # Get question and employee details
         question = await db.questions.find_one({"id": question_id})
