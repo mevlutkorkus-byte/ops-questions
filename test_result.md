@@ -349,6 +349,8 @@ test_plan:
 agent_communication:
     - agent: "main"
       message: "Completed implementation of Cevaplar feature. Backend models, AI integration, and frontend components are ready. Need to test all functionality including API endpoints, AI comment generation, and chart visualization."
+    - agent: "main"
+      message: "Starting implementation of period-based filtering on 'Soruları Paylaş' page. Adding filter buttons (Günlük, Haftalık, Aylık, Çeyreklik, Altı Aylık, Yıllık, İhtiyaç Halinde) to filter questions by their period property. Will also implement dynamic table restructuring for response tables based on question periods."
     - agent: "testing"
       message: "✅ BACKEND TESTING COMPLETE: All Cevaplar backend functionality tested and working perfectly. Fixed MongoDB ObjectId serialization issue during testing. All API endpoints operational: questions-for-responses, monthly-responses CRUD, chart data aggregation. AI comment generation working with GPT-5 (takes 15-30s). Response models handle numerical values (0-10), employee comments, and AI comments correctly. Update functionality working (same month/year updates existing record). Ready for frontend testing or production use."
     - agent: "testing"
