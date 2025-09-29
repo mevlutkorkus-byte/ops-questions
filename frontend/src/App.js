@@ -3126,7 +3126,7 @@ const PublicQuestionResponse = () => {
     return periods;
   };
   
-  const [monthsArray] = useState(generateMonthsArray());
+  const [periodsArray, setPeriodsArray] = useState([]);
   
   // Determine which month is currently active based on question period
   const getCurrentActivePeriod = () => {
