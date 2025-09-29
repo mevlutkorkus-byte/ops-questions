@@ -713,7 +713,6 @@ const ShareQuestionsManagement = ({ onBack }) => {
               Tümü ({allQuestions.length})
             </Button>
             {['Günlük', 'Haftalık', 'Aylık', 'Çeyreklik', 'Altı Aylık', 'Yıllık', 'İhtiyaç Halinde'].map((period) => {
-              const count = allQuestions.filter(q => q.period === period).length;
               return (
                 <Button
                   key={period}
@@ -721,9 +720,8 @@ const ShareQuestionsManagement = ({ onBack }) => {
                   size="sm"
                   onClick={() => filterQuestionsByPeriod(period)}
                   className={selectedPeriod === period ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
-                  disabled={count === 0}
                 >
-                  {period} ({count})
+                  {period}
                 </Button>
               );
             })}
