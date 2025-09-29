@@ -688,6 +688,40 @@ const ShareQuestionsManagement = ({ onBack }) => {
         </div>
       </div>
 
+      {/* Period Filter Buttons */}
+      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+        <CardContent className="p-4">
+          <div className="flex items-center space-x-2 mb-2">
+            <span className="text-sm font-semibold text-gray-700">Periyod Filtresi:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={selectedPeriod === '' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => filterQuestionsByPeriod('')}
+              className={selectedPeriod === '' ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
+            >
+              Tümü ({allQuestions.length})
+            </Button>
+            {['Günlük', 'Haftalık', 'Aylık', 'Çeyreklik', 'Altı Aylık', 'Yıllık', 'İhtiyaç Halinde'].map((period) => {
+              const count = allQuestions.filter(q => q.period === period).length;
+              return (
+                <Button
+                  key={period}
+                  variant={selectedPeriod === period ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => filterQuestionsByPeriod(period)}
+                  className={selectedPeriod === period ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
+                  disabled={count === 0}
+                >
+                  {period} ({count})
+                </Button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Status Messages */}
       {error && (
         <Alert className="border-red-200 bg-red-50">
