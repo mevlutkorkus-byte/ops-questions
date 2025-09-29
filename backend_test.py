@@ -1321,7 +1321,45 @@ class QuestionBankAPITester:
         
         return 0 if self.tests_passed > 0 else 1
 
-    def run_authentication_and_sharing_tests(self):
+    def run_dashboard_stats_tests(self):
+        """Run focused tests for the dynamic dashboard stats endpoint"""
+        print("🚀 Starting Dynamic Dashboard Stats Tests...")
+        print(f"Backend URL: {self.base_url}")
+        print("="*70)
+        
+        # Test 1: Authentication System
+        if not self.test_authentication_system():
+            print("\n❌ Authentication failed - cannot proceed with dashboard stats tests")
+            return 1
+        
+        # Test 2: Dashboard Stats Endpoint
+        self.test_dashboard_stats()
+        
+        # Print focused results
+        print("\n" + "="*70)
+        print("DASHBOARD STATS TEST RESULTS")
+        print("="*70)
+        print(f"📊 Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+            print(f"🔑 Token: {self.token[:30]}...")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        # Show specific test results for dashboard stats
+        dashboard_tests = [result for result in self.test_results if 'dashboard' in result['test_name'].lower()]
+        if dashboard_tests:
+            print(f"\n📋 DASHBOARD STATS SPECIFIC RESULTS:")
+            for test in dashboard_tests:
+                status = "✅ PASSED" if test['success'] else "❌ FAILED"
+                print(f"   {status}: {test['test_name']}")
+                if not test['success'] and test['details']:
+                    print(f"      Details: {test['details']}")
+        
+        return 0 if self.tests_passed > 0 else 1
         """Run focused tests for authentication and question sharing"""
         print("🚀 Starting Authentication and Question Sharing Tests...")
         print(f"Backend URL: {self.base_url}")
