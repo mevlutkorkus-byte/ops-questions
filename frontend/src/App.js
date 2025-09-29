@@ -3163,8 +3163,11 @@ const Dashboard = () => {
                     </div>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => setCurrentView('employees')}
-                    data-testid="manage-employees-menu"
+                    onClick={() => {
+                      setConstantsType('employee');
+                      setCurrentView('constants');
+                    }}
+                    data-testid="employee-constants-menu"
                     className="p-3 hover:bg-slate-50"
                   >
                     <Users className="w-4 h-4 mr-3 text-slate-600" />
@@ -3174,8 +3177,11 @@ const Dashboard = () => {
                     </div>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => setCurrentView('questions')}
-                    data-testid="question-bank-menu"
+                    onClick={() => {
+                      setConstantsType('question');
+                      setCurrentView('constants');
+                    }}
+                    data-testid="question-constants-menu"
                     className="p-3 hover:bg-slate-50"
                   >
                     <Target className="w-4 h-4 mr-3 text-slate-600" />
