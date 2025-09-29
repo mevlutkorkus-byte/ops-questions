@@ -3201,19 +3201,22 @@ const PublicQuestionResponse = () => {
   };
 
   const handleSubmit = async () => {
-    // Get only the active month data
-    const activePeriod = getCurrentActivePeriod();
-    const activeMonthKey = `${activePeriod.year}-${activePeriod.month}`;
-    const activeMonthData = tableData[activeMonthKey];
+    // Find the active period
+    const activePeriod = periodsArray.find(p => p.isCurrentPeriod);
+    if (!activePeriod) {
+      setError('Aktif dönem bulunamadı');
+      return;
+    }
     
-    if (!activeMonthData) {
+    const activeData = tableData[activePeriod.key];
+    if (!activeData) {
       setError('Aktif dönem verisi bulunamadı');
       return;
     }
     
     // Check if there's any data to submit
-    const hasData = Object.values(activeMonthData.data).some(val => val && val.toString().trim());
-    const hasComment = activeMonthData.comment && activeMonthData.comment.trim();
+    const hasData = Object.values(activeData.data).some(val => val && val.toString().trim());
+    const hasComment = activeData.comment && activeData.comment.trim();
     
     if (!hasData && !hasComment) {
       setError('Lütfen en az bir veri girişi yapın veya yorum yazın');
@@ -3225,14 +3228,23 @@ const PublicQuestionResponse = () => {
     setSuccess('');
 
     try {
-      await axios.post(`${API}/table-responses`, {
+      // Prepare submission data based on period type
+      const submissionData = {
         question_id: questionData.question.id,
         employee_id: questionData.employee.id,
-        year: activePeriod.year,
-        month: activePeriod.month,
-        table_data: activeMonthData.data,
-        monthly_comment: activeMonthData.comment || null
-      });
+        table_data: activeData.data,
+        monthly_comment: activeData.comment || null
+      };
+      
+      // Add period-specific fields
+      if (activePeriod.year) submissionData.year = activePeriod.year;
+      if (activePeriod.month) submissionData.month = activePeriod.month;
+      if (activePeriod.day) submissionData.day = activePeriod.day;
+      if (activePeriod.week) submissionData.week = activePeriod.week;
+      if (activePeriod.quarter) submissionData.quarter = activePeriod.quarter;
+      if (activePeriod.half) submissionData.half = activePeriod.half;
+      
+      await axios.post(`${API}/table-responses`, submissionData);
       
       setSuccess('Verileriniz başarıyla kaydedildi ve AI yorumu oluşturuldu!');
       setSubmitted(true);
