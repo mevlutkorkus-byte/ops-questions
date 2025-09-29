@@ -2940,7 +2940,7 @@ const Dashboard = () => {
                     <p className="text-blue-100 text-xs sm:text-sm font-medium">Bu Ay Yanıtları</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-xl sm:text-2xl font-bold">{stats?.monthly_responses || 0}</p>
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      <span className={`text-xs px-1 sm:px-1.5 py-0.5 rounded-full ${
                         (stats?.monthly_trend || 0) >= 0 
                           ? 'bg-blue-400' 
                           : 'bg-red-400'
@@ -2964,7 +2964,7 @@ const Dashboard = () => {
                     <p className="text-emerald-100 text-xs sm:text-sm font-medium">Aktif Kullanıcılar</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-xl sm:text-2xl font-bold">{stats?.active_users || 0}</p>
-                      <span className="text-xs bg-emerald-400 px-1.5 py-0.5 rounded-full">Online</span>
+                      <span className="text-xs bg-emerald-400 px-1 sm:px-1.5 py-0.5 rounded-full">Online</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 bg-emerald-400 rounded-lg flex items-center justify-center">
@@ -2982,7 +2982,7 @@ const Dashboard = () => {
                     <p className="text-amber-100 text-xs sm:text-sm font-medium">Tamamlanma Oranı</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-xl sm:text-2xl font-bold">{stats?.completion_rate || 0}%</p>
-                      <span className="text-xs bg-amber-400 px-1.5 py-0.5 rounded-full">Hedef</span>
+                      <span className="text-xs bg-amber-400 px-1 sm:px-1.5 py-0.5 rounded-full">Hedef</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center">
@@ -3000,7 +3000,7 @@ const Dashboard = () => {
                     <p className="text-purple-100 text-xs sm:text-sm font-medium">AI Analizleri</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-xl sm:text-2xl font-bold">{stats?.ai_analyses || 0}</p>
-                      <span className="text-xs bg-purple-400 px-1.5 py-0.5 rounded-full">Hazır</span>
+                      <span className="text-xs bg-purple-400 px-1 sm:px-1.5 py-0.5 rounded-full">Hazır</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 bg-purple-400 rounded-lg flex items-center justify-center">
@@ -3904,7 +3904,7 @@ const PublicQuestionResponse = () => {
                                           {periodInfo.day}
                                         </span>
                                         {isActive && (
-                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             AKTİF
                                           </span>
                                         )}
@@ -3926,7 +3926,7 @@ const PublicQuestionResponse = () => {
                                           {periodInfo.week}
                                         </span>
                                         {isActive && (
-                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             AKTİF
                                           </span>
                                         )}
@@ -3948,7 +3948,7 @@ const PublicQuestionResponse = () => {
                                           {periodInfo.monthName}
                                         </span>
                                         {isActive && (
-                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             AKTİF
                                           </span>
                                         )}
@@ -3970,7 +3970,7 @@ const PublicQuestionResponse = () => {
                                           Q{periodInfo.quarter}
                                         </span>
                                         {isActive && (
-                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             AKTİF
                                           </span>
                                         )}
@@ -3992,7 +3992,7 @@ const PublicQuestionResponse = () => {
                                           H{periodInfo.half}
                                         </span>
                                         {isActive && (
-                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                             AKTİF
                                           </span>
                                         )}
@@ -4008,7 +4008,7 @@ const PublicQuestionResponse = () => {
                                         {periodInfo.year}
                                       </span>
                                       {isActive && (
-                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                           AKTİF
                                         </span>
                                       )}
@@ -4023,7 +4023,7 @@ const PublicQuestionResponse = () => {
                                         {periodInfo.displayText}
                                       </span>
                                       {isActive && (
-                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                           AKTİF
                                         </span>
                                       )}
@@ -4584,7 +4584,7 @@ const DemoQuestionResponse = () => {
                                       {periodInfo.monthName}
                                     </span>
                                     {isActive && (
-                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                      <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                         AKTİF
                                       </span>
                                     )}
@@ -4606,7 +4606,7 @@ const DemoQuestionResponse = () => {
                                       Q{periodInfo.quarter}
                                     </span>
                                     {isActive && (
-                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                      <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                         AKTİF
                                       </span>
                                     )}
@@ -4628,7 +4628,7 @@ const DemoQuestionResponse = () => {
                                       H{periodInfo.half}
                                     </span>
                                     {isActive && (
-                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                      <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                         AKTİF
                                       </span>
                                     )}
@@ -4644,7 +4644,7 @@ const DemoQuestionResponse = () => {
                                     {periodInfo.year}
                                   </span>
                                   {isActive && (
-                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    <span className="inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                       AKTİF
                                     </span>
                                   )}
