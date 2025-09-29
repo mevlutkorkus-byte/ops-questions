@@ -934,7 +934,11 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
     # Prepare response message
     message_parts = []
     if assignments_created:
-        message_parts.append(f"{len(assignments_created)} soru atandı")
+        new_assignments = len(assignments_created) - resend_count
+        if new_assignments > 0:
+            message_parts.append(f"{new_assignments} yeni soru atandı")
+        if resend_count > 0:
+            message_parts.append(f"{resend_count} soru tekrar gönderildi")
     
     if email_successes:
         message_parts.append(f"{email_successes} e-posta başarıyla gönderildi")
