@@ -1002,7 +1002,9 @@ async def get_public_question_form(assignment_id: str):
             "question_text": question["question_text"],
             "category": question["category"],
             "importance_reason": question["importance_reason"],
-            "expected_action": question["expected_action"]
+            "expected_action": question["expected_action"],
+            "period": question["period"],  # ✅ Period bilgisi eklendi
+            "table_rows": question.get("table_rows", [])  # ✅ Table rows eklendi
         },
         "employee": {
             "first_name": employee["first_name"],
