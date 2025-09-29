@@ -1889,7 +1889,7 @@ async def get_questions_for_responses(current_user: User = Depends(get_current_u
 
 @api_router.post("/table-responses")
 async def create_table_response(response_data: TableResponseCreate, current_user: User = Depends(get_current_user)):
-    """Create or update a single table response"""
+    """Create or update a single table response (authenticated users)"""
     try:
         # Check if question and employee exist
         question = await db.questions.find_one({"id": response_data.question_id})
