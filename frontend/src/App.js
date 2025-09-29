@@ -2560,6 +2560,7 @@ const EmployeeManagement = ({ onBack }) => {
 // Dashboard Component
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState('dashboard');
