@@ -628,7 +628,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
         }))
       });
       
-      setSuccess(`${response.data.assignments_created} soru başarıyla paylaşıldı!`);
+      setSuccess(response.data.message);
       
     } catch (error) {
       setError(error.response?.data?.detail || 'Paylaşım sırasında hata oluştu');
