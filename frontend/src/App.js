@@ -3889,7 +3889,29 @@ const PublicQuestionResponse = () => {
       setSuccess('Verileriniz başarıyla kaydedildi ve AI yorumu oluşturuldu!');
       setSubmitted(true);
     } catch (error) {
-      setError(error.response?.data?.detail || 'Veriler gönderilirken hata oluştu');
+      console.error('Submission error:', error);
+      
+      // Handle different error response formats
+      let errorMessage = 'Veriler gönderilirken hata oluştu';
+      
+      if (error.response?.data) {
+        if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.detail) {
+          if (typeof error.response.data.detail === 'string') {
+            errorMessage = error.response.data.detail;
+          } else {
+            // Handle Pydantic validation errors
+            errorMessage = 'Veri doğrulama hatası oluştu';
+          }
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
