@@ -746,7 +746,8 @@ const ShareQuestionsManagement = ({ onBack }) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-1/3">Soru Metni</TableHead>
+                  <TableHead className="w-1/4">Soru Metni</TableHead>
+                  <TableHead className="w-20">Periyod</TableHead>
                   <TableHead>İlgili Kişi</TableHead>
                   <TableHead>Departman</TableHead>
                   <TableHead>E-posta Adresi</TableHead>
