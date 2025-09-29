@@ -3771,6 +3771,12 @@ const PublicQuestionResponse = () => {
     return activePeriod ? activePeriod.displayText : 'Aktif Dönem';
   };
 
+  // Get the current active period object
+  const getCurrentActivePeriod = () => {
+    const activePeriod = periodsArray.find(p => p.isCurrentPeriod);
+    return activePeriod || { month: 'Ekim', year: 2024 };
+  };
+
   useEffect(() => {
     if (assignmentId) {
       fetchQuestionData();
