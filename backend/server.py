@@ -506,74 +506,166 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
 # Protected routes
-@api_router.get("/dashboard/stats")
-async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
-    """Get dashboard statistics"""
+@api_router.get("/analytics/insights/{question_id}")
+async def get_advanced_insights(question_id: str, current_user: User = Depends(get_current_user)):
+    """Get AI-powered advanced analytics insights for a specific question"""
     from datetime import datetime, timedelta
+    import statistics
     
-    # Bu ayın başlangıcı
-    now = datetime.now()
-    start_of_month = datetime(now.year, now.month, 1)
+    # Get question data
+    question = await db.questions.find_one({"id": question_id})
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
     
-    # Bu ay yanıtları
-    monthly_responses = await db.table_responses.count_documents({
-        "created_at": {"$gte": start_of_month}
-    })
+    # Get all responses for this question
+    responses = await db.table_responses.find({"question_id": question_id}).to_list(1000)
     
-    # Geçen ay yanıtları (karşılaştırma için)
-    if now.month == 1:
-        last_month_start = datetime(now.year - 1, 12, 1)
-        last_month_end = datetime(now.year, 1, 1)
-    else:
-        last_month_start = datetime(now.year, now.month - 1, 1)
-        last_month_end = start_of_month
+    if not responses:
+        return {
+            "question_id": question_id,
+            "question_text": question.get("question_text", ""),
+            "insights": {
+                "data_trends": [],
+                "predictions": [],
+                "anomalies": [],
+                "recommendations": ["Henüz yeterli veri bulunmuyor. Lütfen daha fazla yanıt toplayın."],
+                "performance_score": 0,
+                "confidence_level": "low"
+            },
+            "generated_at": datetime.now().isoformat()
+        }
+    
+    # Organize data by periods and table rows
+    period_data = {}
+    table_rows = question.get("table_rows", [])
+    
+    for response in responses:
+        period_key = f"{response.get('year', 0)}-{response.get('month', 0):02d}"
+        if period_key not in period_data:
+            period_data[period_key] = {}
         
-    last_monthly_responses = await db.table_responses.count_documents({
-        "created_at": {"$gte": last_month_start, "$lt": last_month_end}
-    })
+        for row in table_rows:
+            value = response.get("table_data", {}).get(row["id"], "0")
+            try:
+                numeric_value = float(value) if value else 0
+                period_data[period_key][row["name"]] = numeric_value
+            except (ValueError, TypeError):
+                period_data[period_key][row["name"]] = 0
     
-    # Yüzde hesaplama
-    if last_monthly_responses > 0:
-        monthly_trend = round(((monthly_responses - last_monthly_responses) / last_monthly_responses) * 100)
+    # Calculate insights
+    insights = {
+        "data_trends": [],
+        "predictions": [],
+        "anomalies": [],
+        "recommendations": [],
+        "performance_score": 0,
+        "confidence_level": "medium"
+    }
+    
+    # Trend Analysis
+    for row in table_rows:
+        row_name = row["name"]
+        values = []
+        periods = []
+        
+        for period_key in sorted(period_data.keys()):
+            if row_name in period_data[period_key]:
+                values.append(period_data[period_key][row_name])
+                periods.append(period_key)
+        
+        if len(values) >= 2:
+            # Calculate trend
+            if len(values) >= 3:
+                recent_avg = statistics.mean(values[-3:])
+                older_avg = statistics.mean(values[:-3]) if len(values) > 3 else values[0]
+                trend_percentage = ((recent_avg - older_avg) / older_avg * 100) if older_avg != 0 else 0
+            else:
+                trend_percentage = ((values[-1] - values[0]) / values[0] * 100) if values[0] != 0 else 0
+            
+            trend_direction = "artış" if trend_percentage > 5 else "azalış" if trend_percentage < -5 else "stabil"
+            
+            insights["data_trends"].append({
+                "metric": row_name,
+                "direction": trend_direction,
+                "percentage": round(trend_percentage, 2),
+                "current_value": values[-1],
+                "previous_value": values[-2] if len(values) >= 2 else 0,
+                "confidence": "high" if len(values) >= 4 else "medium"
+            })
+            
+            # Simple prediction (linear trend)
+            if len(values) >= 3:
+                # Simple linear regression for next period
+                x_values = list(range(len(values)))
+                slope = sum((x_values[i] - statistics.mean(x_values)) * (values[i] - statistics.mean(values)) 
+                           for i in range(len(values))) / sum((x - statistics.mean(x_values))**2 for x in x_values)
+                intercept = statistics.mean(values) - slope * statistics.mean(x_values)
+                next_prediction = slope * len(values) + intercept
+                
+                insights["predictions"].append({
+                    "metric": row_name,
+                    "predicted_value": round(max(0, next_prediction), 2),
+                    "confidence_interval": {
+                        "min": round(max(0, next_prediction * 0.85), 2),
+                        "max": round(next_prediction * 1.15, 2)
+                    },
+                    "period": "Gelecek dönem"
+                })
+            
+            # Anomaly detection (simple outlier detection)
+            if len(values) >= 4:
+                mean_val = statistics.mean(values)
+                std_dev = statistics.stdev(values) if len(values) > 1 else 0
+                
+                for i, value in enumerate(values):
+                    if std_dev > 0 and abs(value - mean_val) > 2 * std_dev:
+                        insights["anomalies"].append({
+                            "metric": row_name,
+                            "period": periods[i],
+                            "value": value,
+                            "expected_range": {
+                                "min": round(mean_val - std_dev, 2),
+                                "max": round(mean_val + std_dev, 2)
+                            },
+                            "severity": "high" if abs(value - mean_val) > 3 * std_dev else "medium",
+                            "description": f"{row_name} değeri normal aralığın dışında ({value} vs beklenen {round(mean_val, 2)})"
+                        })
+    
+    # Generate smart recommendations
+    total_trends = len([t for t in insights["data_trends"] if t["direction"] != "stabil"])
+    positive_trends = len([t for t in insights["data_trends"] if t["direction"] == "artış"])
+    negative_trends = len([t for t in insights["data_trends"] if t["direction"] == "azalış"])
+    
+    if positive_trends > negative_trends:
+        insights["recommendations"].append("🎯 Genel performans pozitif yönde. Mevcut stratejileri sürdürün.")
+        insights["performance_score"] = min(95, 70 + (positive_trends * 5))
+    elif negative_trends > positive_trends:
+        insights["recommendations"].append("⚠️ Bazı metriklerde düşüş gözleniyor. Aksiyon planı oluşturun.")
+        insights["performance_score"] = max(30, 70 - (negative_trends * 8))
     else:
-        monthly_trend = 100 if monthly_responses > 0 else 0
+        insights["recommendations"].append("📊 Metrikler stabil durumda. Sürekli iyileştirme fırsatları araştırın.")
+        insights["performance_score"] = 65
     
-    # Toplam kullanıcılar
-    total_employees = await db.employees.count_documents({})
+    if len(insights["anomalies"]) > 0:
+        insights["recommendations"].append(f"🔍 {len(insights['anomalies'])} adet anormal veri tespit edildi. Detaylı inceleme önerilir.")
     
-    # Aktif sorular
-    active_questions = await db.questions.count_documents({})
-    
-    # AI analizleri (table_responses with ai_comment)
-    ai_analyses = await db.table_responses.count_documents({
-        "$and": [
-            {"ai_comment": {"$exists": True}},
-            {"ai_comment": {"$ne": None}},
-            {"ai_comment": {"$ne": ""}}
-        ]
-    })
-    
-    # Tamamlanma oranı hesaplama (bu ay)
-    # Toplam beklenilen yanıt = aktif sorular * kullanıcı sayısı
-    expected_responses = active_questions * total_employees
-    completion_rate = round((monthly_responses / expected_responses * 100)) if expected_responses > 0 else 0
-    
-    # Bildirimler
-    notifications = [
-        {"message": f"{expected_responses - monthly_responses} soru yanıt bekliyor", "type": "warning"},
-        {"message": f"{ai_analyses} AI analizi hazır", "type": "info"},
-        {"message": "Aylık rapor hazırlanıyor", "type": "info"}
-    ]
+    if len(responses) >= 6:
+        insights["confidence_level"] = "high"
+        insights["recommendations"].append("✅ Yeterli veri mevcut. Analiz sonuçları güvenilir.")
+    elif len(responses) >= 3:
+        insights["confidence_level"] = "medium"
+        insights["recommendations"].append("📈 Orta düzey veri mevcut. Daha fazla veri toplayarak analiz kalitesini artırabilirsiniz.")
+    else:
+        insights["confidence_level"] = "low"
+        insights["recommendations"].append("📊 Sınırlı veri mevcut. Güvenilir trend analizi için daha fazla veri gerekli.")
     
     return {
-        "monthly_responses": monthly_responses,
-        "monthly_trend": monthly_trend,
-        "active_users": total_employees,
-        "completion_rate": completion_rate,
-        "ai_analyses": ai_analyses,
-        "active_questions": active_questions,
-        "notifications": notifications,
-        "last_updated": now.isoformat()
+        "question_id": question_id,
+        "question_text": question.get("question_text", ""),
+        "insights": insights,
+        "data_points": len(responses),
+        "periods_analyzed": len(period_data),
+        "generated_at": datetime.now().isoformat()
     }
 
 # Original routes (now protected)
