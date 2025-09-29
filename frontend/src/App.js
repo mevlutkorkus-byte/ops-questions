@@ -512,7 +512,7 @@ const EmailLogsComponent = ({ onBack }) => {
                 <div key={log.assignment_id} className="border rounded-lg p-4 space-y-3">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <span className="font-semibold text-gray-900">{log.employee_name}</span>
                         <span className="text-sm text-gray-500">({log.employee_email})</span>
                       </div>
@@ -704,7 +704,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
       {/* Period Filter Buttons */}
       <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-3 sm:p-4">
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="flex items-center space-x-1 sm:space-x-2 mb-2">
             <span className="text-sm font-semibold text-gray-700">Periyod Filtresi:</span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -1127,7 +1127,7 @@ const ResponsesComponent = ({ onBack }) => {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2 mb-2">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                         {question.category}
                       </span>
@@ -1176,7 +1176,7 @@ const ResponsesComponent = ({ onBack }) => {
             <h2 className="text-2xl font-bold text-gray-900">Cevap Girişi</h2>
             <p className="text-gray-600">{selectedQuestion.category}</p>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-1 sm:space-x-2">
             <Button 
               onClick={() => setCurrentView('chart')}
               variant="outline"
@@ -2052,7 +2052,7 @@ const QuestionBankManagement = ({ onBack }) => {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-1 sm:space-x-2">
                           <Button
                             variant="outline"
                             size="sm"
@@ -2488,7 +2488,7 @@ const EmployeeManagement = ({ onBack }) => {
                       <TableCell>{formatDate(employee.birth_date)}</TableCell>
                       <TableCell>{formatSalary(employee.salary)}</TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-1 sm:space-x-2">
                           <Button
                             variant="outline"
                             size="sm"
@@ -2822,7 +2822,7 @@ const Dashboard = () => {
               </div>
               
               {/* Breadcrumb */}
-              <div className="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+              <div className="hidden md:flex items-center space-x-1 sm:space-x-2 text-sm text-gray-500">
                 <span>Dashboard</span>
               </div>
             </div>
@@ -2938,7 +2938,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-100 text-xs sm:text-sm font-medium">Bu Ay Yanıtları</p>
-                    <div className="flex items-baseline space-x-2">
+                    <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-2xl font-bold">{stats?.monthly_responses || 0}</p>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                         (stats?.monthly_trend || 0) >= 0 
@@ -2962,7 +2962,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-emerald-100 text-xs sm:text-sm font-medium">Aktif Kullanıcılar</p>
-                    <div className="flex items-baseline space-x-2">
+                    <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-2xl font-bold">{stats?.active_users || 0}</p>
                       <span className="text-xs bg-emerald-400 px-1.5 py-0.5 rounded-full">Online</span>
                     </div>
@@ -2980,7 +2980,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-amber-100 text-xs sm:text-sm font-medium">Tamamlanma Oranı</p>
-                    <div className="flex items-baseline space-x-2">
+                    <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-2xl font-bold">{stats?.completion_rate || 0}%</p>
                       <span className="text-xs bg-amber-400 px-1.5 py-0.5 rounded-full">Hedef</span>
                     </div>
@@ -2998,7 +2998,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-purple-100 text-xs sm:text-sm font-medium">AI Analizleri</p>
-                    <div className="flex items-baseline space-x-2">
+                    <div className="flex items-baseline space-x-1 sm:space-x-2">
                       <p className="text-2xl font-bold">{stats?.ai_analyses || 0}</p>
                       <span className="text-xs bg-purple-400 px-1.5 py-0.5 rounded-full">Hazır</span>
                     </div>
@@ -3017,7 +3017,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center space-x-6">
                 {stats?.notifications?.map((notification, index) => (
-                  <div key={index} className="flex items-center space-x-2">
+                  <div key={index} className="flex items-center space-x-1 sm:space-x-2">
                     <div className={`w-3 h-3 rounded-full ${
                       notification.type === 'warning' ? 'bg-amber-500' :
                       notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
@@ -3026,7 +3026,7 @@ const Dashboard = () => {
                   </div>
                 )) || (
                   <>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       <span className="text-gray-600">Sistem hazır</span>
                     </div>
@@ -3126,7 +3126,7 @@ const Dashboard = () => {
                           <p className="text-sm text-gray-600">Sistem ayarları ve temel veri yönetimi</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full font-medium">
                           Aktif
                         </span>
@@ -3212,7 +3212,7 @@ const Dashboard = () => {
                       <p className="text-sm text-gray-600">Çalışanlara soru ataması ve e-posta gönderimi</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
                     <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-medium">
                       {stats?.active_questions || 0} Aktif
                     </span>
@@ -3239,7 +3239,7 @@ const Dashboard = () => {
                         <p className="text-xs text-gray-600">Kullanıcı ekranı demo</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-medium">
                         DEMO
                       </span>
@@ -3264,7 +3264,7 @@ const Dashboard = () => {
                         <p className="text-xs text-gray-600">Grafikler ve AI analizi</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <span className="bg-emerald-100 text-emerald-600 text-xs px-2 py-1 rounded-full font-medium">
                         {stats?.ai_analyses || 0} Rapor
                       </span>
@@ -3279,7 +3279,7 @@ const Dashboard = () => {
           <div className="lg:col-span-1">
             <Card className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md sticky top-4">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center space-x-2">
+                <CardTitle className="text-lg flex items-center space-x-1 sm:space-x-2">
                   <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                     <AlertCircle className="w-4 h-4 text-white" />
                   </div>
@@ -3899,7 +3899,7 @@ const PublicQuestionResponse = () => {
                                       </span>
                                     </td>
                                     <td className="px-3 py-2 font-medium">
-                                      <div className="flex items-center space-x-2">
+                                      <div className="flex items-center space-x-1 sm:space-x-2">
                                         <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                           {periodInfo.day}
                                         </span>
@@ -3921,7 +3921,7 @@ const PublicQuestionResponse = () => {
                                       </span>
                                     </td>
                                     <td className="px-3 py-2 font-medium">
-                                      <div className="flex items-center space-x-2">
+                                      <div className="flex items-center space-x-1 sm:space-x-2">
                                         <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                           {periodInfo.week}
                                         </span>
@@ -3943,7 +3943,7 @@ const PublicQuestionResponse = () => {
                                       </span>
                                     </td>
                                     <td className="px-3 py-2 font-medium">
-                                      <div className="flex items-center space-x-2">
+                                      <div className="flex items-center space-x-1 sm:space-x-2">
                                         <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                           {periodInfo.monthName}
                                         </span>
@@ -3965,7 +3965,7 @@ const PublicQuestionResponse = () => {
                                       </span>
                                     </td>
                                     <td className="px-3 py-2 font-medium">
-                                      <div className="flex items-center space-x-2">
+                                      <div className="flex items-center space-x-1 sm:space-x-2">
                                         <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                           Q{periodInfo.quarter}
                                         </span>
@@ -3987,7 +3987,7 @@ const PublicQuestionResponse = () => {
                                       </span>
                                     </td>
                                     <td className="px-3 py-2 font-medium">
-                                      <div className="flex items-center space-x-2">
+                                      <div className="flex items-center space-x-1 sm:space-x-2">
                                         <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                           H{periodInfo.half}
                                         </span>
@@ -4003,7 +4003,7 @@ const PublicQuestionResponse = () => {
                                 
                                 {questionData.question.period === 'Yıllık' && (
                                   <td className="px-3 py-2 font-medium">
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-1 sm:space-x-2">
                                       <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                         {periodInfo.year}
                                       </span>
@@ -4018,7 +4018,7 @@ const PublicQuestionResponse = () => {
                                 
                                 {questionData.question.period === 'İhtiyaç Halinde' && (
                                   <td className="px-3 py-2 font-medium">
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-1 sm:space-x-2">
                                       <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                         {periodInfo.displayText}
                                       </span>
@@ -4421,7 +4421,7 @@ const DemoQuestionResponse = () => {
               >
                 ← Dashboard'a Dön
               </Button>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <span className="text-sm text-gray-600">
                   Soru {currentQuestionIndex + 1} / {demoQuestions.length}
                 </span>
@@ -4432,7 +4432,7 @@ const DemoQuestionResponse = () => {
             </div>
             
             {/* Navigation buttons */}
-            <div className="flex justify-center space-x-2 mb-4">
+            <div className="flex justify-center space-x-1 sm:space-x-2 mb-4">
               <Button 
                 variant="outline" 
                 size="sm"
@@ -4579,7 +4579,7 @@ const DemoQuestionResponse = () => {
                                   </span>
                                 </td>
                                 <td className="px-3 py-2 font-medium">
-                                  <div className="flex items-center space-x-2">
+                                  <div className="flex items-center space-x-1 sm:space-x-2">
                                     <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                       {periodInfo.monthName}
                                     </span>
@@ -4601,7 +4601,7 @@ const DemoQuestionResponse = () => {
                                   </span>
                                 </td>
                                 <td className="px-3 py-2 font-medium">
-                                  <div className="flex items-center space-x-2">
+                                  <div className="flex items-center space-x-1 sm:space-x-2">
                                     <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                       Q{periodInfo.quarter}
                                     </span>
@@ -4623,7 +4623,7 @@ const DemoQuestionResponse = () => {
                                   </span>
                                 </td>
                                 <td className="px-3 py-2 font-medium">
-                                  <div className="flex items-center space-x-2">
+                                  <div className="flex items-center space-x-1 sm:space-x-2">
                                     <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                       H{periodInfo.half}
                                     </span>
@@ -4639,7 +4639,7 @@ const DemoQuestionResponse = () => {
                             
                             {currentQuestion.period === 'Yıllık' && (
                               <td className="px-3 py-2 font-medium">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-1 sm:space-x-2">
                                   <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
                                     {periodInfo.year}
                                   </span>
@@ -4840,7 +4840,7 @@ const DataAnalysisPage = () => {
               >
                 ← Dashboard'a Dön
               </Button>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <span className="text-sm text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded">
                   VERİ ANALİZİ DEMO
                 </span>
@@ -4933,7 +4933,7 @@ const DataAnalysisPage = () => {
                     ))}
                   </div>
                 </div>
-                <div className="ml-4 flex space-x-2">
+                <div className="ml-4 flex space-x-1 sm:space-x-2">
                   <Button variant="outline" size="sm">
                     📄 PDF İndir
                   </Button>
@@ -4949,7 +4949,7 @@ const DataAnalysisPage = () => {
               <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">Trend Analizi</h3>
               
               {/* Chart Type Selector */}
-              <div className="mb-4 flex space-x-2">
+              <div className="mb-4 flex space-x-1 sm:space-x-2">
                 <Button variant="outline" size="sm" className="bg-blue-50 text-blue-600">
                   📈 Line Chart
                 </Button>
