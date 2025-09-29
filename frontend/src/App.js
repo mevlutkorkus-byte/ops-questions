@@ -4453,9 +4453,15 @@ const DataAnalysisPage = () => {
                 ← Dashboard'a Dön
               </Button>
               <div className="flex items-center space-x-1 sm:space-x-2">
-                <span className="text-sm text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded">
-                  VERİ ANALİZİ DEMO
-                </span>
+                {hasRealData ? (
+                  <span className="text-sm text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded">
+                    GERÇEK VERİ ANALİZİ
+                  </span>
+                ) : (
+                  <span className="text-sm text-amber-600 font-semibold bg-amber-100 px-2 py-1 rounded">
+                    VERİ BEKLENİYOR
+                  </span>
+                )}
               </div>
             </div>
             
