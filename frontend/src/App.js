@@ -703,7 +703,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
 
       {/* Period Filter Buttons */}
       <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex items-center space-x-2 mb-2">
             <span className="text-sm font-semibold text-gray-700">Periyod Filtresi:</span>
           </div>
@@ -2934,7 +2934,7 @@ const Dashboard = () => {
             
             {/* Bu Ay Yanıtları */}
             <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-100 text-sm font-medium">Bu Ay Yanıtları</p>
@@ -2958,7 +2958,7 @@ const Dashboard = () => {
 
             {/* Aktif Kullanıcılar */}
             <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 shadow-lg">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-emerald-100 text-sm font-medium">Aktif Kullanıcılar</p>
@@ -2976,7 +2976,7 @@ const Dashboard = () => {
 
             {/* Tamamlanma Oranı */}
             <Card className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 shadow-lg">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-amber-100 text-sm font-medium">Tamamlanma Oranı</p>
@@ -2994,7 +2994,7 @@ const Dashboard = () => {
 
             {/* AI Analizleri */}
             <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-purple-100 text-sm font-medium">AI Analizleri</p>
