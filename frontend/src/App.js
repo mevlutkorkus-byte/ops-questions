@@ -596,31 +596,40 @@ const ShareQuestionsManagement = ({ onBack }) => {
   };
 
   // Filter questions by period
-  const filterQuestionsByPeriod = (period) => {
+  const filterQuestionsByPeriod = async (period) => {
     setSelectedPeriod(period);
+    setLoading(true);
     
-    if (period === '') {
-      // Show all questions
-      setQuestions(allQuestions);
-    } else {
-      // Filter by selected period
-      const filtered = allQuestions.filter(question => question.period === period);
-      setQuestions(filtered);
+    try {
+      // Call backend with period filter
+      const url = period ? `${API}/questions-share-list?period=${encodeURIComponent(period)}` : `${API}/questions-share-list`;
+      const response = await axios.get(url);
+      
+      setQuestions(response.data.questions);
+      // Keep all questions for count display
+      if (period === '') {
+        setAllQuestions(response.data.questions);
+      }
+      
+      // Update assignments array based on filtered questions
+      const newAssignments = response.data.questions.map(question => {
+        // Keep existing assignments if they exist
+        const existingAssignment = assignments.find(a => a.question_id === question.id);
+        return existingAssignment || {
+          question_id: question.id,
+          employee_id: '',
+          department: '',
+          employee_email: ''
+        };
+      });
+      setAssignments(newAssignments);
+      
+    } catch (error) {
+      console.error('Filtering error:', error);
+      setError('Filtreleme sırasında hata oluştu');
+    } finally {
+      setLoading(false);
     }
-    
-    // Update assignments array based on filtered questions
-    const filteredQuestions = period === '' ? allQuestions : allQuestions.filter(q => q.period === period);
-    const newAssignments = filteredQuestions.map(question => {
-      // Keep existing assignments if they exist
-      const existingAssignment = assignments.find(a => a.question_id === question.id);
-      return existingAssignment || {
-        question_id: question.id,
-        employee_id: '',
-        department: '',
-        employee_email: ''
-      };
-    });
-    setAssignments(newAssignments);
   };
 
   const handleEmployeeChange = (questionIndex, employeeId) => {
