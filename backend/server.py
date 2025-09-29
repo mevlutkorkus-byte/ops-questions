@@ -546,7 +546,7 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
     
     # AI analizleri (table_responses with ai_comment)
     ai_analyses = await db.table_responses.count_documents({
-        "ai_comment": {"$ne": None, "$ne": ""}
+        "ai_comment": {"$exists": True, "$ne": None, "$ne": ""}
     })
     
     # Tamamlanma oranı hesaplama (bu ay)
