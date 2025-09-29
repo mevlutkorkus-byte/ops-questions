@@ -4491,11 +4491,13 @@ const DataAnalysisPage = () => {
                     onChange={(e) => setSelectedQuestion(parseInt(e.target.value))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
                   >
-                    {analysisQuestions.map((q, index) => (
+                    {analyticsData?.questions?.map((q, index) => (
                       <option key={q.id} value={index}>
                         {q.question_text.length > 40 ? q.question_text.substring(0, 40) + '...' : q.question_text}
                       </option>
-                    ))}
+                    )) || (
+                      <option value={0}>Henüz analiz edilecek veri yok</option>
+                    )}
                   </select>
                 </div>
 
