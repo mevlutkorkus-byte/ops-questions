@@ -3696,6 +3696,7 @@ function App() {
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/answer/:assignmentId" element={<PublicQuestionResponse />} />
+            <Route path="/demo-response" element={<DemoQuestionResponse />} />
             <Route 
               path="/dashboard" 
               element={
