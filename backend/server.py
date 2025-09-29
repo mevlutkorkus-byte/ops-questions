@@ -1669,6 +1669,7 @@ async def get_public_question_form(assignment_id: str):
             "table_rows": question.get("table_rows", [])  # ✅ Table rows eklendi
         },
         "employee": {
+            "id": employee["id"],  # ✅ Employee ID eklendi
             "first_name": employee["first_name"],
             "last_name": employee["last_name"],
             "department": employee["department"]
