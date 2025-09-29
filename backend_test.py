@@ -1205,8 +1205,11 @@ def main():
     
     # Check if we should run focused tests or all tests
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--auth-sharing":
-        return tester.run_authentication_and_sharing_tests()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--auth-sharing":
+            return tester.run_authentication_and_sharing_tests()
+        elif sys.argv[1] == "--period-filtering":
+            return tester.run_period_filtering_tests()
     else:
         return tester.run_all_tests()
 
