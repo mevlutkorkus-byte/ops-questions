@@ -5542,6 +5542,191 @@ const AdvancedInsightsPanel = ({ questionId }) => {
   );
 };
 
+// Global Search Component
+const GlobalSearch = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState({
+    questions: [],
+    employees: [],
+    categories: [],
+    departments: []
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (query.length >= 2) {
+      performSearch();
+    } else {
+      setResults({ questions: [], employees: [], categories: [], departments: [] });
+    }
+  }, [query]);
+
+  const performSearch = async () => {
+    setLoading(true);
+    try {
+      const [questionsRes, employeesRes, categoriesRes, departmentsRes] = await Promise.allSettled([
+        axios.get(`${API}/questions`),
+        axios.get(`${API}/employees`),
+        axios.get(`${API}/categories`),
+        axios.get(`${API}/departments`)
+      ]);
+
+      const questions = questionsRes.status === 'fulfilled' 
+        ? questionsRes.value.data.filter(q => 
+            q.question_text?.toLowerCase().includes(query.toLowerCase()) ||
+            q.category?.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, 5)
+        : [];
+
+      const employees = employeesRes.status === 'fulfilled'
+        ? employeesRes.value.data.filter(e =>
+            e.name?.toLowerCase().includes(query.toLowerCase()) ||
+            e.email?.toLowerCase().includes(query.toLowerCase()) ||
+            e.department?.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, 5)
+        : [];
+
+      const categories = categoriesRes.status === 'fulfilled'
+        ? categoriesRes.value.data.filter(c =>
+            c.name?.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, 3)
+        : [];
+
+      const departments = departmentsRes.status === 'fulfilled'
+        ? departmentsRes.value.data.filter(d =>
+            d.name?.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, 3)
+        : [];
+
+      setResults({ questions, employees, categories, departments });
+    } catch (error) {
+      console.error('Arama hatası:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTotalResults = () => {
+    return results.questions.length + results.employees.length + 
+           results.categories.length + results.departments.length;
+  };
+
+  return (
+    <div className="relative">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Input
+          placeholder="Ara..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setIsOpen(true)}
+          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+          className="pl-10 pr-4 py-2 w-64 bg-white/90 backdrop-blur-sm border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent rounded-lg"
+        />
+        {loading && (
+          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
+        )}
+      </div>
+
+      {/* Search Results Dropdown */}
+      {isOpen && query.length >= 2 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+          {getTotalResults() === 0 ? (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">"{query}" için sonuç bulunamadı</p>
+            </div>
+          ) : (
+            <div className="p-2">
+              <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                {getTotalResults()} sonuç bulundu
+              </div>
+
+              {/* Questions */}
+              {results.questions.length > 0 && (
+                <div className="mb-4">
+                  <div className="px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400">
+                    📝 Sorular ({results.questions.length})
+                  </div>
+                  {results.questions.map((question) => (
+                    <div key={question.id} className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {question.question_text?.substring(0, 60)}...
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {question.category} • {question.period}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Employees */}
+              {results.employees.length > 0 && (
+                <div className="mb-4">
+                  <div className="px-3 py-1 text-xs font-medium text-green-600 dark:text-green-400">
+                    👥 Çalışanlar ({results.employees.length})
+                  </div>
+                  {results.employees.map((employee) => (
+                    <div key={employee.id} className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {employee.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {employee.email} • {employee.department}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Categories */}
+              {results.categories.length > 0 && (
+                <div className="mb-4">
+                  <div className="px-3 py-1 text-xs font-medium text-purple-600 dark:text-purple-400">
+                    🏷️ Kategoriler ({results.categories.length})
+                  </div>
+                  {results.categories.map((category) => (
+                    <div key={category.id} className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {category.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Departments */}
+              {results.departments.length > 0 && (
+                <div>
+                  <div className="px-3 py-1 text-xs font-medium text-orange-600 dark:text-orange-400">
+                    🏢 Departmanlar ({results.departments.length})
+                  </div>
+                  {results.departments.map((department) => (
+                    <div key={department.id} className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {department.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* View All Results */}
+              <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-2">
+                <button className="w-full px-3 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg font-medium">
+                  Tüm sonuçları gör ({getTotalResults()})
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Email Automation Component
 const EmailAutomationComponent = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
