@@ -558,12 +558,14 @@ const EmailLogsComponent = ({ onBack }) => {
 // Share Questions Management
 const ShareQuestionsManagement = ({ onBack }) => {
   const [questions, setQuestions] = useState([]);
+  const [allQuestions, setAllQuestions] = useState([]); // Store all questions for filtering
   const [employees, setEmployees] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sharing, setSharing] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [selectedPeriod, setSelectedPeriod] = useState(''); // Filter state
 
   useEffect(() => {
     fetchQuestionsAndEmployees();
