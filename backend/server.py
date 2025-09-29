@@ -808,74 +808,209 @@ async def get_comparative_analytics(
         "generated_at": datetime.now().isoformat()
     }
 
-@api_router.get("/dashboard/stats")
-async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
-    """Get dashboard statistics"""
+@api_router.post("/automation/email-reminders")
+async def setup_email_reminders(
+    reminder_config: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Setup automated email reminders for pending responses"""
     from datetime import datetime, timedelta
     
-    # Bu ayın başlangıcı
-    now = datetime.now()
-    start_of_month = datetime(now.year, now.month, 1)
+    # Get all assignments that need reminders
+    current_time = datetime.now()
     
-    # Bu ay yanıtları
-    monthly_responses = await db.table_responses.count_documents({
-        "created_at": {"$gte": start_of_month}
-    })
+    # Find assignments older than specified days without response
+    reminder_days = reminder_config.get("reminder_days", 3)
+    cutoff_date = current_time - timedelta(days=reminder_days)
     
-    # Geçen ay yanıtları (karşılaştırma için)
-    if now.month == 1:
-        last_month_start = datetime(now.year - 1, 12, 1)
-        last_month_end = datetime(now.year, 1, 1)
-    else:
-        last_month_start = datetime(now.year, now.month - 1, 1)
-        last_month_end = start_of_month
+    # Get assignments that need reminders
+    assignments = await db.question_assignments.find({
+        "sent_date": {"$lt": cutoff_date},
+        "response_received": {"$ne": True}
+    }).to_list(1000)
+    
+    reminder_count = 0
+    reminders_sent = []
+    
+    for assignment in assignments:
+        # Get question and employee details
+        question = await db.questions.find_one({"id": assignment["question_id"]})
+        employee = await db.employees.find_one({"id": assignment["employee_id"]})
         
-    last_monthly_responses = await db.table_responses.count_documents({
-        "created_at": {"$gte": last_month_start, "$lt": last_month_end}
-    })
-    
-    # Yüzde hesaplama
-    if last_monthly_responses > 0:
-        monthly_trend = round(((monthly_responses - last_monthly_responses) / last_monthly_responses) * 100)
-    else:
-        monthly_trend = 100 if monthly_responses > 0 else 0
-    
-    # Toplam kullanıcılar
-    total_employees = await db.employees.count_documents({})
-    
-    # Aktif sorular
-    active_questions = await db.questions.count_documents({})
-    
-    # AI analizleri (table_responses with ai_comment)
-    ai_analyses = await db.table_responses.count_documents({
-        "$and": [
-            {"ai_comment": {"$exists": True}},
-            {"ai_comment": {"$ne": None}},
-            {"ai_comment": {"$ne": ""}}
-        ]
-    })
-    
-    # Tamamlanma oranı hesaplama (bu ay)
-    # Toplam beklenilen yanıt = aktif sorular * kullanıcı sayısı
-    expected_responses = active_questions * total_employees
-    completion_rate = round((monthly_responses / expected_responses * 100)) if expected_responses > 0 else 0
-    
-    # Bildirimler
-    notifications = [
-        {"message": f"{expected_responses - monthly_responses} soru yanıt bekliyor", "type": "warning"},
-        {"message": f"{ai_analyses} AI analizi hazır", "type": "info"},
-        {"message": "Aylık rapor hazırlanıyor", "type": "info"}
-    ]
+        if not question or not employee:
+            continue
+            
+        # Check if reminder already sent recently
+        last_reminder = assignment.get("last_reminder_sent")
+        if last_reminder:
+            days_since_reminder = (current_time - datetime.fromisoformat(last_reminder)).days
+            if days_since_reminder < reminder_config.get("min_reminder_interval", 2):
+                continue
+        
+        # Prepare reminder email content
+        reminder_data = {
+            "type": "reminder",
+            "employee_name": f"{employee['first_name']} {employee['last_name']}",
+            "employee_email": employee["email"],
+            "question_text": question["question_text"],
+            "category": question["category"],
+            "days_pending": (current_time - datetime.fromisoformat(assignment["sent_date"])).days,
+            "response_url": f"http://localhost:3000/answer/{assignment['assignment_id']}",
+            "assignment_id": assignment["assignment_id"]
+        }
+        
+        # Send reminder email (demo)
+        print(f"[REMINDER EMAIL] Hatırlatma e-postası gönderildi:")
+        print(f"Alıcı: {employee['email']}")
+        print(f"Konu: Hatırlatma - {question['category']} Sorusu Yanıt Bekliyor")
+        print(f"Gecikme: {reminder_data['days_pending']} gün")
+        print("---")
+        
+        # Update assignment with reminder info
+        await db.question_assignments.update_one(
+            {"assignment_id": assignment["assignment_id"]},
+            {
+                "$set": {
+                    "last_reminder_sent": current_time.isoformat(),
+                    "reminder_count": assignment.get("reminder_count", 0) + 1
+                }
+            }
+        )
+        
+        reminders_sent.append(reminder_data)
+        reminder_count += 1
     
     return {
-        "monthly_responses": monthly_responses,
-        "monthly_trend": monthly_trend,
-        "active_users": total_employees,
-        "completion_rate": completion_rate,
-        "ai_analyses": ai_analyses,
-        "active_questions": active_questions,
-        "notifications": notifications,
-        "last_updated": now.isoformat()
+        "success": True,
+        "reminder_count": reminder_count,
+        "reminders_sent": reminders_sent,
+        "config": reminder_config,
+        "processed_at": current_time.isoformat()
+    }
+
+@api_router.post("/automation/generate-reports")
+async def generate_automated_reports(
+    report_config: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Generate automated reports based on configuration"""
+    from datetime import datetime, timedelta
+    import json
+    
+    current_time = datetime.now()
+    report_type = report_config.get("type", "monthly")
+    
+    # Calculate report period
+    if report_type == "weekly":
+        start_date = current_time - timedelta(days=7)
+        period_name = "Haftalık"
+    elif report_type == "monthly":
+        start_date = current_time.replace(day=1)
+        period_name = "Aylık"
+    elif report_type == "quarterly":
+        # Get start of quarter
+        quarter_start_month = ((current_time.month - 1) // 3) * 3 + 1
+        start_date = current_time.replace(month=quarter_start_month, day=1)
+        period_name = "Çeyreklik"
+    else:
+        start_date = current_time - timedelta(days=30)
+        period_name = "Özel"
+    
+    # Get responses in the period
+    responses = await db.table_responses.find({
+        "created_at": {"$gte": start_date}
+    }).to_list(1000)
+    
+    # Get all questions for context
+    questions = await db.questions.find({}).to_list(1000)
+    question_map = {q["id"]: q for q in questions}
+    
+    # Generate report data
+    report_data = {
+        "period": period_name,
+        "start_date": start_date.isoformat(),
+        "end_date": current_time.isoformat(),
+        "total_responses": len(responses),
+        "questions_analyzed": len(set(r["question_id"] for r in responses)),
+        "response_breakdown": {},
+        "top_performers": [],
+        "insights": [],
+        "recommendations": []
+    }
+    
+    # Analyze responses by question
+    question_stats = {}
+    for response in responses:
+        question_id = response["question_id"]
+        if question_id not in question_stats:
+            question_stats[question_id] = {
+                "question_text": question_map.get(question_id, {}).get("question_text", "Unknown"),
+                "category": question_map.get(question_id, {}).get("category", "Unknown"),
+                "response_count": 0,
+                "total_values": []
+            }
+        
+        question_stats[question_id]["response_count"] += 1
+        
+        # Extract numeric values from table_data
+        table_data = response.get("table_data", {})
+        for value in table_data.values():
+            try:
+                numeric_value = float(value) if value else 0
+                question_stats[question_id]["total_values"].append(numeric_value)
+            except (ValueError, TypeError):
+                pass
+    
+    # Generate insights
+    if len(responses) > 0:
+        report_data["insights"].append(f"📊 {period_name} dönemde {len(responses)} yanıt alındı")
+        report_data["insights"].append(f"📈 {len(question_stats)} farklı soru kategorisi analiz edildi")
+        
+        # Find most active category
+        category_counts = {}
+        for stats in question_stats.values():
+            category = stats["category"]
+            category_counts[category] = category_counts.get(category, 0) + stats["response_count"]
+        
+        if category_counts:
+            top_category = max(category_counts.items(), key=lambda x: x[1])
+            report_data["insights"].append(f"🏆 En aktif kategori: {top_category[0]} ({top_category[1]} yanıt)")
+    
+    # Generate recommendations
+    if len(responses) < 5:
+        report_data["recommendations"].append("📈 Yanıt oranını artırmak için hatırlatma e-postaları göndermeyi düşünün")
+    else:
+        report_data["recommendations"].append("✅ İyi performans gösteriyorsunuz, bu tempoyu koruyun")
+    
+    if len(question_stats) < 3:
+        report_data["recommendations"].append("📊 Daha kapsamlı analiz için farklı kategorilerde sorular eklemeyi düşünün")
+    
+    # Store report in database for future reference
+    report_record = {
+        "id": f"report_{current_time.strftime('%Y%m%d_%H%M%S')}",
+        "type": report_type,
+        "generated_at": current_time.isoformat(),
+        "generated_by": current_user.get("username", "system"),
+        "data": report_data,
+        "config": report_config
+    }
+    
+    await db.automated_reports.insert_one(report_record)
+    
+    # Demo: Print report summary
+    print(f"[AUTOMATED REPORT] {period_name} Raporu Oluşturuldu:")
+    print(f"Dönem: {start_date.strftime('%Y-%m-%d')} - {current_time.strftime('%Y-%m-%d')}")
+    print(f"Toplam Yanıt: {len(responses)}")
+    print(f"Analiz Edilen Sorular: {len(question_stats)}")
+    for insight in report_data["insights"]:
+        print(f"• {insight}")
+    print("---")
+    
+    return {
+        "success": True,
+        "report_id": report_record["id"],
+        "report_data": report_data,
+        "generated_at": current_time.isoformat()
     }
 # Original routes (now protected)
 @api_router.get("/")
