@@ -2980,6 +2980,65 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+
+          {/* Mini Trendler */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">📈 Haftalık Trendler</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Mini Yanıt Trendi */}
+              <Card className="bg-white/70 border border-gray-200 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-gray-600">Yanıt Trendi (7 Gün)</span>
+                  <span className="text-xs text-green-600">+{stats?.monthly_trend || 0}%</span>
+                </div>
+                <div className="h-12">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={[
+                      { day: 'Pzt', responses: 2 },
+                      { day: 'Sal', responses: 5 },
+                      { day: 'Çar', responses: 3 },
+                      { day: 'Per', responses: 8 },
+                      { day: 'Cum', responses: 6 },
+                      { day: 'Cmt', responses: 4 },
+                      { day: 'Paz', responses: 7 }
+                    ]}>
+                      <Area 
+                        type="monotone" 
+                        dataKey="responses" 
+                        stroke="#10b981" 
+                        fill="#10b981" 
+                        fillOpacity={0.2}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+
+              {/* Mini Kullanıcı Aktivitesi */}
+              <Card className="bg-white/70 border border-gray-200 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-gray-600">Kullanıcı Aktivitesi</span>
+                  <span className="text-xs text-blue-600">{stats?.active_users || 0} Online</span>
+                </div>
+                <div className="h-12">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={[
+                      { hour: '09', users: 2 },
+                      { hour: '10', users: 5 },
+                      { hour: '11', users: 3 },
+                      { hour: '12', users: 1 },
+                      { hour: '13', users: 4 },
+                      { hour: '14', users: 6 },
+                      { hour: '15', users: 3 }
+                    ]}>
+                      <Bar dataKey="users" fill="#3b82f6" radius={[1, 1, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            </div>
+          </div>
         </div>
 
         {/* Ana Fonksiyon Kartları */}
