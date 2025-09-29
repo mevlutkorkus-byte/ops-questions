@@ -3307,17 +3307,17 @@ const PublicQuestionResponse = () => {
 
                 <div className="flex justify-end">
                   <Button
-                    onClick={handleBulkSubmit}
+                    onClick={handleSubmit}
                     disabled={submitting}
                     className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 px-8 py-2.5"
                   >
                     {submitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Gönderiliyor...
+                        Kaydediliyor...
                       </>
                     ) : (
-                      'Tüm Verileri Gönder'
+                      `${getCurrentActivePeriod().month}/${getCurrentActivePeriod().year} Verilerini Kaydet`
                     )}
                   </Button>
                 </div>
