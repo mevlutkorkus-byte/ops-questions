@@ -434,6 +434,10 @@ class TableResponseCreate(BaseModel):
     employee_id: str  
     year: int
     month: int
+    day: Optional[int] = None
+    week: Optional[int] = None
+    quarter: Optional[int] = None
+    half: Optional[int] = None
     table_data: Dict[str, str] = Field(default_factory=dict)
     monthly_comment: Optional[str] = Field(None, max_length=2000)
 
