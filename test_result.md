@@ -354,9 +354,9 @@ test_plan:
     priority: "high"
     needs_retesting: true
     status_history:
-        - working: "NA"
+        - working: false
           agent: "main"
-          comment: "Starting implementation of period filter buttons (Günlük, Haftalık, Aylık, Çeyreklik, Altı Aylık, Yıllık, İhtiyaç Halinde) to filter questions displayed based on their period property in ShareQuestionsManagement component."
+          comment: "Implemented period filter buttons and filtering logic in ShareQuestionsManagement component. Added dynamic table structure in PublicQuestionResponse to adapt column headers based on question period (Günlük, Haftalık, Aylık, etc.). Need testing to verify functionality."
 
   - task: "Dynamic Response Table Restructuring based on Period"
     implemented: false
