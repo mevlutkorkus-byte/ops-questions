@@ -3483,58 +3483,30 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* DEMO & VERİ ANALİZİ Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* DEMO SAYFA Card */}
-              <Card 
-                className="bg-white/90 backdrop-blur-sm border-2 border-orange-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                onClick={() => setCurrentView('demo')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                        <FileQuestion className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-base font-semibold text-gray-900">DEMO SAYFA</h3>
-                        <p className="text-xs text-gray-600">Kullanıcı ekranı demo</p>
-                      </div>
+            {/* VERİ ANALİZİ Card - Full width */}
+            <Card 
+              className="bg-white/90 backdrop-blur-sm border-2 border-emerald-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              onClick={() => setCurrentView('analysis')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                      <BarChart3 className="w-6 h-6 text-white" />
                     </div>
-                    <div className="flex items-center space-x-1 sm:space-x-2">
-                      <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-medium">
-                        DEMO
-                      </span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">VERİ ANALİZİ</h3>
+                      <p className="text-sm text-gray-600">Grafikler ve AI analizi ile veri görselleştirme</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* VERİ ANALİZİ Card */}
-              <Card 
-                className="bg-white/90 backdrop-blur-sm border-2 border-emerald-300 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                onClick={() => setCurrentView('analysis')}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                        <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-base font-semibold text-gray-900">VERİ ANALİZİ</h3>
-                        <p className="text-xs text-gray-600">Grafikler ve AI analizi</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-1 sm:space-x-2">
-                      <span className="bg-emerald-100 text-emerald-600 text-xs px-2 py-1 rounded-full font-medium">
-                        {stats?.ai_analyses || 0} Rapor
-                      </span>
-                    </div>
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    <span className="bg-emerald-100 text-emerald-600 text-xs px-2 py-1 rounded-full font-medium">
+                      {stats?.ai_analyses || 0} Rapor
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sağ Taraf - Activity Feed */}
