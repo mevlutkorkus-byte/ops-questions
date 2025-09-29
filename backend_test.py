@@ -1097,6 +1097,46 @@ class QuestionBankAPITester:
         else:
             print(f"   ❌ Failed to create test question for period: {period}")
 
+    def run_period_filtering_tests(self):
+        """Run focused tests for the newly implemented period filtering functionality"""
+        print("🚀 Starting Period Filtering Tests for questions-share-list endpoint...")
+        print(f"Backend URL: {self.base_url}")
+        print("="*70)
+        
+        # Test 1: Authentication System
+        if not self.test_authentication_system():
+            print("\n❌ Authentication failed - cannot proceed with period filtering tests")
+            return 1
+        
+        # Test 2: Period-based filtering functionality
+        self.test_period_based_filtering()
+        
+        # Print focused results
+        print("\n" + "="*70)
+        print("PERIOD FILTERING TEST RESULTS")
+        print("="*70)
+        print(f"📊 Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+            print(f"🔑 Token: {self.token[:30]}...")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        # Show specific test results for period filtering
+        period_tests = [result for result in self.test_results if 'period' in result['test_name'].lower()]
+        if period_tests:
+            print(f"\n📋 PERIOD FILTERING SPECIFIC RESULTS:")
+            for test in period_tests:
+                status = "✅ PASSED" if test['success'] else "❌ FAILED"
+                print(f"   {status}: {test['test_name']}")
+                if not test['success'] and test['details']:
+                    print(f"      Details: {test['details']}")
+        
+        return 0 if self.tests_passed > 0 else 1
+
     def run_authentication_and_sharing_tests(self):
         """Run focused tests for authentication and question sharing"""
         print("🚀 Starting Authentication and Question Sharing Tests...")
