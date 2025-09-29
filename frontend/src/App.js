@@ -3012,28 +3012,28 @@ const Dashboard = () => {
 
           </div>
 
-          {/* Hızlı Bilgiler Çubuğu */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-6">
+          {/* Hızlı Bilgiler Çubuğu - Mobile Friendly */}
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 mb-6 mx-2 sm:mx-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm gap-4 sm:gap-0">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
                 {stats?.notifications?.map((notification, index) => (
-                  <div key={index} className="flex items-center space-x-1 sm:space-x-2">
+                  <div key={index} className="flex items-center space-x-2">
                     <div className={`w-3 h-3 rounded-full ${
                       notification.type === 'warning' ? 'bg-amber-500' :
                       notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
                     }`}></div>
-                    <span className="text-gray-600">{notification.message}</span>
+                    <span className="text-gray-600 text-xs sm:text-sm">{notification.message}</span>
                   </div>
                 )) || (
                   <>
-                    <div className="flex items-center space-x-1 sm:space-x-2">
+                    <div className="flex items-center space-x-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="text-gray-600">Sistem hazır</span>
+                      <span className="text-gray-600 text-xs sm:text-sm">Sistem hazır</span>
                     </div>
                   </>
                 )}
               </div>
-              <div className="text-gray-500">
+              <div className="text-gray-500 text-xs sm:text-sm">
                 Son güncelleme: {stats?.last_updated ? 
                   new Date(stats.last_updated).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) :
                   new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
