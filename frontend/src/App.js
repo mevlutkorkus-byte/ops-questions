@@ -3148,22 +3148,19 @@ const PublicQuestionResponse = () => {
       const response = await axios.get(`${API}/public/question-form/${assignmentId}`);
       setQuestionData(response.data);
       
+      // Generate periods based on question period type
+      const periods = generatePeriodsArray(response.data.question.period);
+      setPeriodsArray(periods);
+      
       // Initialize table data structure
       const initialTableData = {};
-      const activePeriod = getCurrentActivePeriod();
       
-      // Mark current period as active
-      monthsArray.forEach(monthInfo => {
-        monthInfo.isCurrentPeriod = (
-          monthInfo.year === activePeriod.year && 
-          monthInfo.month === activePeriod.month
-        );
-        
-        // Initialize table data for each month
-        initialTableData[monthInfo.key] = {
+      // Initialize table data for each period
+      periods.forEach(periodInfo => {
+        initialTableData[periodInfo.key] = {
           data: {}, // row_id -> value mapping
           comment: '',
-          isActive: monthInfo.isCurrentPeriod
+          isActive: periodInfo.isCurrentPeriod
         };
       });
       
