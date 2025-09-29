@@ -2930,7 +2930,7 @@ const Dashboard = () => {
         {/* KPI İstatistik Kartları */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">📊 Sistem Durumu</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 px-2 sm:px-0">
             
             {/* Bu Ay Yanıtları */}
             <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
