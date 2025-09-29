@@ -1975,6 +1975,8 @@ async def create_table_response(response_data: TableResponseCreate, current_user
 async def create_public_table_response(response_data: TableResponseCreate):
     """Create or update a single table response for public users (no auth required)"""
     try:
+        logger.info(f"Received table response data: {response_data.dict()}")
+        
         # Check if question and employee exist
         question = await db.questions.find_one({"id": response_data.question_id})
         employee = await db.employees.find_one({"id": response_data.employee_id})
