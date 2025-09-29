@@ -3204,7 +3204,8 @@ const PublicQuestionResponse = () => {
                       <table className="w-full text-sm">
                         <thead className="bg-gray-50 sticky top-0">
                           <tr>
-                            <th className="px-4 py-3 text-left font-medium text-gray-900 w-24">Ay</th>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
                             
                             {/* Dynamic columns from table_rows */}
                             {questionData.question.table_rows && questionData.question.table_rows.map(row => (
