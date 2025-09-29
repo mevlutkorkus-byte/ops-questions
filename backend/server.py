@@ -872,18 +872,26 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
         if not question or not employee:
             continue
         
-        # Create assignment
-        assignment_id = str(uuid.uuid4())
-        assignment_dict = {
-            "id": assignment_id,
-            "question_id": question_id,
-            "employee_id": employee_id,
-            "year": year,
-            "month": month,
-            "email_sent": False,
-            "response_received": False,
-            "assigned_at": current_date.isoformat()
-        }
+        # Create or update assignment  
+        if existing_assignment:
+            # Update existing assignment for re-send
+            assignment_id = existing_assignment["id"]
+            assignment_dict = existing_assignment.copy()
+            assignment_dict["assigned_at"] = current_date.isoformat()  # Update timestamp
+            assignment_dict["email_sent"] = False  # Reset email status
+        else:
+            # Create new assignment
+            assignment_id = str(uuid.uuid4())
+            assignment_dict = {
+                "id": assignment_id,
+                "question_id": question_id,
+                "employee_id": employee_id,
+                "year": year,
+                "month": month,
+                "email_sent": False,
+                "response_received": False,
+                "assigned_at": current_date.isoformat()
+            }
         
         # Send email if employee has email address
         email_sent = False
