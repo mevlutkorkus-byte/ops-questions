@@ -14,6 +14,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Loader2, User, Lock, Mail, BarChart3, Users, Activity, Plus, Edit, Trash2, Phone, Calendar, DollarSign, FileQuestion, Clock, Target, Settings, ChevronDown, Share, Send, Brain, Bell, ArrowLeft, Building } from "lucide-react";
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area
+} from 'recharts';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
