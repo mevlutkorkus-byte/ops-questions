@@ -128,7 +128,7 @@ const AuthProvider = ({ children }) => {
       login, 
       register, 
       logout, 
-      loading: loading || !initialized,
+      loading,
       isAuthenticated: !!token && !!user && initialized
     }}>
       {children}
