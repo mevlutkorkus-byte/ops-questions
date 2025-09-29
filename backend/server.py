@@ -668,6 +668,146 @@ async def get_advanced_insights(question_id: str, current_user: User = Depends(g
         "generated_at": datetime.now().isoformat()
     }
 
+@api_router.get("/analytics/compare")
+async def get_comparative_analytics(
+    question_ids: str = Query(..., description="Comma-separated question IDs to compare"),
+    current_user: User = Depends(get_current_user)
+):
+    """Compare analytics across multiple questions"""
+    from datetime import datetime
+    import statistics
+    
+    question_id_list = [qid.strip() for qid in question_ids.split(',') if qid.strip()]
+    
+    if len(question_id_list) < 2:
+        raise HTTPException(status_code=400, detail="At least 2 question IDs required for comparison")
+    
+    if len(question_id_list) > 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 questions can be compared at once")
+    
+    comparison_results = []
+    
+    for question_id in question_id_list:
+        # Get question data
+        question = await db.questions.find_one({"id": question_id})
+        if not question:
+            continue
+        
+        # Get responses
+        responses = await db.table_responses.find({"question_id": question_id}).to_list(1000)
+        
+        # Calculate basic metrics
+        total_responses = len(responses)
+        latest_response = max(responses, key=lambda x: f"{x.get('year', 0)}-{x.get('month', 0):02d}") if responses else None
+        
+        # Calculate trend if we have enough data
+        trend_data = {}
+        if len(responses) >= 2:
+            table_rows = question.get("table_rows", [])
+            for row in table_rows:
+                values = []
+                for response in sorted(responses, key=lambda x: f"{x.get('year', 0)}-{x.get('month', 0):02d}"):
+                    value = response.get("table_data", {}).get(row["id"], "0")
+                    try:
+                        numeric_value = float(value) if value else 0
+                        values.append(numeric_value)
+                    except (ValueError, TypeError):
+                        values.append(0)
+                
+                if len(values) >= 2:
+                    recent_avg = statistics.mean(values[-3:]) if len(values) >= 3 else values[-1]
+                    older_avg = statistics.mean(values[:-3]) if len(values) > 3 else values[0]
+                    trend_percentage = ((recent_avg - older_avg) / older_avg * 100) if older_avg != 0 else 0
+                    
+                    trend_data[row["name"]] = {
+                        "trend_percentage": round(trend_percentage, 2),
+                        "direction": "artış" if trend_percentage > 5 else "azalış" if trend_percentage < -5 else "stabil",
+                        "current_value": values[-1] if values else 0,
+                        "average_value": round(statistics.mean(values), 2) if values else 0
+                    }
+        
+        comparison_results.append({
+            "question_id": question_id,
+            "question_text": question.get("question_text", ""),
+            "category": question.get("category", ""),
+            "period": question.get("period", ""),
+            "total_responses": total_responses,
+            "latest_period": f"{latest_response.get('year', 0)}-{latest_response.get('month', 0):02d}" if latest_response else None,
+            "trend_data": trend_data,
+            "data_quality": "high" if total_responses >= 6 else "medium" if total_responses >= 3 else "low"
+        })
+    
+    # Generate comparison insights
+    insights = {
+        "summary": {
+            "questions_compared": len(comparison_results),
+            "total_data_points": sum(r["total_responses"] for r in comparison_results),
+            "high_quality_questions": len([r for r in comparison_results if r["data_quality"] == "high"]),
+            "categories": list(set(r["category"] for r in comparison_results if r["category"]))
+        },
+        "performance_ranking": [],
+        "trend_comparison": {},
+        "recommendations": []
+    }
+    
+    # Rank questions by data quality and trend performance
+    for result in comparison_results:
+        score = 0
+        positive_trends = 0
+        negative_trends = 0
+        
+        for metric, trend in result["trend_data"].items():
+            if trend["direction"] == "artış":
+                positive_trends += 1
+                score += 10
+            elif trend["direction"] == "azalış":
+                negative_trends += 1
+                score -= 5
+            else:
+                score += 2
+        
+        # Bonus for data quality
+        if result["data_quality"] == "high":
+            score += 20
+        elif result["data_quality"] == "medium":
+            score += 10
+        
+        insights["performance_ranking"].append({
+            "question_id": result["question_id"],
+            "question_text": result["question_text"],
+            "score": score,
+            "positive_trends": positive_trends,
+            "negative_trends": negative_trends,
+            "data_quality": result["data_quality"]
+        })
+    
+    # Sort by performance score
+    insights["performance_ranking"].sort(key=lambda x: x["score"], reverse=True)
+    
+    # Generate recommendations
+    best_performer = insights["performance_ranking"][0] if insights["performance_ranking"] else None
+    worst_performer = insights["performance_ranking"][-1] if insights["performance_ranking"] else None
+    
+    if best_performer and worst_performer and len(insights["performance_ranking"]) > 1:
+        insights["recommendations"].append(f"🏆 En iyi performans: '{best_performer['question_text'][:50]}...' (Skor: {best_performer['score']})")
+        insights["recommendations"].append(f"⚠️ Dikkat gereken: '{worst_performer['question_text'][:50]}...' (Skor: {worst_performer['score']})")
+    
+    high_quality_count = insights["summary"]["high_quality_questions"]
+    total_questions = insights["summary"]["questions_compared"]
+    
+    if high_quality_count == total_questions:
+        insights["recommendations"].append("✅ Tüm sorular yeterli veri kalitesine sahip.")
+    elif high_quality_count > total_questions / 2:
+        insights["recommendations"].append("📊 Çoğu soru iyi veri kalitesine sahip, bazıları daha fazla veri gerektirebilir.")
+    else:
+        insights["recommendations"].append("📈 Veri kalitesini artırmak için daha fazla yanıt toplanması önerilir.")
+    
+    return {
+        "comparison_results": comparison_results,
+        "insights": insights,
+        "generated_at": datetime.now().isoformat()
+    }
+
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
     """Get dashboard statistics"""
