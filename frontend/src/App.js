@@ -3083,7 +3083,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-medium">
-                    12 Aktif
+                    {stats?.active_questions || 0} Aktif
                   </span>
                 </div>
               </div>
