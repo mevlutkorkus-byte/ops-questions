@@ -224,7 +224,7 @@ const AuthPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="username" className="text-xs sm:text-sm font-medium text-gray-700">
                   Kullanıcı Adı
                 </Label>
                 <div className="relative mt-1">
@@ -245,7 +245,7 @@ const AuthPage = () => {
 
               {activeTab === 'register' && (
                 <div>
-                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="email" className="text-xs sm:text-sm font-medium text-gray-700">
                     Email
                   </Label>
                   <div className="relative mt-1">
@@ -266,7 +266,7 @@ const AuthPage = () => {
               )}
 
               <div>
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="password" className="text-xs sm:text-sm font-medium text-gray-700">
                   Şifre
                 </Label>
                 <div className="relative mt-1">
@@ -530,7 +530,7 @@ const EmailLogsComponent = ({ onBack }) => {
                       <div className="text-sm text-gray-500">
                         {formatDate(log.sent_date)}
                       </div>
-                      <div className={`text-sm font-medium ${log.response_received ? 'text-green-600' : 'text-orange-600'}`}>
+                      <div className={`text-xs sm:text-sm font-medium ${log.response_received ? 'text-green-600' : 'text-orange-600'}`}>
                         {log.response_received ? '✅ Yanıtlandı' : '⏳ Bekliyor'}
                       </div>
                     </div>
@@ -538,7 +538,7 @@ const EmailLogsComponent = ({ onBack }) => {
                   
                   <div className="border-t pt-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Yanıt Linki:</span>
+                      <span className="text-xs sm:text-sm font-medium text-gray-700">Yanıt Linki:</span>
                       <a 
                         href={log.answer_link} 
                         target="_blank" 
@@ -1257,7 +1257,7 @@ const ResponsesComponent = ({ onBack }) => {
                     {/* Çoklu veri alanları varsa onları göster */}
                     {selectedQuestion.data_fields && selectedQuestion.data_fields.length > 0 ? (
                       <div>
-                        <Label className="text-sm font-medium mb-3 block">Veri Alanları</Label>
+                        <Label className="text-xs sm:text-sm font-medium mb-3 block">Veri Alanları</Label>
                         <div className="space-y-3">
                           {selectedQuestion.data_fields.map((field) => (
                             <div key={field.id}>
@@ -1900,7 +1900,7 @@ const QuestionBankManagement = ({ onBack }) => {
               {/* Tablo Satırları - Temiz Sistem */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Tablo Satırları (2-10 satır)</Label>
+                  <Label className="text-xs sm:text-sm font-medium">Tablo Satırları (2-10 satır)</Label>
                   <Button 
                     type="button"
                     variant="outline"
@@ -1926,7 +1926,7 @@ const QuestionBankManagement = ({ onBack }) => {
                 {formData.table_rows.map((row, index) => (
                   <div key={row.id} className="border rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Satır {index + 1}</span>
+                      <span className="text-xs sm:text-sm font-medium">Satır {index + 1}</span>
                       <Button 
                         type="button"
                         variant="outline"
@@ -2901,7 +2901,7 @@ const Dashboard = () => {
               {/* Kullanıcı Profili */}
               <div className="flex items-center space-x-3 border-l border-gray-200 pl-4">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">Admin</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-900">Admin</p>
                   <p className="text-xs text-gray-500">Sistem Yöneticisi</p>
                 </div>
                 <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
@@ -2937,7 +2937,7 @@ const Dashboard = () => {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm font-medium">Bu Ay Yanıtları</p>
+                    <p className="text-blue-100 text-xs sm:text-sm font-medium">Bu Ay Yanıtları</p>
                     <div className="flex items-baseline space-x-2">
                       <p className="text-2xl font-bold">{stats?.monthly_responses || 0}</p>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
@@ -2961,7 +2961,7 @@ const Dashboard = () => {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-emerald-100 text-sm font-medium">Aktif Kullanıcılar</p>
+                    <p className="text-emerald-100 text-xs sm:text-sm font-medium">Aktif Kullanıcılar</p>
                     <div className="flex items-baseline space-x-2">
                       <p className="text-2xl font-bold">{stats?.active_users || 0}</p>
                       <span className="text-xs bg-emerald-400 px-1.5 py-0.5 rounded-full">Online</span>
@@ -2979,7 +2979,7 @@ const Dashboard = () => {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-amber-100 text-sm font-medium">Tamamlanma Oranı</p>
+                    <p className="text-amber-100 text-xs sm:text-sm font-medium">Tamamlanma Oranı</p>
                     <div className="flex items-baseline space-x-2">
                       <p className="text-2xl font-bold">{stats?.completion_rate || 0}%</p>
                       <span className="text-xs bg-amber-400 px-1.5 py-0.5 rounded-full">Hedef</span>
@@ -2997,7 +2997,7 @@ const Dashboard = () => {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm font-medium">AI Analizleri</p>
+                    <p className="text-purple-100 text-xs sm:text-sm font-medium">AI Analizleri</p>
                     <div className="flex items-baseline space-x-2">
                       <p className="text-2xl font-bold">{stats?.ai_analyses || 0}</p>
                       <span className="text-xs bg-purple-400 px-1.5 py-0.5 rounded-full">Hazır</span>
@@ -3295,7 +3295,7 @@ const Dashboard = () => {
                       <User className="w-4 h-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Admin giriş yaptı</p>
+                      <p className="text-xs sm:text-sm font-medium text-gray-900">Admin giriş yaptı</p>
                       <p className="text-xs text-gray-500">Az önce</p>
                     </div>
                   </div>
@@ -3305,7 +3305,7 @@ const Dashboard = () => {
                       <BarChart3 className="w-4 h-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Dashboard verileri güncellendi</p>
+                      <p className="text-xs sm:text-sm font-medium text-gray-900">Dashboard verileri güncellendi</p>
                       <p className="text-xs text-gray-500">2 dk önce</p>
                     </div>
                   </div>
@@ -3315,7 +3315,7 @@ const Dashboard = () => {
                       <FileQuestion className="w-4 h-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{stats?.active_questions || 0} aktif soru mevcut</p>
+                      <p className="text-xs sm:text-sm font-medium text-gray-900">{stats?.active_questions || 0} aktif soru mevcut</p>
                       <p className="text-xs text-gray-500">5 dk önce</p>
                     </div>
                   </div>
@@ -3325,7 +3325,7 @@ const Dashboard = () => {
                       <Brain className="w-4 h-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">AI analiz motoru çalışıyor</p>
+                      <p className="text-xs sm:text-sm font-medium text-gray-900">AI analiz motoru çalışıyor</p>
                       <p className="text-xs text-gray-500">10 dk önce</p>
                     </div>
                   </div>
@@ -3339,7 +3339,7 @@ const Dashboard = () => {
                         <AlertCircle className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{notification.message}</p>
+                        <p className="text-xs sm:text-sm font-medium text-gray-900">{notification.message}</p>
                         <p className="text-xs text-gray-500">Şimdi</p>
                       </div>
                     </div>
@@ -4867,7 +4867,7 @@ const DataAnalysisPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Soru Seçimi */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Soru</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Soru</label>
                   <select 
                     value={selectedQuestion}
                     onChange={(e) => setSelectedQuestion(parseInt(e.target.value))}
@@ -4883,7 +4883,7 @@ const DataAnalysisPage = () => {
 
                 {/* Dönem Filtresi */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Dönem</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Dönem</label>
                   <select 
                     value={selectedPeriodFilter}
                     onChange={(e) => setSelectedPeriodFilter(e.target.value)}
@@ -4898,7 +4898,7 @@ const DataAnalysisPage = () => {
 
                 {/* Departman Filtresi */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Departman</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Departman</label>
                   <select 
                     value={selectedDepartment}
                     onChange={(e) => setSelectedDepartment(e.target.value)}
