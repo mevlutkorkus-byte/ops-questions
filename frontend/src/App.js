@@ -1532,6 +1532,10 @@ const ProgramConstantsManagement = ({ onBack, type }) => {
     return <QuestionBankManagement onBack={onBack} />;
   }
 
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
   const fetchItems = async () => {
     try {
       const response = await axios.get(`${API}/${endpoint}`);
