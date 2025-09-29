@@ -219,6 +219,8 @@ app = FastAPI(title="Auth System API")
 # Add validation error handler
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    from fastapi.responses import JSONResponse
+    
     error_details = []
     for error in exc.errors():
         error_details.append({
@@ -228,9 +230,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         })
     
     print(f"Validation Error Details: {error_details}")
-    return HTTPException(
+    return JSONResponse(
         status_code=422,
-        detail=f"Validation error: {error_details[0]['message']} in field '{error_details[0]['field']}'"
+        content={
+            "detail": f"Validation error: {error_details[0]['message']} in field '{error_details[0]['field']}'",
+            "errors": error_details
+        }
     )
 
 # Create a router with the /api prefix
