@@ -1479,10 +1479,49 @@ const ProgramConstantsManagement = ({ onBack, type }) => {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const isCategory = type === 'category';
-  const endpoint = isCategory ? 'categories' : 'departments';
-  const title = isCategory ? 'Soru Kategorisi Yönetimi' : 'Departman Yönetimi';
-  const itemName = isCategory ? 'Kategori' : 'Departman';
+  // Type-specific configurations
+  const getConfig = () => {
+    switch (type) {
+      case 'category':
+        return {
+          endpoint: 'categories',
+          title: 'Soru Kategorisi Yönetimi',
+          itemName: 'Kategori',
+          addButtonText: 'Yeni Kategori Ekle'
+        };
+      case 'department':
+        return {
+          endpoint: 'departments',
+          title: 'Departman Yönetimi',
+          itemName: 'Departman',
+          addButtonText: 'Yeni Departman Ekle'
+        };
+      case 'employee':
+        return {
+          endpoint: 'employees',
+          title: 'Çalışan Bilgileri Yönetimi',
+          itemName: 'Çalışan',
+          addButtonText: 'Yeni Çalışan Ekle'
+        };
+      case 'question':
+        return {
+          endpoint: 'questions',
+          title: 'Soru Bankası Yönetimi',
+          itemName: 'Soru',
+          addButtonText: 'Yeni Soru Ekle'
+        };
+      default:
+        return {
+          endpoint: 'categories',
+          title: 'Yönetim Paneli',
+          itemName: 'Öğe',
+          addButtonText: 'Yeni Ekle'
+        };
+    }
+  };
+
+  const config = getConfig();
+  const { endpoint, title, itemName, addButtonText } = config;
 
   useEffect(() => {
     fetchItems();
