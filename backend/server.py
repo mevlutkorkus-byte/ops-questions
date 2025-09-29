@@ -807,9 +807,21 @@ async def delete_department(department_id: str, current_user: User = Depends(get
 
 # Question Sharing Routes
 @api_router.get("/questions-share-list")
-async def get_questions_for_sharing(current_user: User = Depends(get_current_user)):
+async def get_questions_for_sharing(
+    period: Optional[str] = Query(None, description="Filter questions by period"),
+    current_user: User = Depends(get_current_user)
+):
     """Get all questions with employees for sharing interface"""
-    questions = await db.questions.find().to_list(1000)
+    # Build filter query
+    filter_query = {}
+    if period:
+        # Validate period value
+        valid_periods = ["Günlük", "Haftalık", "Aylık", "Çeyreklik", "Altı Aylık", "Yıllık", "İhtiyaç Halinde"]
+        if period in valid_periods:
+            filter_query["period"] = period
+    
+    # Get questions with optional filtering
+    questions = await db.questions.find(filter_query).to_list(1000)
     employees = await db.employees.find().to_list(1000)
     
     # Format questions
