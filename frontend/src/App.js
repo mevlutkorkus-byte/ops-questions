@@ -2802,25 +2802,59 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50" data-testid="dashboard">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
-                <BarChart3 className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-4">
+              {/* Logo Area */}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Dijital Dönüşüm</h1>
+                  <p className="text-xs text-gray-500">Performans Yönetim Sistemi</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Dijital Dönüşüm</h1>
+              
+              {/* Breadcrumb */}
+              <div className="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+                <span>Dashboard</span>
               </div>
             </div>
-            <Button 
-              onClick={logout}
-              variant="outline"
-              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-              data-testid="logout-button"
-            >
-              Çıkış Yap
-            </Button>
+            
+            {/* Header Actions */}
+            <div className="flex items-center space-x-4">
+              {/* Bildirimler */}
+              <div className="relative cursor-pointer hover:bg-gray-100 rounded-lg p-2 transition-colors">
+                <Bell className="w-5 h-5 text-gray-600" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  3
+                </span>
+              </div>
+              
+              {/* Kullanıcı Profili */}
+              <div className="flex items-center space-x-3 border-l border-gray-200 pl-4">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-medium text-gray-900">Admin</p>
+                  <p className="text-xs text-gray-500">Sistem Yöneticisi</p>
+                </div>
+                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              
+              <Button 
+                onClick={logout}
+                variant="outline"
+                size="sm"
+                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+                data-testid="logout-button"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Çıkış Yap
+              </Button>
+            </div>
           </div>
         </div>
       </header>
