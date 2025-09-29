@@ -5537,6 +5537,320 @@ const AdvancedInsightsPanel = ({ questionId }) => {
   );
 };
 
+// Email Automation Component
+const EmailAutomationComponent = ({ onBack }) => {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+  const [emailConfig, setEmailConfig] = useState({
+    reminderDays: 3,
+    minReminderInterval: 1,
+    reportType: 'monthly',
+    includeCharts: true,
+    emailRecipients: '',
+    format: 'html'
+  });
+  const [reports, setReports] = useState([]);
+  const [reminders, setReminders] = useState([]);
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get(`${API}/automation/reports`);
+      setReports(response.data.reports || []);
+    } catch (error) {
+      console.error('Raporlar yüklenemedi:', error);
+    }
+  };
+
+  const handleSendReminders = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    
+    try {
+      const response = await axios.post(`${API}/automation/email-reminders`, {
+        reminder_days: emailConfig.reminderDays,
+        min_reminder_interval: emailConfig.minReminderInterval
+      });
+      
+      setSuccess(`${response.data.reminders_sent} hatırlatma e-postası gönderildi!`);
+      setReminders(response.data.reminders || []);
+    } catch (error) {
+      setError(error.response?.data?.detail || 'E-posta gönderiminde hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    
+    try {
+      const response = await axios.post(`${API}/automation/generate-reports`, {
+        type: emailConfig.reportType,
+        include_charts: emailConfig.includeCharts,
+        email_recipients: emailConfig.emailRecipients.split(',').map(email => email.trim()).filter(Boolean),
+        format: emailConfig.format
+      });
+      
+      setSuccess(`${emailConfig.reportType.charAt(0).toUpperCase() + emailConfig.reportType.slice(1)} raporu oluşturuldu! ID: ${response.data.report_id}`);
+      fetchReports(); // Refresh reports list
+    } catch (error) {
+      setError(error.response?.data?.detail || 'Rapor oluşturmada hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto">
+      {/* Back Button */}
+      <div className="flex items-center justify-between mb-6">
+        <Button
+          onClick={onBack}
+          variant="outline"
+          className="flex items-center space-x-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Dashboard'a Dön</span>
+        </Button>
+      </div>
+
+      {/* Success/Error Messages */}
+      {success && (
+        <Alert className="mb-6 border-green-200 bg-green-50">
+          <AlertDescription className="text-green-800">{success}</AlertDescription>
+        </Alert>
+      )}
+
+      {error && (
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* E-posta Hatırlatmaları */}
+        <Card className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Mail className="w-4 h-4 text-blue-600" />
+              </div>
+              <span>E-posta Hatırlatmaları</span>
+            </CardTitle>
+            <CardDescription>
+              Cevaplanmayan sorular için otomatik hatırlatma e-postaları gönder
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="reminderDays">Hatırlatma Süresi (Gün)</Label>
+              <Input
+                id="reminderDays"
+                type="number"
+                value={emailConfig.reminderDays}
+                onChange={(e) => setEmailConfig({...emailConfig, reminderDays: parseInt(e.target.value) || 3})}
+                min="1"
+                max="30"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Soru paylaşımından sonra kaç gün beklenecek
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="minInterval">Minimum Hatırlatma Aralığı (Gün)</Label>
+              <Input
+                id="minInterval"
+                type="number"
+                value={emailConfig.minReminderInterval}
+                onChange={(e) => setEmailConfig({...emailConfig, minReminderInterval: parseInt(e.target.value) || 1})}
+                min="1"
+                max="7"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Hatırlatmalar arası minimum süre
+              </p>
+            </div>
+
+            <Button 
+              onClick={handleSendReminders} 
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Gönderiliyor...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Hatırlatma E-postaları Gönder
+                </>
+              )}
+            </Button>
+
+            {reminders.length > 0 && (
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium">Son Gönderilen Hatırlatmalar:</p>
+                <div className="mt-2 space-y-1">
+                  {reminders.slice(0, 3).map((reminder, index) => (
+                    <p key={index} className="text-xs text-blue-700">
+                      • {reminder.employee_name} - {reminder.question_text.substring(0, 50)}...
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Rapor Oluşturma */}
+        <Card className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-4 h-4 text-green-600" />
+              </div>
+              <span>Otomatik Raporlama</span>
+            </CardTitle>
+            <CardDescription>
+              Periyodik raporlar oluştur ve e-posta ile gönder
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="reportType">Rapor Tipi</Label>
+              <Select value={emailConfig.reportType} onValueChange={(value) => setEmailConfig({...emailConfig, reportType: value})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Aylık Rapor</SelectItem>
+                  <SelectItem value="weekly">Haftalık Rapor</SelectItem>
+                  <SelectItem value="quarterly">Çeyreklik Rapor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="emailRecipients">E-posta Alıcıları</Label>
+              <Textarea
+                id="emailRecipients"
+                placeholder="admin@company.com, manager@company.com"
+                value={emailConfig.emailRecipients}
+                onChange={(e) => setEmailConfig({...emailConfig, emailRecipients: e.target.value})}
+                rows="2"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Virgülle ayırarak birden fazla e-posta adresi ekleyebilirsiniz
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="includeCharts"
+                checked={emailConfig.includeCharts}
+                onChange={(e) => setEmailConfig({...emailConfig, includeCharts: e.target.checked})}
+                className="rounded"
+              />
+              <Label htmlFor="includeCharts" className="text-sm">Grafikleri dahil et</Label>
+            </div>
+
+            <div>
+              <Label htmlFor="format">Rapor Formatı</Label>
+              <Select value={emailConfig.format} onValueChange={(value) => setEmailConfig({...emailConfig, format: value})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="html">HTML</SelectItem>
+                  <SelectItem value="pdf">PDF</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button 
+              onClick={handleGenerateReport} 
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Oluşturuluyor...
+                </>
+              ) : (
+                <>
+                  <FileQuestion className="w-4 h-4 mr-2" />
+                  Rapor Oluştur ve Gönder
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Rapor Geçmişi */}
+      {reports.length > 0 && (
+        <Card className="mt-6 bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md">
+          <CardHeader>
+            <CardTitle>📊 Rapor Geçmişi</CardTitle>
+            <CardDescription>Son oluşturulan raporlar</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Rapor ID</TableHead>
+                    <TableHead>Tip</TableHead>
+                    <TableHead>Tarih</TableHead>
+                    <TableHead>Format</TableHead>
+                    <TableHead>Durum</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {reports.slice(0, 10).map((report) => (
+                    <TableRow key={report.id}>
+                      <TableCell className="font-mono text-xs">{report.id}</TableCell>
+                      <TableCell>
+                        <span className="capitalize">{report.type}</span>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(report.created_at).toLocaleDateString('tr-TR')}
+                      </TableCell>
+                      <TableCell>
+                        <span className="uppercase text-xs bg-gray-100 px-2 py-1 rounded">
+                          {report.format}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-green-600 text-xs bg-green-100 px-2 py-1 rounded">
+                          Tamamlandı
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   // Check if this is a public question response page
