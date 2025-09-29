@@ -1523,9 +1523,14 @@ const ProgramConstantsManagement = ({ onBack, type }) => {
   const config = getConfig();
   const { endpoint, title, itemName, addButtonText } = config;
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
+  // Render different components based on type
+  if (type === 'employee') {
+    return <EmployeeManagement onBack={onBack} />;
+  }
+  
+  if (type === 'question') {
+    return <QuestionBankManagement onBack={onBack} />;
+  }
 
   const fetchItems = async () => {
     try {
