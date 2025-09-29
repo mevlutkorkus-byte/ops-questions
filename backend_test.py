@@ -2834,6 +2834,15 @@ class QuestionBankAPITester:
             print("\n❌ Authentication failed - cannot proceed with tests")
             return 1
         
+        # NEW: Test Gmail SMTP Integration (HIGH PRIORITY)
+        self.test_gmail_smtp_integration()
+        
+        # NEW: Test Export Endpoints (HIGH PRIORITY)
+        self.test_export_endpoints()
+        
+        # NEW: Test Email Automation Endpoints (HIGH PRIORITY)
+        self.test_email_automation_endpoints()
+        
         # NEW: Test Program Sabitleri (Constants) - MAIN FOCUS
         self.test_program_sabitleri_constants()
         
