@@ -1012,6 +1012,102 @@ async def generate_automated_reports(
         "report_data": report_data,
         "generated_at": current_time.isoformat()
     }
+
+@api_router.get("/dashboard/stats")
+async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
+    """Get dynamic dashboard statistics"""
+    from datetime import datetime, timedelta
+    
+    current_time = datetime.now()
+    current_month = current_time.month
+    current_year = current_time.year
+    
+    # Calculate previous month for trend calculation
+    if current_month == 1:
+        prev_month = 12
+        prev_year = current_year - 1
+    else:
+        prev_month = current_month - 1
+        prev_year = current_year
+    
+    # Get current month responses
+    current_month_responses = await db.table_responses.count_documents({
+        "year": current_year,
+        "month": current_month
+    })
+    
+    # Get previous month responses for trend calculation
+    prev_month_responses = await db.table_responses.count_documents({
+        "year": prev_year,
+        "month": prev_month
+    })
+    
+    # Calculate monthly trend
+    if prev_month_responses > 0:
+        monthly_trend = ((current_month_responses - prev_month_responses) / prev_month_responses) * 100
+    else:
+        monthly_trend = 0 if current_month_responses == 0 else 100
+    
+    # Get total active users (employees)
+    active_users = await db.employees.count_documents({})
+    
+    # Get total active questions
+    active_questions = await db.questions.count_documents({})
+    
+    # Get responses with AI comments
+    ai_analyses = await db.table_responses.count_documents({
+        "ai_comment": {"$exists": True, "$ne": None, "$ne": ""}
+    })
+    
+    # Calculate completion rate (responses vs expected responses)
+    # For simplicity, assume each active question should have 1 response per employee per month
+    expected_responses = active_questions * active_users
+    completion_rate = (current_month_responses / expected_responses * 100) if expected_responses > 0 else 0
+    
+    # Generate dynamic notifications
+    notifications = []
+    
+    # Notification about pending responses
+    pending_responses = max(0, expected_responses - current_month_responses)
+    if pending_responses > 0:
+        notifications.append({
+            "type": "warning",
+            "message": f"{pending_responses} soru yanıt bekliyor",
+            "priority": "medium"
+        })
+    
+    # Notification about AI analyses
+    if ai_analyses > 0:
+        notifications.append({
+            "type": "info", 
+            "message": f"{ai_analyses} AI analizi hazır",
+            "priority": "low"
+        })
+    else:
+        notifications.append({
+            "type": "info",
+            "message": "0 AI analizi hazır",
+            "priority": "low"
+        })
+    
+    # Monthly report notification
+    notifications.append({
+        "type": "info",
+        "message": "Aylık rapor hazırlanıyor",
+        "priority": "medium"
+    })
+    
+    return {
+        "monthly_responses": current_month_responses,
+        "monthly_trend": round(monthly_trend, 1),
+        "active_users": active_users,
+        "completion_rate": round(completion_rate, 1),
+        "ai_analyses": ai_analyses,
+        "active_questions": active_questions,
+        "notifications": notifications,
+        "last_updated": current_time.isoformat()
+    }
+
 # Original routes (now protected)
 @api_router.get("/")
 async def root():
