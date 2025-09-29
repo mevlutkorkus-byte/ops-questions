@@ -538,7 +538,7 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 
 # Protected routes
 @api_router.get("/analytics/dashboard")
-async def get_analytics_dashboard(current_user: User = Depends(get_current_user)):
+async def get_analytics_dashboard():
     """Get comprehensive analytics dashboard data with real responses"""
     from datetime import datetime, timedelta
     import statistics
