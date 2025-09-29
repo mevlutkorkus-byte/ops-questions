@@ -2827,6 +2827,115 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* KPI İstatistik Kartları */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">📊 Sistem Durumu</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            
+            {/* Bu Ay Yanıtları */}
+            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-blue-100 text-sm font-medium">Bu Ay Yanıtları</p>
+                    <div className="flex items-baseline space-x-2">
+                      <p className="text-2xl font-bold">24</p>
+                      <span className="text-xs bg-blue-400 px-1.5 py-0.5 rounded-full">+12%</span>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center">
+                    <FileQuestion className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Aktif Kullanıcılar */}
+            <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-emerald-100 text-sm font-medium">Aktif Kullanıcılar</p>
+                    <div className="flex items-baseline space-x-2">
+                      <p className="text-2xl font-bold">8</p>
+                      <span className="text-xs bg-emerald-400 px-1.5 py-0.5 rounded-full">Online</span>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 bg-emerald-400 rounded-lg flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tamamlanma Oranı */}
+            <Card className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-amber-100 text-sm font-medium">Tamamlanma Oranı</p>
+                    <div className="flex items-baseline space-x-2">
+                      <p className="text-2xl font-bold">85%</p>
+                      <span className="text-xs bg-amber-400 px-1.5 py-0.5 rounded-full">Hedef</span>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center">
+                    <Target className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* AI Analizleri */}
+            <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-purple-100 text-sm font-medium">AI Analizleri</p>
+                    <div className="flex items-baseline space-x-2">
+                      <p className="text-2xl font-bold">156</p>
+                      <span className="text-xs bg-purple-400 px-1.5 py-0.5 rounded-full">Hazır</span>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 bg-purple-400 rounded-lg flex items-center justify-center">
+                    <Brain className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+          </div>
+
+          {/* Hızlı Bilgiler Çubuğu */}
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-600">5 soru yanıt bekliyor</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="text-gray-600">3 yeni AI analizi</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                  <span className="text-gray-600">Aylık rapor hazırlanıyor</span>
+                </div>
+              </div>
+              <div className="text-gray-500">
+                Son güncelleme: {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Ana Fonksiyon Kartları */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">🚀 Ana Fonksiyonlar</h2>
+        </div>
+
         {/* Main Navigation Cards */}
         <div className="space-y-4 max-w-md">
           
