@@ -4439,20 +4439,6 @@ const DataAnalysisPage = () => {
 
   const currentQuestion = analyticsData?.questions?.[selectedQuestion];
   const hasRealData = analyticsData && analyticsData.questions.length > 0 && analyticsData.questions[0].total_responses > 0;
-  
-  // Chart data hazırlığı
-  const prepareChartData = (question) => {
-    return question.historical_data.map(item => {
-      const chartItem = { period: item.period };
-      question.table_rows.forEach(row => {
-        chartItem[row.name] = parseInt(item.data[row.id] || 0);
-      });
-      return chartItem;
-    }).reverse(); // Son ay sola gelsin
-  };
-
-  const chartData = prepareChartData(currentQuestion);
-  const chartColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 p-4">
