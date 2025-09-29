@@ -2866,31 +2866,46 @@ const Dashboard = () => {
             </div>
             
             {/* Header Actions */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleTheme}
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 transition-colors"
+                title={isDark ? 'Light Mode' : 'Dark Mode'}
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                )}
+              </Button>
+              
               {/* Bildirimler */}
-              <div className="relative cursor-pointer hover:bg-gray-100 rounded-lg p-2 transition-colors group">
-                <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+              <div className="relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 transition-colors group">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-300" />
                 <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse">
                   {stats?.notifications?.length || 3}
                 </span>
                 
                 {/* Notification Dropdown */}
-                <div className="absolute right-0 top-12 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="font-semibold text-gray-900">🔔 Bildirimler</h3>
-                    <p className="text-xs text-gray-500">Sistem durumu ve güncellemeler</p>
+                <div className="absolute right-0 top-12 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">🔔 Bildirimler</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Sistem durumu ve güncellemeler</p>
                   </div>
                   <div className="max-h-64 overflow-y-auto">
                     {stats?.notifications?.map((notification, index) => (
-                      <div key={index} className="p-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0">
+                      <div key={index} className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
                         <div className="flex items-start space-x-3">
                           <div className={`w-2 h-2 rounded-full mt-2 ${
                             notification.type === 'warning' ? 'bg-amber-500' :
                             notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
                           }`}></div>
                           <div className="flex-1">
-                            <p className="text-sm text-gray-700">{notification.message}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-sm text-gray-700 dark:text-gray-300">{notification.message}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                               {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
@@ -2898,38 +2913,38 @@ const Dashboard = () => {
                       </div>
                     )) || (
                       <>
-                        <div className="p-3 hover:bg-gray-50">
+                        <div className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700">
                           <div className="flex items-start space-x-3">
                             <div className="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
                             <div className="flex-1">
-                              <p className="text-sm text-gray-700">Sistem çalışıyor</p>
-                              <p className="text-xs text-gray-500 mt-1">Az önce</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-300">Sistem çalışıyor</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Az önce</p>
                             </div>
                           </div>
                         </div>
-                        <div className="p-3 hover:bg-gray-50">
+                        <div className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700">
                           <div className="flex items-start space-x-3">
                             <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
                             <div className="flex-1">
-                              <p className="text-sm text-gray-700">Dashboard güncellendi</p>
-                              <p className="text-xs text-gray-500 mt-1">2 dk önce</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-300">Dashboard güncellendi</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">2 dk önce</p>
                             </div>
                           </div>
                         </div>
-                        <div className="p-3 hover:bg-gray-50">
+                        <div className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700">
                           <div className="flex items-start space-x-3">
                             <div className="w-2 h-2 rounded-full bg-amber-500 mt-2"></div>
                             <div className="flex-1">
-                              <p className="text-sm text-gray-700">Yeni veriler mevcut</p>
-                              <p className="text-xs text-gray-500 mt-1">5 dk önce</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-300">Yeni veriler mevcut</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">5 dk önce</p>
                             </div>
                           </div>
                         </div>
                       </>
                     )}
                   </div>
-                  <div className="p-3 bg-gray-50 text-center">
-                    <button className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-700 text-center">
+                    <button className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
                       Tüm bildirimleri gör →
                     </button>
                   </div>
@@ -2937,10 +2952,10 @@ const Dashboard = () => {
               </div>
               
               {/* Kullanıcı Profili */}
-              <div className="flex items-center space-x-3 border-l border-gray-200 pl-4">
+              <div className="flex items-center space-x-3 border-l border-gray-200 dark:border-gray-700 pl-4">
                 <div className="text-right hidden sm:block">
-                  <p className="text-xs sm:text-sm font-medium text-gray-900">Admin</p>
-                  <p className="text-xs text-gray-500">Sistem Yöneticisi</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">Admin</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Sistem Yöneticisi</p>
                 </div>
                 <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
                   <User className="w-4 h-4 text-white" />
@@ -2951,7 +2966,7 @@ const Dashboard = () => {
                 onClick={logout}
                 variant="outline"
                 size="sm"
-                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:border-red-800 dark:hover:text-red-400"
                 data-testid="logout-button"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
