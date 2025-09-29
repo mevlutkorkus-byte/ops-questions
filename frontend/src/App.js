@@ -2962,26 +2962,58 @@ const PublicQuestionResponse = () => {
       const response = await axios.get(`${API}/public/question-form/${assignmentId}`);
       setQuestionData(response.data);
       
-      // Initialize bulk responses structure
-      const initialResponses = {};
-      monthsData.forEach(month => {
-        initialResponses[month.key] = {
-          year: month.year,
-          month: month.month,
-          numerical_value: '',
-          data_values: {},
-          employee_comment: ''
+      // Initialize table data structure
+      const initialTableData = {};
+      const activePeriod = getCurrentActivePeriod();
+      
+      // Mark current period as active
+      monthsArray.forEach(monthInfo => {
+        monthInfo.isCurrentPeriod = (
+          monthInfo.year === activePeriod.year && 
+          monthInfo.month === activePeriod.month
+        );
+        
+        // Initialize table data for each month
+        initialTableData[monthInfo.key] = {
+          data: {}, // row_id -> value mapping
+          comment: '',
+          isActive: monthInfo.isCurrentPeriod
         };
       });
-      setBulkResponses(initialResponses);
       
-      if (response.data.already_responded) {
-        setSubmitted(true);
+      setTableData(initialTableData);
+      
+      // Fetch existing responses to populate table
+      if (response.data.question && response.data.employee) {
+        await fetchExistingResponses(response.data.question.id, response.data.employee.id);
       }
+      
     } catch (error) {
       setError('Soru yüklenirken hata oluştu');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchExistingResponses = async (questionId, employeeId) => {
+    try {
+      const response = await axios.get(`${API}/table-responses/question/${questionId}`);
+      const userResponses = response.data.responses.filter(r => r.employee_id === employeeId);
+      
+      // Populate existing data in table
+      const updatedTableData = { ...tableData };
+      userResponses.forEach(response => {
+        const monthKey = `${response.year}-${response.month}`;
+        if (updatedTableData[monthKey]) {
+          updatedTableData[monthKey].data = response.table_data || {};
+          updatedTableData[monthKey].comment = response.monthly_comment || '';
+        }
+      });
+      
+      setTableData(updatedTableData);
+      setExistingResponses(userResponses);
+    } catch (error) {
+      console.log('Existing responses could not be loaded:', error);
     }
   };
 
