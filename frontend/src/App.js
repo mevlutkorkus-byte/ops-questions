@@ -4342,8 +4342,8 @@ const PublicQuestionResponse = () => {
   );
 };
 
-// Demo Question Response Page - Test için
-const DemoQuestionResponse = () => {
+// Data Analysis Page Component
+const DataAnalysisPage = () => {
   // Demo data
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
