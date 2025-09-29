@@ -3186,99 +3186,123 @@ const PublicQuestionResponse = () => {
                   </Alert>
                 )}
 
-                {/* 5+ Year Monthly Data Table */}
+                {/* Clean Table: Months as Rows, Categories as Columns */}
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
-                      2025 Eylül - 2030 Aralık Dönem Verileri
+                      {questionData.question.period} Değerlendirme Tablosu
                     </h3>
-                    <span className="text-sm text-gray-500">
-                      {Object.values(bulkResponses).filter(r => r.numerical_value || Object.values(r.data_values || {}).some(v => v) || r.employee_comment.trim()).length} / {monthsData.length} ay dolduruldu
-                    </span>
+                    <div className="text-sm text-gray-500">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                        Aktif: {getCurrentActivePeriod().month}/{getCurrentActivePeriod().year}
+                      </span>
+                    </div>
                   </div>
                   
                   <div className="border rounded-lg overflow-hidden">
-                    <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                    <div className="overflow-x-auto max-h-80 overflow-y-auto">
                       <table className="w-full text-sm">
                         <thead className="bg-gray-50 sticky top-0">
                           <tr>
-                            <th className="px-3 py-2 text-left font-medium text-gray-900">Yıl</th>
-                            <th className="px-3 py-2 text-left font-medium text-gray-900">Ay</th>
+                            <th className="px-4 py-3 text-left font-medium text-gray-900 w-24">Ay</th>
                             
-                            {/* Dynamic headers based on question type */}
-                            {questionData.question.data_fields && questionData.question.data_fields.length > 0 ? (
-                              questionData.question.data_fields.map(field => (
-                                <th key={field.id} className="px-3 py-2 text-left font-medium text-gray-900">
-                                  {field.name} {field.unit && `(${field.unit})`}
-                                </th>
-                              ))
-                            ) : (
-                              questionData.question.response_type === 'Sadece Sayısal' || questionData.question.response_type === 'Her İkisi' ? (
-                                <th className="px-3 py-2 text-left font-medium text-gray-900">Sayısal Değer</th>
-                              ) : null
-                            )}
+                            {/* Dynamic columns from table_rows */}
+                            {questionData.question.table_rows && questionData.question.table_rows.map(row => (
+                              <th key={row.id} className="px-3 py-3 text-left font-medium text-gray-900 min-w-20">
+                                {row.name}
+                                {row.unit && <span className="text-xs text-gray-500 block">({row.unit})</span>}
+                              </th>
+                            ))}
                             
-                            {(questionData.question.response_type === 'Sadece Sözel' || questionData.question.response_type === 'Her İkisi') && (
-                              <th className="px-3 py-2 text-left font-medium text-gray-900">Yorum</th>
-                            )}
+                            {/* Always include comment column */}
+                            <th className="px-3 py-3 text-left font-medium text-gray-900 min-w-32">Yorum</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {monthsData.map(month => (
-                            <tr key={month.key} className="border-t hover:bg-gray-50">
-                              <td className="px-3 py-2 font-medium">{month.year}</td>
-                              <td className="px-3 py-2">{month.monthName}</td>
-                              
-                              {/* Dynamic data fields */}
-                              {questionData.question.data_fields && questionData.question.data_fields.length > 0 ? (
-                                questionData.question.data_fields.map(field => (
-                                  <td key={field.id} className="px-3 py-2">
+                          {monthsArray.map(monthInfo => {
+                            const monthData = tableData[monthInfo.key] || { data: {}, comment: '', isActive: false };
+                            const isActive = monthInfo.isCurrentPeriod;
+                            const hasExistingData = existingResponses.some(r => 
+                              r.year === monthInfo.year && r.month === monthInfo.month
+                            );
+                            
+                            return (
+                              <tr 
+                                key={monthInfo.key} 
+                                className={`border-t ${
+                                  isActive ? 'bg-green-50 hover:bg-green-100' : 
+                                  hasExistingData ? 'bg-blue-50' : 
+                                  'bg-gray-50 hover:bg-gray-100'
+                                }`}
+                              >
+                                {/* Month column */}
+                                <td className="px-4 py-2 font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                      {monthInfo.monthName} {monthInfo.year}
+                                    </span>
+                                    {isActive && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        AKTİF
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                                
+                                {/* Data columns */}
+                                {questionData.question.table_rows && questionData.question.table_rows.map(row => (
+                                  <td key={row.id} className="px-3 py-2">
                                     <Input
-                                      type="number"
-                                      step="any"
-                                      value={bulkResponses[month.key]?.data_values?.[field.id] || ''}
-                                      onChange={(e) => updateDataValue(month.key, field.id, e.target.value)}
-                                      placeholder="0"
-                                      className="w-20 h-8 text-sm"
+                                      type="text"
+                                      value={monthData.data[row.id] || ''}
+                                      onChange={(e) => updateTableCell(monthInfo.key, row.id, e.target.value)}
+                                      disabled={!isActive}
+                                      placeholder={isActive ? "0" : ""}
+                                      className={`w-full h-8 text-sm ${
+                                        !isActive ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 
+                                        'bg-white'
+                                      }`}
                                     />
                                   </td>
-                                ))
-                              ) : (
-                                (questionData.question.response_type === 'Sadece Sayısal' || questionData.question.response_type === 'Her İkisi') && (
-                                  <td className="px-3 py-2">
-                                    <Input
-                                      type="number"
-                                      step="any"
-                                      value={bulkResponses[month.key]?.numerical_value || ''}
-                                      onChange={(e) => updateResponseData(month.key, 'numerical_value', e.target.value)}
-                                      placeholder="0"
-                                      className="w-20 h-8 text-sm"
-                                    />
-                                  </td>
-                                )
-                              )}
-                              
-                              {/* Comment field */}
-                              {(questionData.question.response_type === 'Sadece Sözel' || questionData.question.response_type === 'Her İkisi') && (
+                                ))}
+                                
+                                {/* Comment column */}
                                 <td className="px-3 py-2">
                                   <Input
-                                    value={bulkResponses[month.key]?.employee_comment || ''}
-                                    onChange={(e) => updateResponseData(month.key, 'employee_comment', e.target.value)}
-                                    placeholder="Yorum yazın..."
-                                    className="w-40 h-8 text-sm"
+                                    value={monthData.comment || ''}
+                                    onChange={(e) => updateMonthComment(monthInfo.key, e.target.value)}
+                                    disabled={!isActive}
+                                    placeholder={isActive ? "Yorum yazın..." : ""}
+                                    className={`w-full h-8 text-sm ${
+                                      !isActive ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 
+                                      'bg-white'
+                                    }`}
                                   />
                                 </td>
-                              )}
-                            </tr>
-                          ))}
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
                   </div>
                   
-                  <p className="text-xs text-gray-500 mt-2">
-                    💡 İpucu: Sadece veri girdiğiniz aylar kaydedilecektir. Boş bıraktığınız aylar göz ardı edilir.
-                  </p>
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center space-x-4 text-xs">
+                      <div className="flex items-center space-x-1">
+                        <div className="w-3 h-3 bg-green-100 border border-green-200 rounded"></div>
+                        <span>Aktif dönem (düzenlenebilir)</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <div className="w-3 h-3 bg-blue-100 border border-blue-200 rounded"></div>
+                        <span>Geçmiş veri (sadece görüntüleme)</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded"></div>
+                        <span>Gelecek dönemler (kapalı)</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end">
