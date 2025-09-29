@@ -508,18 +508,68 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 # Protected routes
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
-    employee_count = await db.employees.count_documents({})
-    question_count = await db.questions.count_documents({})
-    category_count = await db.categories.count_documents({})
-    department_count = await db.departments.count_documents({})
+    """Get dashboard statistics"""
+    from datetime import datetime, timedelta
+    
+    # Bu ayın başlangıcı
+    now = datetime.now()
+    start_of_month = datetime(now.year, now.month, 1)
+    
+    # Bu ay yanıtları
+    monthly_responses = await db.table_responses.count_documents({
+        "created_at": {"$gte": start_of_month}
+    })
+    
+    # Geçen ay yanıtları (karşılaştırma için)
+    if now.month == 1:
+        last_month_start = datetime(now.year - 1, 12, 1)
+        last_month_end = datetime(now.year, 1, 1)
+    else:
+        last_month_start = datetime(now.year, now.month - 1, 1)
+        last_month_end = start_of_month
+        
+    last_monthly_responses = await db.table_responses.count_documents({
+        "created_at": {"$gte": last_month_start, "$lt": last_month_end}
+    })
+    
+    # Yüzde hesaplama
+    if last_monthly_responses > 0:
+        monthly_trend = round(((monthly_responses - last_monthly_responses) / last_monthly_responses) * 100)
+    else:
+        monthly_trend = 100 if monthly_responses > 0 else 0
+    
+    # Toplam kullanıcılar
+    total_employees = await db.employees.count_documents({})
+    
+    # Aktif sorular
+    active_questions = await db.questions.count_documents({})
+    
+    # AI analizleri (table_responses with ai_comment)
+    ai_analyses = await db.table_responses.count_documents({
+        "ai_comment": {"$ne": None, "$ne": ""}
+    })
+    
+    # Tamamlanma oranı hesaplama (bu ay)
+    # Toplam beklenilen yanıt = aktif sorular * kullanıcı sayısı
+    expected_responses = active_questions * total_employees
+    completion_rate = round((monthly_responses / expected_responses * 100)) if expected_responses > 0 else 0
+    
+    # Bildirimler
+    notifications = [
+        {"message": f"{expected_responses - monthly_responses} soru yanıt bekliyor", "type": "warning"},
+        {"message": f"{ai_analyses} AI analizi hazır", "type": "info"},
+        {"message": "Aylık rapor hazırlanıyor", "type": "info"}
+    ]
     
     return {
-        "stats": {
-            "total_employees": employee_count,
-            "total_questions": question_count,
-            "total_categories": category_count,
-            "total_departments": department_count
-        }
+        "monthly_responses": monthly_responses,
+        "monthly_trend": monthly_trend,
+        "active_users": total_employees,
+        "completion_rate": completion_rate,
+        "ai_analyses": ai_analyses,
+        "active_questions": active_questions,
+        "notifications": notifications,
+        "last_updated": now.isoformat()
     }
 
 # Original routes (now protected)
