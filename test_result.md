@@ -346,6 +346,30 @@ test_plan:
           agent: "testing"
           comment: "✅ RE-SEND CAPABILITY TESTING COMPLETED SUCCESSFULLY: Comprehensive testing of the critical re-send functionality completed! ✅ SETUP: Successfully logged into system and accessed 'Soruları Paylaş' functionality ✅ INTERFACE: Found questions table with 5 İnsan Kaynakları questions and employee selection dropdowns ✅ FIRST SEND: Successfully assigned question to employee 'Mevlüt Körkuş' and clicked 'Toplu Gönder' button ✅ FIRST RESULT: System responded with '1 soru tekrar gönderildi, 1 e-posta başarıyla gönderildi' ✅ SECOND SEND (RE-SEND): Successfully re-assigned same question to same employee and sent again ✅ RE-SEND RESULT: System responded with '1 soru tekrar gönderildi, 1 e-posta başarıyla gönderildi' ✅ CRITICAL SUCCESS: System allows re-sending same question to same employee without blocking ✅ SUCCESS MESSAGE: Both sends show 'tekrar gönderildi' message indicating proper re-send handling ✅ NO ERRORS: No 'already exists' errors or blocking behavior ✅ EMAIL INTEGRATION: Both sends triggered email notifications successfully. CONCLUSION: The re-send capability is working perfectly as requested. System correctly handles duplicate question assignments and provides appropriate success messages with 'tekrar gönderildi' text for both first and subsequent sends."
 
+  - task: "Period-based filtering on Soruları Paylaş page"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Starting implementation of period filter buttons (Günlük, Haftalık, Aylık, Çeyreklik, Altı Aylık, Yıllık, İhtiyaç Halinde) to filter questions displayed based on their period property in ShareQuestionsManagement component."
+
+  - task: "Dynamic Response Table Restructuring based on Period"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Will implement dynamic table column structure based on question period. Monthly: 'Yıl | Ay', Weekly: 'Yıl | Hafta', Daily: 'Yıl | Ay | Gün', with active period logic for current data entry and past/future data states."
+
 agent_communication:
     - agent: "main"
       message: "Completed implementation of Cevaplar feature. Backend models, AI integration, and frontend components are ready. Need to test all functionality including API endpoints, AI comment generation, and chart visualization."
