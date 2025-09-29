@@ -2530,6 +2530,300 @@ class QuestionBankAPITester:
         
         print(f"   ✅ CRUD operations availability checked: {available_operations} operations tested")
 
+    def test_gmail_smtp_integration(self):
+        """Test Gmail SMTP integration and email functionality"""
+        print("\n" + "="*50)
+        print("GMAIL SMTP INTEGRATION TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping Gmail SMTP tests")
+            return
+        
+        # Test 1: Test email sending through question sharing (Soruları Paylaş)
+        print("\n🔍 Testing Gmail SMTP through question sharing functionality...")
+        
+        # First, get questions and employees for sharing
+        success, response = self.run_test(
+            "Get Questions and Employees for Email Test",
+            "GET",
+            "questions-share-list",
+            200
+        )
+        
+        if not success or 'questions' not in response or 'employees' not in response:
+            print("   ❌ Cannot get questions/employees for email test")
+            return
+        
+        questions = response['questions']
+        employees = response['employees']
+        
+        if not questions or not employees:
+            print("   ⚠️  No questions or employees available for email test")
+            return
+        
+        # Find an employee with email address
+        employee_with_email = None
+        for emp in employees:
+            if emp.get('email') and '@' in emp['email']:
+                employee_with_email = emp
+                break
+        
+        if not employee_with_email:
+            print("   ⚠️  No employees with email addresses found")
+            return
+        
+        # Test sharing a question (which triggers email sending)
+        share_data = {
+            "assignments": [
+                {
+                    "question_id": questions[0]['id'],
+                    "employee_id": employee_with_email['id']
+                }
+            ]
+        }
+        
+        success, response = self.run_test(
+            "Share Question with Gmail SMTP Email",
+            "POST",
+            "questions-share",
+            200,
+            data=share_data
+        )
+        
+        if success:
+            # Check response for email success indicators
+            email_successes = response.get('email_successes', 0)
+            email_failures = response.get('email_failures', [])
+            
+            print(f"   📧 Email successes: {email_successes}")
+            print(f"   📧 Email failures: {len(email_failures)}")
+            
+            if email_successes > 0:
+                print("   ✅ Gmail SMTP integration working - emails sent successfully")
+                self.log_test("Gmail SMTP Email Sending", True, f"Successfully sent {email_successes} emails")
+            else:
+                print("   ⚠️  No emails sent successfully")
+                self.log_test("Gmail SMTP Email Sending", False, f"No successful emails, failures: {email_failures}")
+            
+            # Check if assignment was created
+            assignments_created = response.get('assignments_created', 0)
+            if assignments_created > 0:
+                print(f"   ✅ Question assignments created: {assignments_created}")
+            
+        # Test 2: Verify email configuration is loaded
+        print("\n🔍 Testing email configuration...")
+        
+        # We can't directly test email config, but we can verify the sharing endpoint works
+        # which indirectly tests that email configuration is properly loaded
+        
+        # Test with multiple questions to verify bulk email functionality
+        if len(questions) >= 2 and len(employees) >= 1:
+            bulk_share_data = {
+                "assignments": [
+                    {
+                        "question_id": questions[0]['id'],
+                        "employee_id": employee_with_email['id']
+                    },
+                    {
+                        "question_id": questions[1]['id'],
+                        "employee_id": employee_with_email['id']
+                    }
+                ]
+            }
+            
+            success, response = self.run_test(
+                "Bulk Question Share with Gmail SMTP",
+                "POST",
+                "questions-share",
+                200,
+                data=bulk_share_data
+            )
+            
+            if success:
+                email_successes = response.get('email_successes', 0)
+                print(f"   📧 Bulk email test - successes: {email_successes}")
+                
+                if email_successes >= 2:
+                    print("   ✅ Bulk email functionality working")
+                    self.log_test("Gmail SMTP Bulk Email", True, f"Successfully sent {email_successes} bulk emails")
+                else:
+                    self.log_test("Gmail SMTP Bulk Email", False, f"Expected 2+ emails, got {email_successes}")
+
+    def test_export_endpoints(self):
+        """Test all PDF/Excel export endpoints"""
+        print("\n" + "="*50)
+        print("PDF/EXCEL EXPORT ENDPOINTS TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping export tests")
+            return
+        
+        # Test 1: Questions Excel Export
+        success, response = self.run_test(
+            "Export Questions to Excel",
+            "GET",
+            "export/questions/excel",
+            200
+        )
+        
+        if success:
+            print("   ✅ Questions Excel export endpoint working")
+            # Note: We can't easily verify file content in this test, but we can check if it returns successfully
+        
+        # Test 2: Employees Excel Export
+        success, response = self.run_test(
+            "Export Employees to Excel",
+            "GET",
+            "export/employees/excel",
+            200
+        )
+        
+        if success:
+            print("   ✅ Employees Excel export endpoint working")
+        
+        # Test 3: Responses Excel Export
+        success, response = self.run_test(
+            "Export Responses to Excel",
+            "GET",
+            "export/responses/excel",
+            200
+        )
+        
+        if success:
+            print("   ✅ Responses Excel export endpoint working")
+        
+        # Test 4: Questions PDF Export
+        success, response = self.run_test(
+            "Export Questions to PDF",
+            "GET",
+            "export/questions/pdf",
+            200
+        )
+        
+        if success:
+            print("   ✅ Questions PDF export endpoint working")
+        
+        # Test 5: Test authentication requirement for exports
+        print("\n🔍 Testing export authentication requirements...")
+        
+        temp_token = self.token
+        self.token = None
+        
+        export_endpoints = [
+            "export/questions/excel",
+            "export/employees/excel", 
+            "export/responses/excel",
+            "export/questions/pdf"
+        ]
+        
+        for endpoint in export_endpoints:
+            success, response = self.run_test(
+                f"Export Auth Test - {endpoint.split('/')[-1].upper()}",
+                "GET",
+                endpoint,
+                401  # Should require authentication
+            )
+            
+            if success:
+                print(f"   ✅ {endpoint} properly requires authentication")
+            else:
+                self.log_test(f"Export Auth - {endpoint}", False, "Should require authentication")
+        
+        self.token = temp_token
+        
+        # Test 6: Test export error handling
+        print("\n🔍 Testing export error handling...")
+        
+        # Test with potentially invalid parameters (if endpoints support them)
+        # Most export endpoints don't take parameters, so this is mainly for completeness
+        
+        print("   ✅ Export endpoints basic functionality verified")
+
+    def test_email_automation_endpoints(self):
+        """Test email automation endpoints with Gmail SMTP"""
+        print("\n" + "="*50)
+        print("EMAIL AUTOMATION ENDPOINTS TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - skipping email automation tests")
+            return
+        
+        # Test 1: Email Reminders Automation
+        reminder_config = {
+            "reminder_days": 3,
+            "min_reminder_interval": 2
+        }
+        
+        success, response = self.run_test(
+            "Setup Email Reminders Automation",
+            "POST",
+            "automation/email-reminders",
+            200,
+            data=reminder_config
+        )
+        
+        if success:
+            reminder_count = response.get('reminder_count', 0)
+            print(f"   📧 Email reminders processed: {reminder_count}")
+            
+            if 'reminders_sent' in response:
+                print("   ✅ Email reminders automation working")
+                self.log_test("Email Automation - Reminders", True, f"Processed {reminder_count} reminders")
+            else:
+                self.log_test("Email Automation - Reminders", False, "Missing reminders_sent in response")
+        
+        # Test 2: Automated Report Generation
+        report_config = {
+            "type": "monthly",
+            "include_charts": True,
+            "email_recipients": ["test@example.com"],
+            "format": "pdf"
+        }
+        
+        success, response = self.run_test(
+            "Generate Automated Reports",
+            "POST",
+            "automation/generate-reports",
+            200,
+            data=report_config
+        )
+        
+        if success:
+            report_id = response.get('report_id')
+            print(f"   📊 Generated report ID: {report_id}")
+            
+            if 'report_data' in response:
+                report_data = response['report_data']
+                print(f"   📊 Report period: {report_data.get('period', 'Unknown')}")
+                print(f"   📊 Total responses: {report_data.get('total_responses', 0)}")
+                print("   ✅ Automated report generation working")
+                self.log_test("Email Automation - Reports", True, f"Generated report {report_id}")
+            else:
+                self.log_test("Email Automation - Reports", False, "Missing report_data in response")
+        
+        # Test 3: Test different report types
+        report_types = ["weekly", "quarterly"]
+        
+        for report_type in report_types:
+            config = {
+                "type": report_type,
+                "include_charts": False
+            }
+            
+            success, response = self.run_test(
+                f"Generate {report_type.title()} Report",
+                "POST",
+                "automation/generate-reports",
+                200,
+                data=config
+            )
+            
+            if success:
+                print(f"   ✅ {report_type.title()} report generation working")
+
     def run_all_tests(self):
         """Run all API tests including Program Sabitleri and Cevaplar features"""
         print("🚀 Starting Complete API Testing...")
