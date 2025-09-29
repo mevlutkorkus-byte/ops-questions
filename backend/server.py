@@ -863,12 +863,57 @@ async def setup_email_reminders(
             "assignment_id": assignment["assignment_id"]
         }
         
-        # Send reminder email (demo)
-        print(f"[REMINDER EMAIL] Hatırlatma e-postası gönderildi:")
-        print(f"Alıcı: {employee['email']}")
-        print(f"Konu: Hatırlatma - {question['category']} Sorusu Yanıt Bekliyor")
-        print(f"Gecikme: {reminder_data['days_pending']} gün")
-        print("---")
+        # Send real reminder email
+        try:
+            # Create HTML content for reminder
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px;">
+                        <h1 style="margin: 0; font-size: 28px;">⏰ Hatırlatma</h1>
+                        <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Dijital Dönüşüm Değerlendirme Sistemi</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 30px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h2 style="color: #d73027; margin-top: 0;">Yanıt Beklenen Soru</h2>
+                        
+                        <div style="background: #fef7e0; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+                            <strong>{reminder_data['category']}</strong><br>
+                            <span style="color: #666; font-size: 14px;">{reminder_data['days_pending']} gün önce size gönderilmiş</span>
+                        </div>
+                        
+                        <p><strong>Soru:</strong> {reminder_data['question_text']}</p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{reminder_data['response_url']}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Soruyu Yanıtla</a>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 14px; text-align: center; margin-top: 30px;">
+                            Bu e-posta, yanıtlanmayan sorular için otomatik olarak gönderilmiştir.<br>
+                            Lütfen en kısa sürede yanıtlayınız.
+                        </p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            message = MessageSchema(
+                subject=f"Hatırlatma - {question['category']} Sorusu Yanıt Bekliyor ({reminder_data['days_pending']} Gün)",
+                recipients=[employee["email"]],
+                body=html_content,
+                subtype=MessageType.html
+            )
+            
+            fm = FastMail(conf)
+            await fm.send_message(message)
+            
+            print(f"✅ Gmail SMTP ile hatırlatma e-postası gönderildi: {employee['email']}")
+            
+        except Exception as e:
+            print(f"❌ Hatırlatma e-postası gönderim hatası: {str(e)}")
+            continue
         
         # Update assignment with reminder info
         await db.question_assignments.update_one(
