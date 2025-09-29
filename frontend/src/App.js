@@ -769,12 +769,17 @@ const ShareQuestionsManagement = ({ onBack }) => {
                             {question.category}
                           </p>
                           <p className="text-sm text-gray-600 truncate" title={question.question_text}>
-                            {question.question_text.length > 100 
-                              ? question.question_text.substring(0, 100) + '...'
+                            {question.question_text.length > 80 
+                              ? question.question_text.substring(0, 80) + '...'
                               : question.question_text
                             }
                           </p>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {question.period}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <Select 
