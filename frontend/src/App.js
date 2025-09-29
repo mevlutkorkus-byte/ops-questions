@@ -369,7 +369,7 @@ const AnswerStatusComponent = ({ onBack }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">Cevap Durumu</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Cevap Durumu</h2>
         </div>
       </div>
 
@@ -496,7 +496,7 @@ const EmailLogsComponent = ({ onBack }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">Gönderilen E-postalar</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Gönderilen E-postalar</h2>
         </div>
       </div>
 
@@ -697,7 +697,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">Soruları Paylaş</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Soruları Paylaş</h2>
         </div>
       </div>
 
@@ -1099,7 +1099,7 @@ const ResponsesComponent = ({ onBack }) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Cevaplar</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Cevaplar</h2>
             <p className="text-gray-600">Sorulara sayısal değer ve yorum ekleyin, AI analizini görün</p>
           </div>
           <Button 
@@ -1173,7 +1173,7 @@ const ResponsesComponent = ({ onBack }) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Cevap Girişi</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Cevap Girişi</h2>
             <p className="text-gray-600">{selectedQuestion.category}</p>
           </div>
           <div className="flex space-x-1 sm:space-x-2">
@@ -1405,7 +1405,7 @@ const ResponsesComponent = ({ onBack }) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Grafik Görünümü</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Grafik Görünümü</h2>
             <p className="text-gray-600">{selectedQuestion.category} - {selectedQuestion.question_text}</p>
           </div>
           <Button 
@@ -1505,7 +1505,7 @@ const ProgramConstantsManagement = ({ onBack, type }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{title}</h2>
         </div>
         
         <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
@@ -1770,7 +1770,7 @@ const QuestionBankManagement = ({ onBack }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">Soru Ekle Yönetimi</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Soru Ekle Yönetimi</h2>
         </div>
         
         <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
@@ -2247,7 +2247,7 @@ const EmployeeManagement = ({ onBack }) => {
           <Button variant="outline" onClick={onBack}>
             ← Geri Dön
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900">Personel Yönetimi</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Personel Yönetimi</h2>
         </div>
         
         <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
@@ -2939,7 +2939,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-blue-100 text-xs sm:text-sm font-medium">Bu Ay Yanıtları</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
-                      <p className="text-2xl font-bold">{stats?.monthly_responses || 0}</p>
+                      <p className="text-xl sm:text-2xl font-bold">{stats?.monthly_responses || 0}</p>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                         (stats?.monthly_trend || 0) >= 0 
                           ? 'bg-blue-400' 
@@ -2963,7 +2963,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-emerald-100 text-xs sm:text-sm font-medium">Aktif Kullanıcılar</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
-                      <p className="text-2xl font-bold">{stats?.active_users || 0}</p>
+                      <p className="text-xl sm:text-2xl font-bold">{stats?.active_users || 0}</p>
                       <span className="text-xs bg-emerald-400 px-1.5 py-0.5 rounded-full">Online</span>
                     </div>
                   </div>
@@ -2981,7 +2981,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-amber-100 text-xs sm:text-sm font-medium">Tamamlanma Oranı</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
-                      <p className="text-2xl font-bold">{stats?.completion_rate || 0}%</p>
+                      <p className="text-xl sm:text-2xl font-bold">{stats?.completion_rate || 0}%</p>
                       <span className="text-xs bg-amber-400 px-1.5 py-0.5 rounded-full">Hedef</span>
                     </div>
                   </div>
@@ -2999,7 +2999,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-purple-100 text-xs sm:text-sm font-medium">AI Analizleri</p>
                     <div className="flex items-baseline space-x-1 sm:space-x-2">
-                      <p className="text-2xl font-bold">{stats?.ai_analyses || 0}</p>
+                      <p className="text-xl sm:text-2xl font-bold">{stats?.ai_analyses || 0}</p>
                       <span className="text-xs bg-purple-400 px-1.5 py-0.5 rounded-full">Hazır</span>
                     </div>
                   </div>
@@ -3700,7 +3700,7 @@ const PublicQuestionResponse = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
             <p className="text-gray-600">
               Yanıtınız başarıyla kaydedildi. Bu sayfayı kapatabilirsiniz.
             </p>
@@ -3720,7 +3720,7 @@ const PublicQuestionResponse = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Hata</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Hata</h2>
             <p className="text-gray-600">{error}</p>
           </CardContent>
         </Card>
@@ -4399,7 +4399,7 @@ const DemoQuestionResponse = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
             <p className="text-gray-600">
               Demo yanıtınız başarıyla kaydedildi. Bu sayfayı kapatabilirsiniz.
             </p>
