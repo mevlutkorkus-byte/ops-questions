@@ -4032,19 +4032,19 @@ const DemoQuestionResponse = () => {
             {/* Question Info */}
             <div className="bg-emerald-50 border-l-4 border-emerald-400 p-6 mb-6 rounded-r-lg">
               <h3 className="text-lg font-semibold text-emerald-800 mb-2">
-                {questionData.question.category}
+                {currentQuestion.category}
               </h3>
               <p className="text-emerald-700 font-medium mb-4">
-                {questionData.question.question_text}
+                {currentQuestion.question_text}
               </p>
               <div className="text-sm text-emerald-600">
                 <p className="mb-2">
                   <strong>Önem/Gerekçe:</strong><br />
-                  {questionData.question.importance_reason}
+                  {currentQuestion.importance_reason}
                 </p>
                 <p>
                   <strong>Beklenen Aksiyon:</strong><br />
-                  {questionData.question.expected_action}
+                  {currentQuestion.expected_action}
                 </p>
               </div>
             </div>
@@ -4052,10 +4052,10 @@ const DemoQuestionResponse = () => {
             {/* Employee Info */}
             <div className="mb-6">
               <p className="text-sm text-gray-600">
-                <strong>Çalışan:</strong> {questionData.employee.first_name} {questionData.employee.last_name}
+                <strong>Çalışan:</strong> {employee.first_name} {employee.last_name}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Departman:</strong> {questionData.employee.department}
+                <strong>Departman:</strong> {employee.department}
               </p>
             </div>
 
