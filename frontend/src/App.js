@@ -3139,7 +3139,7 @@ const PublicQuestionResponse = () => {
             </div>
             <CardTitle className="text-2xl text-gray-900">Dijital Dönüşüm</CardTitle>
             <CardDescription>
-              5+ Yıllık Periyot Değerlendirmesi (2025-2030)
+              {questionData?.question?.period} Değerlendirme Formu - {getCurrentActivePeriod().month}/{getCurrentActivePeriod().year}
             </CardDescription>
           </CardHeader>
 
