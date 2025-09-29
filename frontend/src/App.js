@@ -5187,6 +5187,250 @@ const DataAnalysisPage = () => {
   );
 };
 
+// Advanced Insights Panel - AI Analytics Component  
+const AdvancedInsightsPanel = ({ questionId }) => {
+  const [insights, setInsights] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchInsights = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await axios.get(`${API}/analytics/insights/${questionId}`);
+        setInsights(response.data);
+      } catch (error) {
+        console.error('AI insights error:', error);
+        setError('AI analizi yüklenemedi');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (questionId) {
+      fetchInsights();
+    }
+  }, [questionId]);
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 border rounded-lg p-8">
+        <div className="flex items-center justify-center space-x-3">
+          <Loader2 className="w-6 h-6 text-purple-600 animate-spin" />
+          <span className="text-gray-600 dark:text-gray-300">AI analizi yükleniyor...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+        <AlertCircle className="h-4 w-4 text-red-600" />
+        <AlertDescription className="text-red-600 dark:text-red-400">
+          {error}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (!insights) {
+    return null;
+  }
+
+  const { insights: data, data_points, periods_analyzed, generated_at } = insights;
+  const performanceScore = data.performance_score || 0;
+  const confidenceLevel = data.confidence_level || 'low';
+
+  // Performance score color logic
+  const getScoreColor = (score) => {
+    if (score >= 80) return 'text-green-600 bg-green-100 dark:bg-green-900/20';
+    if (score >= 60) return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
+    if (score >= 40) return 'text-amber-600 bg-amber-100 dark:bg-amber-900/20';
+    return 'text-red-600 bg-red-100 dark:bg-red-900/20';
+  };
+
+  const getConfidenceColor = (level) => {
+    if (level === 'high') return 'text-green-600 bg-green-100 dark:bg-green-900/20';
+    if (level === 'medium') return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
+    return 'text-amber-600 bg-amber-100 dark:bg-amber-900/20';
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Performance Overview */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-white">📊 Performans Özeti</h4>
+          <div className="flex items-center space-x-4">
+            <div className={`px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(performanceScore)}`}>
+              Puan: {performanceScore}/100
+            </div>
+            <div className={`px-3 py-1 rounded-full text-xs font-medium ${getConfidenceColor(confidenceLevel)}`}>
+              Güven: {confidenceLevel === 'high' ? 'Yüksek' : confidenceLevel === 'medium' ? 'Orta' : 'Düşük'}
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            <div className="font-semibold text-gray-900 dark:text-white">{data_points}</div>
+            <div className="text-gray-500 dark:text-gray-400">Veri Noktası</div>
+          </div>
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            <div className="font-semibold text-gray-900 dark:text-white">{periods_analyzed}</div>
+            <div className="text-gray-500 dark:text-gray-400">Dönem Analizi</div>
+          </div>
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            <div className="font-semibold text-gray-900 dark:text-white">
+              {new Date(generated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+            </div>
+            <div className="text-gray-500 dark:text-gray-400">Son Analiz</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Advanced Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Trend Analysis */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+          <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mr-3">
+              📈
+            </div>
+            Trend Analizi
+          </h4>
+          
+          {data.data_trends && data.data_trends.length > 0 ? (
+            <div className="space-y-3">
+              {data.data_trends.map((trend, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 dark:text-white text-sm">{trend.metric}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {trend.current_value} → {trend.previous_value}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      trend.direction === 'artış' ? 'bg-green-100 text-green-700 dark:bg-green-900/20' :
+                      trend.direction === 'azalış' ? 'bg-red-100 text-red-700 dark:bg-red-900/20' :
+                      'bg-gray-100 text-gray-700 dark:bg-gray-700'
+                    }`}>
+                      {trend.direction === 'artış' ? '↗️' : trend.direction === 'azalış' ? '↘️' : '→'} {trend.direction}
+                    </span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      {trend.percentage > 0 ? '+' : ''}{trend.percentage}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Trend analizi için yeterli veri bulunmuyor.</p>
+          )}
+        </div>
+
+        {/* Predictions */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+          <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center mr-3">
+              🔮
+            </div>
+            Tahminler
+          </h4>
+          
+          {data.predictions && data.predictions.length > 0 ? (
+            <div className="space-y-3">
+              {data.predictions.map((prediction, index) => (
+                <div key={index} className="p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-medium text-gray-900 dark:text-white text-sm">{prediction.metric}</div>
+                    <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                      {prediction.predicted_value}
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    Güven aralığı: {prediction.confidence_interval.min} - {prediction.confidence_interval.max}
+                  </div>
+                  <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                    {prediction.period}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Tahmin için yeterli veri bulunmuyor.</p>
+          )}
+        </div>
+
+        {/* Anomalies */}
+        {data.anomalies && data.anomalies.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center mr-3">
+                ⚠️
+              </div>
+              Anormallikler
+            </h4>
+            
+            <div className="space-y-3">
+              {data.anomalies.map((anomaly, index) => (
+                <div key={index} className={`p-3 rounded-lg border-l-4 ${
+                  anomaly.severity === 'high' 
+                    ? 'bg-red-50 dark:bg-red-900/10 border-red-400' 
+                    : 'bg-amber-50 dark:bg-amber-900/10 border-amber-400'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-medium text-gray-900 dark:text-white text-sm">{anomaly.metric}</div>
+                    <div className={`text-sm font-bold ${
+                      anomaly.severity === 'high' ? 'text-red-600' : 'text-amber-600'
+                    }`}>
+                      {anomaly.value}
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                    {anomaly.description}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Dönem: {anomaly.period} | Beklenen: {anomaly.expected_range.min}-{anomaly.expected_range.max}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* AI Recommendations */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+          <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center mr-3">
+              💡
+            </div>
+            AI Önerileri
+          </h4>
+          
+          {data.recommendations && data.recommendations.length > 0 ? (
+            <div className="space-y-3">
+              {data.recommendations.map((recommendation, index) => (
+                <div key={index} className="p-3 bg-green-50 dark:bg-green-900/10 rounded-lg">
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {recommendation}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Henüz öneri bulunmuyor.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   // Check if this is a public question response page
