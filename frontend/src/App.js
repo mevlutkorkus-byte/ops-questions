@@ -4735,12 +4735,106 @@ const DataAnalysisPage = () => {
             {/* Grafik */}
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Trend Analizi</h3>
+              
+              {/* Chart Type Selector */}
+              <div className="mb-4 flex space-x-2">
+                <Button variant="outline" size="sm" className="bg-blue-50 text-blue-600">
+                  📈 Line Chart
+                </Button>
+                <Button variant="outline" size="sm">
+                  📊 Bar Chart  
+                </Button>
+                <Button variant="outline" size="sm">
+                  🥧 Pie Chart
+                </Button>
+              </div>
+              
               <div className="bg-white border rounded-lg p-6" style={{height: '400px'}}>
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
-                  📊 Grafik buraya gelecek (Recharts ile implementasyon)
-                  <br />
-                  <small>Veri: {chartData.length} dönem, {currentQuestion.table_rows.length} sütun</small>
-                </div>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="period" 
+                      tick={{ fontSize: 12 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis tick={{ fontSize: 12 }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px',
+                        fontSize: '12px'
+                      }}
+                    />
+                    <Legend />
+                    {currentQuestion.table_rows.map((row, index) => (
+                      <Line 
+                        key={row.id}
+                        type="monotone" 
+                        dataKey={row.name} 
+                        stroke={chartColors[index % chartColors.length]}
+                        strokeWidth={2}
+                        dot={{ fill: chartColors[index % chartColors.length], strokeWidth: 2 }}
+                        activeDot={{ r: 6, stroke: chartColors[index % chartColors.length], strokeWidth: 2 }}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* İkincil Grafik - Bar Chart */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Karşılaştırma Analizi</h3>
+              <div className="bg-white border rounded-lg p-6" style={{height: '300px'}}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="period" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 12 }} />
+                    <Tooltip />
+                    <Legend />
+                    {currentQuestion.table_rows.map((row, index) => (
+                      <Bar 
+                        key={row.id}
+                        dataKey={row.name} 
+                        fill={chartColors[index % chartColors.length]}
+                        radius={[2, 2, 0, 0]}
+                      />
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Üçüncül Grafik - Pie Chart (Son dönem için) */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Güncel Dağılım</h3>
+              <div className="bg-white border rounded-lg p-6" style={{height: '300px'}}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={currentQuestion.table_rows.map((row, index) => ({
+                        name: row.name,
+                        value: parseInt(currentQuestion.historical_data[0]?.data[row.id] || 0),
+                        fill: chartColors[index % chartColors.length]
+                      }))}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value}`}
+                    >
+                      {currentQuestion.table_rows.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
