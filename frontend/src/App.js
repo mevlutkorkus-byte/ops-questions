@@ -756,8 +756,8 @@ const ShareQuestionsManagement = ({ onBack }) => {
               <TableBody>
                 {questions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
-                      Henüz soru bulunmuyor
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      {selectedPeriod ? `${selectedPeriod} periyoduna ait soru bulunmuyor` : 'Henüz soru bulunmuyor'}
                     </TableCell>
                   </TableRow>
                 ) : (
