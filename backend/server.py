@@ -537,6 +537,115 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
 # Protected routes
+@api_router.get("/analytics/dashboard")
+async def get_analytics_dashboard(current_user: User = Depends(get_current_user)):
+    """Get comprehensive analytics dashboard data with real responses"""
+    from datetime import datetime, timedelta
+    import statistics
+    
+    # Get all questions with their responses
+    questions = await db.questions.find({}).to_list(100)
+    dashboard_data = []
+    
+    for question in questions:
+        question_id = question["id"]
+        
+        # Get all responses for this question
+        responses = await db.table_responses.find({"question_id": question_id}).to_list(1000)
+        
+        if not responses:
+            continue
+            
+        # Organize data by time periods
+        historical_data = []
+        period_data = {}
+        table_rows = question.get("table_rows", [])
+        
+        # Group responses by period
+        for response in responses:
+            period_key = f"{response.get('year', 2024)}-{response.get('month', 1):02d}"
+            period_display = f"{['', 'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'][response.get('month', 1)]} {response.get('year', 2024)}"
+            
+            if period_key not in period_data:
+                period_data[period_key] = {
+                    'period': period_display,
+                    'data': {},
+                    'comment': response.get('monthly_comment', ''),
+                    'ai_comment': response.get('ai_comment', ''),
+                    'employee_id': response.get('employee_id', ''),
+                    'date': response.get('created_at', '')[:10]  # Just date part
+                }
+            
+            # Merge table data
+            response_data = response.get('table_data', {})
+            period_data[period_key]['data'].update(response_data)
+        
+        # Convert to list and sort by date
+        for period_key in sorted(period_data.keys()):
+            historical_data.append(period_data[period_key])
+        
+        # Calculate trends for each table row
+        trends = {}
+        if len(historical_data) >= 2:
+            for row in table_rows:
+                values = []
+                for period in historical_data:
+                    try:
+                        value = float(period['data'].get(row['id'], 0))
+                        values.append(value)
+                    except (ValueError, TypeError):
+                        values.append(0)
+                
+                if len(values) >= 2:
+                    recent_avg = statistics.mean(values[-3:]) if len(values) >= 3 else values[-1]
+                    older_avg = statistics.mean(values[:-3]) if len(values) > 3 else values[0]
+                    
+                    if older_avg > 0:
+                        change_percent = ((recent_avg - older_avg) / older_avg) * 100
+                    else:
+                        change_percent = 0
+                    
+                    trends[row['id']] = {
+                        'name': row['name'],
+                        'current': recent_avg,
+                        'change_percent': round(change_percent, 2),
+                        'trend': 'up' if change_percent > 5 else 'down' if change_percent < -5 else 'stable'
+                    }
+        
+        # Generate AI insights using the existing generate_ai_comment function
+        try:
+            if historical_data:
+                last_period = historical_data[-1]
+                ai_insights = await generate_ai_comment(
+                    employee_name="Sistem Analizi",
+                    question_text=question.get('question_text', ''),
+                    numerical_values=last_period['data'],
+                    employee_comment=f"Son {len(historical_data)} dönem verisi analizi"
+                )
+            else:
+                ai_insights = "Yeterli veri bulunmuyor."
+        except Exception as e:
+            ai_insights = "AI analizi oluşturulamadı."
+        
+        dashboard_data.append({
+            "id": question_id,
+            "question_text": question.get("question_text", ""),
+            "category": question.get("category", ""),
+            "period": question.get("period", ""),
+            "table_rows": table_rows,
+            "historical_data": historical_data,
+            "trends": trends,
+            "ai_insights": ai_insights,
+            "total_responses": len(responses),
+            "last_updated": historical_data[-1]['date'] if historical_data else None
+        })
+    
+    return {
+        "questions": dashboard_data,
+        "total_questions": len(dashboard_data),
+        "generated_at": datetime.now(timezone.utc).isoformat()
+    }
+
 @api_router.get("/analytics/insights/{question_id}")
 async def get_advanced_insights(question_id: str, current_user: User = Depends(get_current_user)):
     """Get AI-powered advanced analytics insights for a specific question"""
