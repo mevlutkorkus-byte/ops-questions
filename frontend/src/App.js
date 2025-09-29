@@ -2831,8 +2831,8 @@ const Dashboard = () => {
             <div className="flex items-center space-x-4">
               {/* Bildirimler */}
               <div className="relative cursor-pointer hover:bg-gray-100 rounded-lg p-2 transition-colors group">
-                <Bell className="w-5 h-5 text-gray-600" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse">
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse">
                   {stats?.notifications?.length || 3}
                 </span>
                 
@@ -2950,7 +2950,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-400 rounded-lg flex items-center justify-center">
-                    <FileQuestion className="w-5 h-5 text-white" />
+                    <FileQuestion className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -2968,7 +2968,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-400 rounded-lg flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -2986,7 +2986,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-400 rounded-lg flex items-center justify-center">
-                    <Target className="w-5 h-5 text-white" />
+                    <Target className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -3004,7 +3004,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-400 rounded-lg flex items-center justify-center">
-                    <Brain className="w-5 h-5 text-white" />
+                    <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -3130,7 +3130,7 @@ const Dashboard = () => {
                         <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full font-medium">
                           Aktif
                         </span>
-                        <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                       </div>
                     </div>
                   </DropdownMenuTrigger>
@@ -3232,7 +3232,7 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                        <FileQuestion className="w-5 h-5 text-white" />
+                        <FileQuestion className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
                       <div>
                         <h3 className="text-base font-semibold text-gray-900">DEMO SAYFA</h3>
@@ -3257,7 +3257,7 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
-                        <BarChart3 className="w-5 h-5 text-white" />
+                        <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
                       <div>
                         <h3 className="text-base font-semibold text-gray-900">VERİ ANALİZİ</h3>
