@@ -2770,10 +2770,6 @@ const Dashboard = () => {
     );
   }
 
-  if (currentView === 'demo') {
-    return <DemoQuestionResponse />;
-  }
-
   if (currentView === 'analysis') {
     return <DataAnalysisPage />;
   }
