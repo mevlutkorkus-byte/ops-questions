@@ -3387,8 +3387,44 @@ const PublicQuestionResponse = () => {
                       <table className="w-full text-sm">
                         <thead className="bg-gray-50 sticky top-0">
                           <tr>
-                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
-                            <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
+                            {/* Dynamic period columns based on question period */}
+                            {questionData.question.period === 'Günlük' && (
+                              <>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Gün</th>
+                              </>
+                            )}
+                            {questionData.question.period === 'Haftalık' && (
+                              <>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Hafta</th>
+                              </>
+                            )}
+                            {questionData.question.period === 'Aylık' && (
+                              <>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Ay</th>
+                              </>
+                            )}
+                            {questionData.question.period === 'Çeyreklik' && (
+                              <>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Çeyrek</th>
+                              </>
+                            )}
+                            {questionData.question.period === 'Altı Aylık' && (
+                              <>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                                <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yarıyıl</th>
+                              </>
+                            )}
+                            {questionData.question.period === 'Yıllık' && (
+                              <th className="px-3 py-3 text-left font-medium text-gray-900 w-20">Yıl</th>
+                            )}
+                            {questionData.question.period === 'İhtiyaç Halinde' && (
+                              <th className="px-3 py-3 text-left font-medium text-gray-900 w-32">Dönem</th>
+                            )}
                             
                             {/* Dynamic columns from table_rows */}
                             {questionData.question.table_rows && questionData.question.table_rows.map(row => (
