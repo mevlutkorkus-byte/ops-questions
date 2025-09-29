@@ -2951,21 +2951,28 @@ const Dashboard = () => {
           <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 mb-6">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center space-x-6">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-gray-600">5 soru yanıt bekliyor</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span className="text-gray-600">3 yeni AI analizi</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
-                  <span className="text-gray-600">Aylık rapor hazırlanıyor</span>
-                </div>
+                {stats?.notifications?.map((notification, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div className={`w-3 h-3 rounded-full ${
+                      notification.type === 'warning' ? 'bg-amber-500' :
+                      notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
+                    }`}></div>
+                    <span className="text-gray-600">{notification.message}</span>
+                  </div>
+                )) || (
+                  <>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-600">Sistem hazır</span>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="text-gray-500">
-                Son güncelleme: {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                Son güncelleme: {stats?.last_updated ? 
+                  new Date(stats.last_updated).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) :
+                  new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                }
               </div>
             </div>
           </div>
