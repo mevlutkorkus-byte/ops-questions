@@ -3884,6 +3884,10 @@ const PublicQuestionResponse = () => {
       if (activePeriod.quarter) submissionData.quarter = activePeriod.quarter;
       if (activePeriod.half) submissionData.half = activePeriod.half;
       
+      // Debug: Log the data being sent
+      console.log('Sending submission data:', JSON.stringify(submissionData, null, 2));
+      console.log('Active period:', activePeriod);
+      
       await axios.post(`${API}/public/table-responses`, submissionData);
       
       setSuccess('Verileriniz başarıyla kaydedildi ve AI yorumu oluşturuldu!');
