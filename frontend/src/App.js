@@ -4324,6 +4324,313 @@ const DemoQuestionResponse = () => {
   );
 };
 
+// Data Analysis Page - Veri Analizi
+const DataAnalysisPage = () => {
+  const [selectedQuestion, setSelectedQuestion] = useState(0);
+  const [selectedPeriodFilter, setSelectedPeriodFilter] = useState('all');
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
+  
+  // Demo sorular ve geçmiş verileri
+  const analysisQuestions = [
+    {
+      id: '1',
+      question_text: 'Toplam çalışan sayımız nedir?',
+      category: 'İnsan Kaynakları',
+      period: 'Aylık',
+      table_rows: [
+        { id: '1', name: 'Tam Zamanlı', unit: 'kişi' },
+        { id: '2', name: 'Yarı Zamanlı', unit: 'kişi' },
+        { id: '3', name: 'Stajyer', unit: 'kişi' }
+      ],
+      historical_data: [
+        {
+          period: 'Eylül 2024',
+          data: { '1': '45', '2': '12', '3': '8' },
+          comment: 'Yeni işe alımlar gerçekleşti.',
+          ai_comment: 'Tam zamanlı çalışan sayısında %8 artış gözlendi. Bu olumlu bir trend.',
+          user: 'Mevlüt Körkuş',
+          date: '2024-09-15'
+        },
+        {
+          period: 'Ağustos 2024',
+          data: { '1': '42', '2': '10', '3': '6' },
+          comment: 'Yaz dönemi azalması.',
+          ai_comment: 'Mevsimsel azalma beklendiği gibi gerçekleşti.',
+          user: 'Mevlüt Körkuş',
+          date: '2024-08-15'
+        },
+        {
+          period: 'Temmuz 2024',
+          data: { '1': '48', '2': '14', '3': '5' },
+          comment: 'Proje yoğunluğu sebebiyle artış.',
+          ai_comment: 'Proje dönemlerinde çalışan artışı normal bir durumdur.',
+          user: 'Mevlüt Körkuş',
+          date: '2024-07-15'
+        }
+      ]
+    },
+    {
+      id: '2',
+      question_text: 'Departman bazında çalışan dağılımı nasıl?',
+      category: 'İnsan Kaynakları',
+      period: 'Aylık',
+      table_rows: [
+        { id: '1', name: 'İnsan Kaynakları', unit: 'kişi' },
+        { id: '2', name: 'Pazarlama', unit: 'kişi' },
+        { id: '3', name: 'Satış', unit: 'kişi' },
+        { id: '4', name: 'Teknik', unit: 'kişi' },
+        { id: '5', name: 'Finans', unit: 'kişi' }
+      ],
+      historical_data: [
+        {
+          period: 'Eylül 2024',
+          data: { '1': '8', '2': '12', '3': '15', '4': '20', '5': '10' },
+          comment: 'Teknik departmana yeni alımlar yapıldı.',
+          ai_comment: 'Teknik departman %25 büyüdü. Dengeyi koruyun.',
+          user: 'Mevlüt Körkuş',
+          date: '2024-09-15'
+        },
+        {
+          period: 'Ağustos 2024',
+          data: { '1': '8', '2': '10', '3': '14', '4': '16', '5': '10' },
+          comment: 'Normal dönem.',
+          ai_comment: 'Departmanlar arası denge iyi durumda.',
+          user: 'Mevlüt Körkuş',
+          date: '2024-08-15'
+        }
+      ]
+    }
+  ];
+
+  const currentQuestion = analysisQuestions[selectedQuestion];
+  
+  // Chart data hazırlığı
+  const prepareChartData = (question) => {
+    return question.historical_data.map(item => {
+      const chartItem = { period: item.period };
+      question.table_rows.forEach(row => {
+        chartItem[row.name] = parseInt(item.data[row.id] || 0);
+      });
+      return chartItem;
+    }).reverse(); // Son ay sola gelsin
+  };
+
+  const chartData = prepareChartData(currentQuestion);
+  const chartColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+          <CardHeader className="border-b border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/dashboard'}
+              >
+                ← Dashboard'a Dön
+              </Button>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-emerald-600 font-semibold bg-emerald-100 px-2 py-1 rounded">
+                  VERİ ANALİZİ DEMO
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl text-gray-900">Veri Analizi & Raporlama</CardTitle>
+                <CardDescription>
+                  Geçmiş veriler, trendler ve AI destekli analizler
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-8">
+            {/* Filtreler */}
+            <div className="mb-8 bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtreler</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Soru Seçimi */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Soru</label>
+                  <select 
+                    value={selectedQuestion}
+                    onChange={(e) => setSelectedQuestion(parseInt(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                  >
+                    {analysisQuestions.map((q, index) => (
+                      <option key={q.id} value={index}>
+                        {q.question_text.length > 40 ? q.question_text.substring(0, 40) + '...' : q.question_text}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Dönem Filtresi */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Dönem</label>
+                  <select 
+                    value={selectedPeriodFilter}
+                    onChange={(e) => setSelectedPeriodFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                  >
+                    <option value="all">Tüm Dönemler</option>
+                    <option value="last3">Son 3 Ay</option>
+                    <option value="last6">Son 6 Ay</option>
+                    <option value="lastyear">Son 1 Yıl</option>
+                  </select>
+                </div>
+
+                {/* Departman Filtresi */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Departman</label>
+                  <select 
+                    value={selectedDepartment}
+                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                  >
+                    <option value="all">Tüm Departmanlar</option>
+                    <option value="hr">İnsan Kaynakları</option>
+                    <option value="marketing">Pazarlama</option>
+                    <option value="sales">Satış</option>
+                    <option value="tech">Teknik</option>
+                    <option value="finance">Finans</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Soru Bilgileri */}
+            <div className="bg-emerald-50 border-l-4 border-emerald-400 p-6 mb-8 rounded-r-lg">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-emerald-800 mb-2">
+                    {currentQuestion.category} - {currentQuestion.period}
+                  </h3>
+                  <p className="text-emerald-700 font-medium mb-2">
+                    {currentQuestion.question_text}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {currentQuestion.table_rows.map(row => (
+                      <span key={row.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                        {row.name} ({row.unit})
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="ml-4 flex space-x-2">
+                  <Button variant="outline" size="sm">
+                    📄 PDF İndir
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    📊 Excel İndir
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Grafik */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Trend Analizi</h3>
+              <div className="bg-white border rounded-lg p-6" style={{height: '400px'}}>
+                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                  📊 Grafik buraya gelecek (Recharts ile implementasyon)
+                  <br />
+                  <small>Veri: {chartData.length} dönem, {currentQuestion.table_rows.length} sütun</small>
+                </div>
+              </div>
+            </div>
+
+            {/* Geçmiş Veriler Tablosu */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Geçmiş Veriler</h3>
+              <div className="border rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-medium text-gray-900">Dönem</th>
+                        <th className="px-4 py-3 text-left font-medium text-gray-900">Kullanıcı</th>
+                        {currentQuestion.table_rows.map(row => (
+                          <th key={row.id} className="px-4 py-3 text-left font-medium text-gray-900">
+                            {row.name} ({row.unit})
+                          </th>
+                        ))}
+                        <th className="px-4 py-3 text-left font-medium text-gray-900">Yorum</th>
+                        <th className="px-4 py-3 text-left font-medium text-gray-900">AI Analizi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentQuestion.historical_data.map((item, index) => (
+                        <tr key={index} className="border-t hover:bg-gray-50">
+                          <td className="px-4 py-3 font-medium">{item.period}</td>
+                          <td className="px-4 py-3 text-gray-600">{item.user}</td>
+                          {currentQuestion.table_rows.map(row => (
+                            <td key={row.id} className="px-4 py-3">
+                              <span className="font-semibold text-emerald-600">
+                                {item.data[row.id] || '0'}
+                              </span>
+                            </td>
+                          ))}
+                          <td className="px-4 py-3 max-w-xs">
+                            <p className="text-gray-700 text-xs">{item.comment}</p>
+                          </td>
+                          <td className="px-4 py-3 max-w-xs">
+                            <p className="text-blue-700 text-xs bg-blue-50 p-2 rounded">
+                              🤖 {item.ai_comment}
+                            </p>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* AI İçgörüler */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI İçgörüler & Öneriler</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-blue-800 mb-2">📈 Trend Analizi</h4>
+                  <p className="text-blue-700 text-sm">
+                    Son 3 aydaki veriler %12 artış trendi gösteriyor. Bu pozitif gelişimin devam etmesi bekleniyor.
+                  </p>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-amber-800 mb-2">⚠️ Dikkat Noktaları</h4>
+                  <p className="text-amber-700 text-sm">
+                    Yarı zamanlı çalışan oranı azalıyor. Esnek çalışma politikalarını gözden geçirebilirsiniz.
+                  </p>
+                </div>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-green-800 mb-2">💡 Öneriler</h4>
+                  <p className="text-green-700 text-sm">
+                    İnsan kaynakları planlaması için önümüzdeki dönemde +5 kişilik artış planlanabilir.
+                  </p>
+                </div>
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-purple-800 mb-2">🎯 Hedef Karşılaştırması</h4>
+                  <p className="text-purple-700 text-sm">
+                    Yıllık hedefin %67'sine ulaşıldı. Bu tempo ile hedefe ulaşmak mümkün görünüyor.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   // Check if this is a public question response page
