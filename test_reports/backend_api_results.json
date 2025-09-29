@@ -1,161 +1,257 @@
 {
   "test_summary": {
-    "total_tests": 25,
-    "passed_tests": 19,
-    "failed_tests": 6,
-    "success_rate": "76.0%",
-    "timestamp": "2025-09-29T18:02:55.071155"
+    "total_tests": 41,
+    "passed_tests": 34,
+    "failed_tests": 7,
+    "success_rate": "82.9%",
+    "timestamp": "2025-09-29T18:04:44.567613"
   },
   "detailed_results": [
     {
       "test_name": "User Registration with Realistic Data",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.391514"
+      "timestamp": "2025-09-29T18:04:41.786575"
     },
     {
       "test_name": "Login Test - admin",
       "success": false,
       "details": "Expected 200, got 401 - {'detail': 'Incorrect username or password'}",
-      "timestamp": "2025-09-29T18:02:27.468903"
+      "timestamp": "2025-09-29T18:04:42.623412"
     },
     {
       "test_name": "Login Test - testuser",
       "success": false,
       "details": "Expected 200, got 401 - {'detail': 'Incorrect username or password'}",
-      "timestamp": "2025-09-29T18:02:27.539684"
+      "timestamp": "2025-09-29T18:04:42.689021"
     },
     {
-      "test_name": "Login Test - mevlut_korkus_180227",
+      "test_name": "Login Test - mevlut_korkus_180441",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.603911"
+      "timestamp": "2025-09-29T18:04:42.748797"
     },
     {
       "test_name": "Token Verification - Get Current User",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.678662"
+      "timestamp": "2025-09-29T18:04:42.781065"
     },
     {
       "test_name": "Dashboard Stats Endpoint - Basic Functionality",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T18:04:42.818770"
+    },
+    {
+      "test_name": "Dashboard Stats Structure",
+      "success": true,
+      "details": "All required fields present",
+      "timestamp": "2025-09-29T18:04:42.819253"
+    },
+    {
+      "test_name": "Monthly Responses Metric",
+      "success": true,
+      "details": "Value: 1",
+      "timestamp": "2025-09-29T18:04:42.819268"
+    },
+    {
+      "test_name": "Monthly Trend Metric",
+      "success": true,
+      "details": "Value: 100%",
+      "timestamp": "2025-09-29T18:04:42.819276"
+    },
+    {
+      "test_name": "Active Users Metric",
+      "success": true,
+      "details": "Value: 4",
+      "timestamp": "2025-09-29T18:04:42.819283"
+    },
+    {
+      "test_name": "Completion Rate Metric",
+      "success": true,
+      "details": "Value: 1.5%",
+      "timestamp": "2025-09-29T18:04:42.819294"
+    },
+    {
+      "test_name": "AI Analyses Metric",
+      "success": true,
+      "details": "Value: 2",
+      "timestamp": "2025-09-29T18:04:42.819301"
+    },
+    {
+      "test_name": "Active Questions Metric",
+      "success": true,
+      "details": "Value: 17",
+      "timestamp": "2025-09-29T18:04:42.819308"
+    },
+    {
+      "test_name": "Notifications Metric",
+      "success": true,
+      "details": "Count: 3",
+      "timestamp": "2025-09-29T18:04:42.819315"
+    },
+    {
+      "test_name": "Last Updated Timestamp",
+      "success": true,
+      "details": "Value: 2025-09-29T18:04:42.814597",
+      "timestamp": "2025-09-29T18:04:42.819341"
+    },
+    {
+      "test_name": "Dashboard Stats Without Auth (Should Fail)",
       "success": false,
-      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
-      "timestamp": "2025-09-29T18:02:27.715638"
+      "details": "Expected 401, got 403 - {'detail': 'Not authenticated'}",
+      "timestamp": "2025-09-29T18:04:42.850967"
+    },
+    {
+      "test_name": "Dashboard Stats Authentication",
+      "success": false,
+      "details": "Should require authentication",
+      "timestamp": "2025-09-29T18:04:42.851521"
+    },
+    {
+      "test_name": "Dashboard Stats Performance Test",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T18:04:42.883431"
+    },
+    {
+      "test_name": "Dashboard Stats Performance",
+      "success": true,
+      "details": "Response time: 0.032s",
+      "timestamp": "2025-09-29T18:04:42.883893"
+    },
+    {
+      "test_name": "Dashboard Stats Consistency Test 1",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T18:04:42.918883"
+    },
+    {
+      "test_name": "Dashboard Stats Consistency Test 2",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T18:04:42.958851"
+    },
+    {
+      "test_name": "Dashboard Stats Consistency Test 3",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T18:04:42.995435"
+    },
+    {
+      "test_name": "Dashboard Stats Consistency",
+      "success": true,
+      "details": "Core metrics consistent",
+      "timestamp": "2025-09-29T18:04:42.995896"
     },
     {
       "test_name": "Get Questions for Analytics Testing",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.747328"
+      "timestamp": "2025-09-29T18:04:43.028877"
     },
     {
       "test_name": "Advanced Analytics Insights - Question 1",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.785273"
+      "timestamp": "2025-09-29T18:04:43.067064"
     },
     {
       "test_name": "Advanced Analytics Insights - Question 2",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.823367"
+      "timestamp": "2025-09-29T18:04:43.101276"
     },
     {
       "test_name": "Comparative Analytics",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.859162"
+      "timestamp": "2025-09-29T18:04:43.135214"
     },
     {
       "test_name": "Analytics Insights - Invalid Question ID",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-29T18:02:27.892755"
+      "success": false,
+      "details": "Expected 404, got 503 - upstream connect error or disconnect/reset before headers. reset reason: connection termination",
+      "timestamp": "2025-09-29T18:04:43.774608"
     },
     {
       "test_name": "Comparative Analytics - Single Question (Should Fail)",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.927654"
+      "timestamp": "2025-09-29T18:04:43.849378"
     },
     {
       "test_name": "Email Reminders Automation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.959718"
+      "timestamp": "2025-09-29T18:04:44.187103"
     },
     {
       "test_name": "Generate Automated Reports - Monthly",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:27.993910"
+      "timestamp": "2025-09-29T18:04:44.221019"
     },
     {
       "test_name": "Generate Automated Reports - Weekly",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:28.068462"
+      "timestamp": "2025-09-29T18:04:44.262206"
     },
     {
       "test_name": "Generate Automated Reports - Quarterly",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:28.145953"
+      "timestamp": "2025-09-29T18:04:44.296028"
     },
     {
       "test_name": "Legacy - Questions Share List",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:28.182307"
+      "timestamp": "2025-09-29T18:04:44.333469"
     },
     {
       "test_name": "Legacy - Questions Share List with Period Filter",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:28.214524"
+      "timestamp": "2025-09-29T18:04:44.368505"
     },
     {
       "test_name": "Create Test Question for Responses",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:28.250327"
+      "timestamp": "2025-09-29T18:04:44.403148"
     },
     {
       "test_name": "Create Test Employee for Responses",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-29T18:02:28.326292"
-    },
-    {
-      "test_name": "Legacy - Table Responses Submission",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='teamanswers.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-29T18:02:38.356411"
+      "details": "Expected 200, got 503 - upstream connect error or disconnect/reset before headers. reset reason: remote connection failure, transport failure reason: delayed connect error: Connection refused",
+      "timestamp": "2025-09-29T18:04:44.432576"
     },
     {
       "test_name": "Dashboard Stats - Invalid Token",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='teamanswers.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-29T18:02:48.409264"
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T18:04:44.465760"
     },
     {
       "test_name": "Analytics Insights - Non-existent Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:54.974762"
+      "timestamp": "2025-09-29T18:04:44.500249"
     },
     {
       "test_name": "Comparative Analytics - Too Many Questions",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-29T18:02:55.031980"
+      "timestamp": "2025-09-29T18:04:44.531037"
     },
     {
       "test_name": "Email Reminders - Invalid Config",
       "success": false,
       "details": "Expected 200, got 422 - {'detail': [{'type': 'missing', 'loc': ['body'], 'msg': 'Field required', 'input': None, 'url': 'https://errors.pydantic.dev/2.11/v/missing'}]}",
-      "timestamp": "2025-09-29T18:02:55.070629"
+      "timestamp": "2025-09-29T18:04:44.567089"
     }
   ]
 }
