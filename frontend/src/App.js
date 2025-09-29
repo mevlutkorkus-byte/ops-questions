@@ -3017,30 +3017,23 @@ const PublicQuestionResponse = () => {
     }
   };
 
-  const handleBulkSubmit = async () => {
-    // Filter and prepare responses with data
-    const responsesToSubmit = [];
+  const handleSubmit = async () => {
+    // Get only the active month data
+    const activePeriod = getCurrentActivePeriod();
+    const activeMonthKey = `${activePeriod.year}-${activePeriod.month}`;
+    const activeMonthData = tableData[activeMonthKey];
     
-    Object.entries(bulkResponses).forEach(([key, responseData]) => {
-      const hasNumericalData = responseData.numerical_value || 
-        (responseData.data_values && Object.values(responseData.data_values).some(v => v));
-      const hasComment = responseData.employee_comment && responseData.employee_comment.trim();
-      
-      if (hasNumericalData || hasComment) {
-        responsesToSubmit.push({
-          question_id: questionData.question.id,
-          employee_id: questionData.employee.id,
-          year: responseData.year,
-          month: responseData.month,
-          numerical_value: responseData.numerical_value ? parseFloat(responseData.numerical_value) : null,
-          data_values: responseData.data_values || {},
-          employee_comment: responseData.employee_comment || null
-        });
-      }
-    });
-
-    if (responsesToSubmit.length === 0) {
-      setError('Lütfen en az bir aya veri girişi yapın');
+    if (!activeMonthData) {
+      setError('Aktif dönem verisi bulunamadı');
+      return;
+    }
+    
+    // Check if there's any data to submit
+    const hasData = Object.values(activeMonthData.data).some(val => val && val.toString().trim());
+    const hasComment = activeMonthData.comment && activeMonthData.comment.trim();
+    
+    if (!hasData && !hasComment) {
+      setError('Lütfen en az bir veri girişi yapın veya yorum yazın');
       return;
     }
 
@@ -3049,8 +3042,16 @@ const PublicQuestionResponse = () => {
     setSuccess('');
 
     try {
-      const response = await axios.post(`${API}/monthly-responses/bulk`, responsesToSubmit);
-      setSuccess(`${responsesToSubmit.length} aylık veri başarıyla kaydedildi ve AI yorumları oluşturuldu!`);
+      await axios.post(`${API}/table-responses`, {
+        question_id: questionData.question.id,
+        employee_id: questionData.employee.id,
+        year: activePeriod.year,
+        month: activePeriod.month,
+        table_data: activeMonthData.data,
+        monthly_comment: activeMonthData.comment || null
+      });
+      
+      setSuccess('Verileriniz başarıyla kaydedildi ve AI yorumu oluşturuldu!');
       setSubmitted(true);
     } catch (error) {
       setError(error.response?.data?.detail || 'Veriler gönderilirken hata oluştu');
@@ -3059,25 +3060,25 @@ const PublicQuestionResponse = () => {
     }
   };
 
-  const updateResponseData = (monthKey, field, value) => {
-    setBulkResponses(prev => ({
+  const updateTableCell = (monthKey, rowId, value) => {
+    setTableData(prev => ({
       ...prev,
       [monthKey]: {
         ...prev[monthKey],
-        [field]: value
+        data: {
+          ...prev[monthKey].data,
+          [rowId]: value
+        }
       }
     }));
   };
 
-  const updateDataValue = (monthKey, fieldId, value) => {
-    setBulkResponses(prev => ({
+  const updateMonthComment = (monthKey, comment) => {
+    setTableData(prev => ({
       ...prev,
       [monthKey]: {
         ...prev[monthKey],
-        data_values: {
-          ...prev[monthKey].data_values,
-          [fieldId]: value
-        }
+        comment: comment
       }
     }));
   };
