@@ -974,7 +974,13 @@ class QuestionBankAPITester:
 
 def main():
     tester = QuestionBankAPITester()
-    return tester.run_all_tests()
+    
+    # Check if we should run focused tests or all tests
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--auth-sharing":
+        return tester.run_authentication_and_sharing_tests()
+    else:
+        return tester.run_all_tests()
 
 if __name__ == "__main__":
     sys.exit(main())
