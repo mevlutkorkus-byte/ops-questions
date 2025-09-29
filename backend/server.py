@@ -846,6 +846,7 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
     assignments_created = []
     email_successes = 0
     email_failures = []
+    resend_count = 0
     
     for assignment_data in share_request.assignments:
         question_id = assignment_data.get("question_id")
