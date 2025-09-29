@@ -2824,6 +2824,53 @@ class QuestionBankAPITester:
             if success:
                 print(f"   ✅ {report_type.title()} report generation working")
 
+    def run_gmail_smtp_tests(self):
+        """Run focused tests for Gmail SMTP integration"""
+        print("🚀 Starting Gmail SMTP Integration Tests...")
+        print(f"Backend URL: {self.base_url}")
+        print("="*70)
+        
+        # Test 1: Authentication System
+        if not self.test_auth_and_setup():
+            print("\n❌ Authentication failed - cannot proceed with Gmail SMTP tests")
+            return 1
+        
+        # Test 2: Gmail SMTP Integration
+        self.test_gmail_smtp_integration()
+        
+        # Print focused results
+        print("\n" + "="*70)
+        print("GMAIL SMTP INTEGRATION TEST RESULTS")
+        print("="*70)
+        print(f"📊 Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+            print(f"🔑 Token: {self.token[:30]}...")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        # Show specific test results for Gmail SMTP
+        smtp_tests = [result for result in self.test_results if 'gmail' in result['test_name'].lower() or 'smtp' in result['test_name'].lower() or 'email' in result['test_name'].lower()]
+        if smtp_tests:
+            print(f"\n📋 GMAIL SMTP SPECIFIC RESULTS:")
+            for test in smtp_tests:
+                status = "✅ PASSED" if test['success'] else "❌ FAILED"
+                print(f"   {status}: {test['test_name']}")
+                if not test['success'] and test['details']:
+                    print(f"      Details: {test['details']}")
+        
+        # Check backend logs instruction
+        print(f"\n📋 BACKEND LOG VERIFICATION:")
+        print(f"   To verify Gmail SMTP is working, check backend logs for:")
+        print(f"   ✅ '✅ Gmail SMTP ile e-posta gönderildi: dijitaldonusumgen@gmail.com'")
+        print(f"   ❌ Should NOT see '[DEMO EMAIL]' messages")
+        print(f"   📝 Command: tail -n 100 /var/log/supervisor/backend.*.log")
+        
+        return 0 if self.tests_passed > 0 else 1
+
     def run_new_features_tests(self):
         """Run focused tests for the newly implemented Gmail SMTP and Export features"""
         print("🚀 Starting NEW FEATURES Testing (Gmail SMTP + Export Endpoints)...")
