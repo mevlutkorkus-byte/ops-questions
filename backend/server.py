@@ -120,7 +120,7 @@ async def send_question_email(employee_email: str, employee_name: str, question:
         )
         
         # For demo purposes - simulate successful email sending
-        print(f"[DEMO EMAIL] E-posta gönderildi:")
+        print("[DEMO EMAIL] E-posta gönderildi:")
         print(f"Alıcı: {employee_email}")
         print(f"Konu: Dijital Dönüşüm - {month_year} Dönemi Soru Yanıtlama")
         print(f"İçerik: {employee_name} için {question.get('category', '')} sorusu")
