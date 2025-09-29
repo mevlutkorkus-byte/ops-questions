@@ -2650,6 +2650,10 @@ const Dashboard = () => {
     return <DemoQuestionResponse />;
   }
 
+  if (currentView === 'analysis') {
+    return <DataAnalysisPage />;
+  }
+
   if (currentView === 'responses') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
