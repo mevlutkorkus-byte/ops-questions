@@ -3688,27 +3688,91 @@ const DemoQuestionResponse = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   
-  // Demo question data
-  const questionData = {
-    question: {
+  // Demo sorular - Gerçek sistemdeki sorular
+  const demoQuestions = [
+    {
       id: 'demo-1',
-      question_text: 'Bu ay departmanınızdaki çalışan sayıları ve üretkenlik verileri nelerdir?',
+      question_text: 'Toplam çalışan sayımız nedir?',
       category: 'İnsan Kaynakları',
-      importance_reason: 'Çalışan verimliliğini takip etmek ve kapasiteyi değerlendirmek için gereklidir.',
-      expected_action: 'Aylık çalışan sayıları ve üretkenlik verilerini sisteme giriniz.',
-      period: 'Aylık', // Test için aylık seçtik
+      importance_reason: 'İnsan kaynakları planlaması ve bütçe hesaplamaları için temel veri.',
+      expected_action: 'Mevcut toplam çalışan sayısını departman bazında giriniz.',
+      period: 'Aylık',
       table_rows: [
-        { id: '1', name: 'Erkek Sayısı', unit: 'kişi' },
-        { id: '2', name: 'Kadın Sayısı', unit: 'kişi' },
-        { id: '3', name: 'Üretkenlik Skoru', unit: 'puan' }
+        { id: '1', name: 'Tam Zamanlı', unit: 'kişi' },
+        { id: '2', name: 'Yarı Zamanlı', unit: 'kişi' },
+        { id: '3', name: 'Stajyer', unit: 'kişi' }
       ]
     },
-    employee: {
-      first_name: 'Mevlüt',
-      last_name: 'Körkuş',
-      department: 'İnsan Kaynakları'
+    {
+      id: 'demo-2',
+      question_text: 'Departman bazında çalışan dağılımı nasıl?',
+      category: 'İnsan Kaynakları',
+      importance_reason: 'Departmanlar arası kaynak dağılımını optimize etmek için.',
+      expected_action: 'Her departmandaki çalışan sayılarını güncel olarak giriniz.',
+      period: 'Aylık',
+      table_rows: [
+        { id: '1', name: 'İnsan Kaynakları', unit: 'kişi' },
+        { id: '2', name: 'Pazarlama', unit: 'kişi' },
+        { id: '3', name: 'Satış', unit: 'kişi' },
+        { id: '4', name: 'Teknik', unit: 'kişi' },
+        { id: '5', name: 'Finans', unit: 'kişi' }
+      ]
+    },
+    {
+      id: 'demo-3',
+      question_text: 'Yaş, cinsiyet dağılımı nedir?',
+      category: 'İnsan Kaynakları',
+      importance_reason: 'Çeşitlilik ve eşitlik politikalarını değerlendirmek için.',
+      expected_action: 'Yaş grupları ve cinsiyet bazında çalışan dağılımını giriniz.',
+      period: 'Çeyreklik',
+      table_rows: [
+        { id: '1', name: 'Erkek (20-30)', unit: 'kişi' },
+        { id: '2', name: 'Erkek (31-40)', unit: 'kişi' },
+        { id: '3', name: 'Erkek (41+)', unit: 'kişi' },
+        { id: '4', name: 'Kadın (20-30)', unit: 'kişi' },
+        { id: '5', name: 'Kadın (31-40)', unit: 'kişi' },
+        { id: '6', name: 'Kadın (41+)', unit: 'kişi' }
+      ]
+    },
+    {
+      id: 'demo-4',
+      question_text: 'Kıdem dağılımı nedir?',
+      category: 'İnsan Kaynakları',
+      importance_reason: 'Deneyim seviyesi analizi ve kariyer planlama için.',
+      expected_action: 'Çalışanların kıdem yıllarına göre dağılımını giriniz.',
+      period: 'Altı Aylık',
+      table_rows: [
+        { id: '1', name: '0-1 Yıl', unit: 'kişi' },
+        { id: '2', name: '2-5 Yıl', unit: 'kişi' },
+        { id: '3', name: '6-10 Yıl', unit: 'kişi' },
+        { id: '4', name: '11+ Yıl', unit: 'kişi' }
+      ]
+    },
+    {
+      id: 'demo-5',
+      question_text: 'Kritik pozisyonlar kimlerde?',
+      category: 'İnsan Kaynakları',
+      importance_reason: 'Risk yönetimi ve süreklilik planlaması için kritik.',
+      expected_action: 'Kritik pozisyonlardaki personel durumunu değerlendirin.',
+      period: 'Yıllık',
+      table_rows: [
+        { id: '1', name: 'Üst Yönetim', unit: 'kişi' },
+        { id: '2', name: 'Orta Kademe', unit: 'kişi' },
+        { id: '3', name: 'Teknik Uzman', unit: 'kişi' },
+        { id: '4', name: 'Boş Pozisyon', unit: 'adet' }
+      ]
     }
+  ];
+
+  const currentQuestion = demoQuestions[currentQuestionIndex];
+  
+  // Employee info
+  const employee = {
+    first_name: 'Mevlüt',
+    last_name: 'Körkuş',
+    department: 'İnsan Kaynakları'
   };
   
   // Generate demo periods array
