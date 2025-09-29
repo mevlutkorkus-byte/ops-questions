@@ -1851,7 +1851,7 @@ class QuestionBankAPITester:
         return 0 if len(failed_tests) == 0 else 1
 
     def run_all_tests(self):
-        """Run all API tests including new Cevaplar feature"""
+        """Run all API tests including Program Sabitleri and Cevaplar features"""
         print("🚀 Starting Complete API Testing...")
         print(f"Backend URL: {self.base_url}")
         
@@ -1860,17 +1860,47 @@ class QuestionBankAPITester:
             print("\n❌ Authentication failed - cannot proceed with tests")
             return 1
         
+        # NEW: Test Program Sabitleri (Constants) - MAIN FOCUS
+        self.test_program_sabitleri_constants()
+        
         # Run all test suites
         self.test_question_bank_endpoints()
         self.test_question_validation()
         self.test_dashboard_stats()
         
-        # NEW: Test Cevaplar (Monthly Responses) feature
+        # Test Cevaplar (Monthly Responses) feature
         self.test_cevaplar_responses_feature()
         self.test_ai_integration()
         
-        # NEW: Test Advanced Analytics and Automation
+        # Test Advanced Analytics and Automation
         self.test_advanced_analytics_system()
+        self.test_automation_services()
+        
+        # Print final results
+        print("\n" + "="*70)
+        print("COMPREHENSIVE TEST RESULTS")
+        print("="*70)
+        print(f"📊 Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+            print(f"🔑 Token: {self.token[:30]}...")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        # Show critical failures
+        critical_failures = [result for result in self.test_results if not result['success'] and 'critical' in result['test_name'].lower()]
+        if critical_failures:
+            print(f"\n🚨 CRITICAL FAILURES:")
+            for failure in critical_failures:
+                print(f"   ❌ {failure['test_name']}: {failure['details']}")
+        
+        # Save results
+        self.save_results()
+        
+        return 0 if self.tests_passed > 0 else 1
         self.test_automation_services()
         self.test_legacy_endpoints()
         
