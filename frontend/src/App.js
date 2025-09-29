@@ -3989,16 +3989,42 @@ const DemoQuestionResponse = () => {
               >
                 ← Dashboard'a Dön
               </Button>
-              <span className="text-sm text-red-600 font-semibold bg-red-100 px-2 py-1 rounded">
-                GEÇİCİ DEMO SAYFA
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">
+                  Soru {currentQuestionIndex + 1} / {demoQuestions.length}
+                </span>
+                <span className="text-sm text-red-600 font-semibold bg-red-100 px-2 py-1 rounded">
+                  GEÇİCİ DEMO
+                </span>
+              </div>
             </div>
+            
+            {/* Navigation buttons */}
+            <div className="flex justify-center space-x-2 mb-4">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={prevQuestion}
+                disabled={currentQuestionIndex === 0}
+              >
+                ← Önceki Soru
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={nextQuestion}
+                disabled={currentQuestionIndex === demoQuestions.length - 1}
+              >
+                Sonraki Soru →
+              </Button>
+            </div>
+            
             <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
               <FileQuestion className="w-6 h-6 text-white" />
             </div>
             <CardTitle className="text-2xl text-gray-900">Dijital Dönüşüm - DEMO</CardTitle>
             <CardDescription>
-              {questionData.question.period} Değerlendirme Formu - {getActivePeriodDisplayText()}
+              {currentQuestion.period} Değerlendirme Formu - {getActivePeriodDisplayText()}
             </CardDescription>
           </CardHeader>
 
