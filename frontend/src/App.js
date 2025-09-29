@@ -3236,11 +3236,18 @@ const PublicQuestionResponse = () => {
                                   'bg-gray-50 hover:bg-gray-100'
                                 }`}
                               >
+                                {/* Year column */}
+                                <td className="px-3 py-2 font-medium">
+                                  <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
+                                    {monthInfo.year}
+                                  </span>
+                                </td>
+                                
                                 {/* Month column */}
-                                <td className="px-4 py-2 font-medium">
+                                <td className="px-3 py-2 font-medium">
                                   <div className="flex items-center space-x-2">
                                     <span className={isActive ? 'text-green-700' : hasExistingData ? 'text-blue-700' : 'text-gray-500'}>
-                                      {monthInfo.monthName} {monthInfo.year}
+                                      {monthInfo.monthName}
                                     </span>
                                     {isActive && (
                                       <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
