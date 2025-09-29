@@ -1432,6 +1432,8 @@ def main():
             return tester.run_authentication_and_sharing_tests()
         elif sys.argv[1] == "--period-filtering":
             return tester.run_period_filtering_tests()
+        elif sys.argv[1] == "--dashboard-stats":
+            return tester.run_dashboard_stats_tests()
     else:
         return tester.run_all_tests()
 
