@@ -2960,8 +2960,10 @@ def main():
             return tester.run_dashboard_stats_tests()
         elif sys.argv[1] == "--comprehensive":
             return tester.run_comprehensive_system_tests()
+        elif sys.argv[1] == "--new-features":
+            return tester.run_new_features_tests()
     else:
-        return tester.run_comprehensive_system_tests()  # Default to comprehensive tests
+        return tester.run_new_features_tests()  # Default to new features tests for this review
 
 if __name__ == "__main__":
     sys.exit(main())
