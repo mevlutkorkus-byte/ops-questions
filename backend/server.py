@@ -859,7 +859,7 @@ async def setup_email_reminders(
             "question_text": question["question_text"],
             "category": question["category"],
             "days_pending": (current_time - datetime.fromisoformat(assignment["sent_date"])).days,
-            "response_url": f"http://localhost:3000/answer/{assignment['assignment_id']}",
+            "response_url": f"{frontend_url}/answer/{assignment['assignment_id']}",
             "assignment_id": assignment["assignment_id"]
         }
         
