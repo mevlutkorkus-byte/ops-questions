@@ -5195,31 +5195,35 @@ function App() {
   
   if (isPublicAnswerPage) {
     return (
-      <div className="App">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50">
         <PublicQuestionResponse />
       </div>
     );
   }
 
   return (
-    <div className="App">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/answer/:assignmentId" element={<PublicQuestionResponse />} />
-            <Route path="/demo-response" element={<DemoQuestionResponse />} />
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } 
-            />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </BrowserRouter>
+        <ThemeProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/answer/:assignmentId" element={<PublicQuestionResponse />} />
+                <Route path="/demo-response" element={<DemoQuestionResponse />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              </Routes>
+            </BrowserRouter>
+          </ToastProvider>
+        </ThemeProvider>
       </AuthProvider>
     </div>
   );
