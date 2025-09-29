@@ -1,155 +1,179 @@
 {
   "test_summary": {
-    "total_tests": 24,
-    "passed_tests": 16,
-    "failed_tests": 8,
-    "success_rate": "66.7%",
-    "timestamp": "2025-09-28T19:53:39.980511"
+    "total_tests": 28,
+    "passed_tests": 15,
+    "failed_tests": 13,
+    "success_rate": "53.6%",
+    "timestamp": "2025-09-29T17:02:34.799523"
   },
   "detailed_results": [
     {
       "test_name": "User Registration",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.750905"
+      "timestamp": "2025-09-29T17:02:30.865477"
     },
     {
       "test_name": "Create Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.789340"
+      "timestamp": "2025-09-29T17:02:31.123502"
     },
     {
       "test_name": "Get All Questions",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.825948"
+      "timestamp": "2025-09-29T17:02:31.159229"
     },
     {
       "test_name": "Get Single Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.859272"
+      "timestamp": "2025-09-29T17:02:31.194914"
     },
     {
       "test_name": "Update Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.893815"
+      "timestamp": "2025-09-29T17:02:31.233083"
     },
     {
       "test_name": "Delete Question",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.929671"
+      "timestamp": "2025-09-29T17:02:31.463341"
     },
     {
       "test_name": "Invalid Period Validation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:23.966681"
+      "timestamp": "2025-09-29T17:02:31.562106"
     },
     {
       "test_name": "Invalid Chart Type Validation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:24.007898"
+      "timestamp": "2025-09-29T17:02:31.595714"
     },
     {
       "test_name": "Invalid Date Format Validation",
       "success": false,
-      "details": "Expected 400, got 200 - {'id': 'd15c747e-3d60-4347-9bbd-a59df11f4640', 'category': 'Test', 'question_text': 'Test question with invalid date', 'importance_reason': 'Testing validation', 'expected_action': 'Should fail validation', 'period': 'Haftal\u0131k', 'chart_type': 'S\u00fctun', 'created_at': '2025-09-28T19:52:24.039123Z'}",
-      "timestamp": "2025-09-28T19:52:24.041320"
+      "details": "Expected 400, got 200 - {'id': '5e58a6b9-70a9-4e76-ae93-ce4d1699d832', 'category': 'Test', 'question_text': 'Test question with invalid date', 'importance_reason': 'Testing validation', 'expected_action': 'Should fail validation', 'period': 'Haftal\u0131k', 'chart_type': 'S\u00fctun', 'table_rows': [], 'created_at': '2025-09-29T17:02:31.628558Z'}",
+      "timestamp": "2025-09-29T17:02:31.631694"
     },
     {
       "test_name": "Missing Required Fields Validation",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:24.075476"
+      "timestamp": "2025-09-29T17:02:31.705887"
     },
     {
       "test_name": "Dashboard Stats with Question Count",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:24.112314"
+      "timestamp": "2025-09-29T17:02:31.743880"
     },
     {
       "test_name": "Create Test Question for Responses",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:24.149163"
+      "timestamp": "2025-09-29T17:02:31.777863"
     },
     {
       "test_name": "Create Test Employee for Responses",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:24.184506"
+      "timestamp": "2025-09-29T17:02:34.144598"
     },
     {
       "test_name": "Get Questions for Responses",
       "success": true,
       "details": "",
-      "timestamp": "2025-09-28T19:52:24.221647"
+      "timestamp": "2025-09-29T17:02:34.179389"
     },
     {
       "test_name": "Create Monthly Response with AI Comment",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:52:34.259211"
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.250440"
     },
     {
       "test_name": "Get All Monthly Responses",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-28T19:52:39.540223"
+      "success": false,
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.330582"
     },
     {
       "test_name": "Get Responses by Question",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-28T19:52:39.602360"
+      "success": false,
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.363253"
     },
     {
       "test_name": "Get Chart Data for Question",
-      "success": true,
-      "details": "",
-      "timestamp": "2025-09-28T19:52:39.639982"
+      "success": false,
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.394466"
     },
     {
       "test_name": "Monthly Response Test Case 2",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:52:49.676300"
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.426868"
     },
     {
       "test_name": "Monthly Response Test Case 3",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:52:59.730822"
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.459893"
     },
     {
       "test_name": "Monthly Response Test Case 4",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:53:09.794380"
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.491585"
     },
     {
       "test_name": "Monthly Response Test Case 5",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:53:19.853551"
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.561623"
     },
     {
       "test_name": "Create Test Question for Responses",
-      "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:53:29.910232"
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T17:02:34.594661"
     },
     {
       "test_name": "Create Test Employee for Responses",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-29T17:02:34.672162"
+    },
+    {
+      "test_name": "AI Comment Generation - Positive Tone",
       "success": false,
-      "details": "Request failed: HTTPSConnectionPool(host='qmanage-hub.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
-      "timestamp": "2025-09-28T19:53:39.980476"
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.708150"
+    },
+    {
+      "test_name": "AI Comment Generation - Neutral Tone",
+      "success": false,
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.739706"
+    },
+    {
+      "test_name": "AI Comment Generation - Negative Tone",
+      "success": false,
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.770384"
+    },
+    {
+      "test_name": "AI Comment Generation - Learning Tone",
+      "success": false,
+      "details": "Expected 200, got 404 - {'detail': 'Not Found'}",
+      "timestamp": "2025-09-29T17:02:34.799091"
     }
   ]
 }
