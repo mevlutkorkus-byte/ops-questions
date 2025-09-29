@@ -916,7 +916,16 @@ async def share_questions(share_request: ShareQuestionsRequest, current_user: Us
         # Update assignment with email status
         assignment_dict["email_sent"] = email_sent
         
-        await db.question_assignments.insert_one(assignment_dict)
+        if existing_assignment:
+            # Update existing assignment
+            await db.question_assignments.update_one(
+                {"id": assignment_id},
+                {"$set": assignment_dict}
+            )
+        else:
+            # Insert new assignment
+            await db.question_assignments.insert_one(assignment_dict)
+        
         assignments_created.append(assignment_dict)
     
     # Prepare response message
