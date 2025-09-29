@@ -277,8 +277,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Clean Table-Based System Refactor testing completed successfully"
-    - "All major refactoring and new features tested and working"
+    - "Question Re-send Capability testing completed successfully"
+    - "All major features tested and working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
