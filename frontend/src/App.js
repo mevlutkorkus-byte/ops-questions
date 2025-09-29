@@ -2954,6 +2954,70 @@ const Dashboard = () => {
                 <GlobalSearch />
               </div>
               
+              {/* Export Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 transition-colors"
+                    title="Verileri Dışa Aktar"
+                  >
+                    <Download className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-2 py-1.5 text-sm font-semibold text-gray-900 dark:text-white">
+                    📊 Verileri Dışa Aktar
+                  </div>
+                  <div className="border-b border-gray-200 dark:border-gray-700 my-1"></div>
+                  
+                  <DropdownMenuItem
+                    onClick={() => downloadExport('questions', 'excel')}
+                    className="cursor-pointer"
+                  >
+                    <FileQuestion className="w-4 h-4 mr-3 text-green-600" />
+                    <div>
+                      <p className="font-medium">Sorular - Excel</p>
+                      <p className="text-xs text-gray-500">Tüm soruları Excel formatında indir</p>
+                    </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem
+                    onClick={() => downloadExport('questions', 'pdf')}
+                    className="cursor-pointer"
+                  >
+                    <FileQuestion className="w-4 h-4 mr-3 text-red-600" />
+                    <div>
+                      <p className="font-medium">Sorular - PDF</p>
+                      <p className="text-xs text-gray-500">Tüm soruları PDF formatında indir</p>
+                    </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem
+                    onClick={() => downloadExport('employees', 'excel')}
+                    className="cursor-pointer"
+                  >
+                    <Users className="w-4 h-4 mr-3 text-blue-600" />
+                    <div>
+                      <p className="font-medium">Çalışanlar - Excel</p>
+                      <p className="text-xs text-gray-500">Personel listesini Excel'de indir</p>
+                    </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem
+                    onClick={() => downloadExport('responses', 'excel')}
+                    className="cursor-pointer"
+                  >
+                    <BarChart3 className="w-4 h-4 mr-3 text-purple-600" />
+                    <div>
+                      <p className="font-medium">Cevaplar - Excel</p>
+                      <p className="text-xs text-gray-500">Tüm yanıtları Excel'de indir</p>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               {/* Theme Toggle */}
               <Button
                 variant="ghost"
