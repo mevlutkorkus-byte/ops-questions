@@ -3781,35 +3781,98 @@ const DemoQuestionResponse = () => {
     const now = new Date();
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1; // 1-indexed
+    const currentQuarter = Math.ceil(currentMonth / 3);
+    const currentHalf = Math.ceil(currentMonth / 6);
     
-    if (questionPeriod === 'Aylık') {
-      const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                         'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-      
-      for (let year = 2025; year <= 2030; year++) {
-        const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
-        const endMonth = year === 2030 ? 11 : 11; // Dec = 11
+    switch (questionPeriod) {
+      case 'Aylık': {
+        const monthNames = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                           'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
         
-        for (let month = startMonth; month <= endMonth; month++) {
+        for (let year = 2025; year <= 2030; year++) {
+          const startMonth = year === 2025 ? 8 : 0; // Sep = 8 (0-indexed)
+          const endMonth = year === 2030 ? 11 : 11; // Dec = 11
+          
+          for (let month = startMonth; month <= endMonth; month++) {
+            periods.push({
+              year,
+              month: month + 1, // Convert to 1-indexed
+              monthName: monthNames[month],
+              key: `${year}-${month + 1}`,
+              displayText: `${monthNames[month]} ${year}`,
+              isCurrentPeriod: (year === currentYear && month + 1 === currentMonth)
+            });
+          }
+        }
+        break;
+      }
+      
+      case 'Çeyreklik': {
+        const quarterNames = ['Q1 (Oca-Mar)', 'Q2 (Nis-Haz)', 'Q3 (Tem-Eyl)', 'Q4 (Eki-Ara)'];
+        
+        for (let year = 2025; year <= 2030; year++) {
+          const startQuarter = year === 2025 ? 3 : 1; // Start from Q3 (Sep)
+          
+          for (let quarter = startQuarter; quarter <= 4; quarter++) {
+            periods.push({
+              year,
+              quarter,
+              key: `${year}-Q${quarter}`,
+              displayText: `${quarterNames[quarter-1]} ${year}`,
+              isCurrentPeriod: (year === currentYear && quarter === currentQuarter)
+            });
+          }
+        }
+        break;
+      }
+      
+      case 'Altı Aylık': {
+        for (let year = 2025; year <= 2030; year++) {
+          const startHalf = year === 2025 ? 2 : 1; // Start from H2 (Jul-Dec)
+          
+          for (let half = startHalf; half <= 2; half++) {
+            periods.push({
+              year,
+              half,
+              key: `${year}-H${half}`,
+              displayText: `${half === 1 ? 'İlk' : 'İkinci'} Yarıyıl ${year}`,
+              isCurrentPeriod: (year === currentYear && half === currentHalf)
+            });
+          }
+        }
+        break;
+      }
+      
+      case 'Yıllık': {
+        for (let year = 2025; year <= 2030; year++) {
           periods.push({
             year,
-            month: month + 1, // Convert to 1-indexed
-            monthName: monthNames[month],
-            key: `${year}-${month + 1}`,
-            displayText: `${monthNames[month]} ${year}`,
-            isCurrentPeriod: (year === currentYear && month + 1 === currentMonth)
+            key: `${year}`,
+            displayText: `${year} Yılı`,
+            isCurrentPeriod: (year === currentYear)
           });
         }
+        break;
       }
+      
+      default: // 'Günlük', 'Haftalık', 'İhtiyaç Halinde'
+        periods.push({
+          year: currentYear,
+          key: 'current',
+          displayText: 'Mevcut Dönem',
+          isCurrentPeriod: true
+        });
+        break;
     }
     
     return periods;
   };
   
-  const [periodsArray] = useState(generateDemoPeriodsArray(questionData.question.period));
+  const [periodsArray, setPeriodsArray] = useState(generateDemoPeriodsArray(currentQuestion.period));
   const [tableData, setTableData] = useState(() => {
     const initialTableData = {};
-    periodsArray.forEach(periodInfo => {
+    const periods = generateDemoPeriodsArray(currentQuestion.period);
+    periods.forEach(periodInfo => {
       initialTableData[periodInfo.key] = {
         data: {}, // row_id -> value mapping
         comment: '',
@@ -3819,9 +3882,43 @@ const DemoQuestionResponse = () => {
     return initialTableData;
   });
   
+  // Update periods when question changes
+  useEffect(() => {
+    const newPeriods = generateDemoPeriodsArray(currentQuestion.period);
+    setPeriodsArray(newPeriods);
+    
+    const initialTableData = {};
+    newPeriods.forEach(periodInfo => {
+      initialTableData[periodInfo.key] = {
+        data: {},
+        comment: '',
+        isActive: periodInfo.isCurrentPeriod
+      };
+    });
+    setTableData(initialTableData);
+  }, [currentQuestionIndex]);
+  
   const getActivePeriodDisplayText = () => {
     const activePeriod = periodsArray.find(p => p.isCurrentPeriod);
     return activePeriod ? activePeriod.displayText : 'Aktif Dönem';
+  };
+  
+  const nextQuestion = () => {
+    if (currentQuestionIndex < demoQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSubmitted(false);
+      setError('');
+      setSuccess('');
+    }
+  };
+  
+  const prevQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setSubmitted(false);
+      setError('');
+      setSuccess('');
+    }
   };
   
   const updateTableCell = (periodKey, rowId, value) => {
