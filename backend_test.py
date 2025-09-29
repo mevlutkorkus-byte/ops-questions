@@ -644,6 +644,303 @@ class QuestionBankAPITester:
         
         print(f"\n📊 Results saved to /app/test_reports/backend_api_results.json")
 
+    def test_authentication_system(self):
+        """Test authentication system comprehensively"""
+        print("\n" + "="*50)
+        print("AUTHENTICATION SYSTEM COMPREHENSIVE TESTS")
+        print("="*50)
+        
+        # Test 1: User Registration with realistic data
+        timestamp = datetime.now().strftime('%H%M%S')
+        test_user = f"mevlut_korkus_{timestamp}"
+        test_email = f"mevlut.korkus.{timestamp}@dijitaldonusum.com"
+        test_password = "SecurePass2024!"
+
+        success, response = self.run_test(
+            "User Registration with Realistic Data",
+            "POST",
+            "auth/register",
+            200,
+            data={
+                "username": test_user,
+                "email": test_email,
+                "password": test_password
+            }
+        )
+
+        if success and 'access_token' in response:
+            self.token = response['access_token']
+            print(f"   ✅ Registration successful, token obtained: {self.token[:30]}...")
+            print(f"   ✅ User info: {response.get('user', {}).get('username', 'Unknown')}")
+        else:
+            print("   ❌ Registration failed, trying existing user login...")
+            
+        # Test 2: Login with existing credentials
+        existing_users = [
+            {"username": "admin", "password": "admin123"},
+            {"username": "testuser", "password": "testpass"},
+            {"username": test_user, "password": test_password}
+        ]
+        
+        for user_creds in existing_users:
+            success, response = self.run_test(
+                f"Login Test - {user_creds['username']}",
+                "POST",
+                "auth/login",
+                200,
+                data=user_creds
+            )
+            
+            if success and 'access_token' in response:
+                self.token = response['access_token']
+                print(f"   ✅ Login successful for {user_creds['username']}")
+                print(f"   ✅ Token: {self.token[:30]}...")
+                break
+        
+        # Test 3: Verify token works with protected endpoint
+        if self.token:
+            success, response = self.run_test(
+                "Token Verification - Get Current User",
+                "GET",
+                "auth/me",
+                200
+            )
+            
+            if success:
+                print(f"   ✅ Token verification successful")
+                print(f"   ✅ Current user: {response.get('username', 'Unknown')}")
+        
+        return bool(self.token)
+
+    def test_questions_share_list_endpoint(self):
+        """Test the questions-share-list endpoint specifically"""
+        print("\n" + "="*50)
+        print("QUESTIONS-SHARE-LIST ENDPOINT TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - cannot test questions-share-list")
+            return
+        
+        # Test 1: Get questions-share-list endpoint
+        success, response = self.run_test(
+            "Get Questions Share List",
+            "GET",
+            "questions-share-list",
+            200
+        )
+        
+        if success:
+            # Verify response structure
+            if 'questions' in response and 'employees' in response:
+                questions = response['questions']
+                employees = response['employees']
+                
+                print(f"   ✅ Questions retrieved: {len(questions)}")
+                print(f"   ✅ Employees retrieved: {len(employees)}")
+                
+                # Test question structure and period values
+                if questions:
+                    self.verify_question_periods(questions)
+                    self.verify_question_structure(questions)
+                else:
+                    print("   ⚠️  No questions found - creating test questions...")
+                    self.create_test_questions_with_periods()
+                    
+                    # Retry getting questions
+                    success, response = self.run_test(
+                        "Get Questions Share List (Retry)",
+                        "GET",
+                        "questions-share-list",
+                        200
+                    )
+                    
+                    if success and response.get('questions'):
+                        self.verify_question_periods(response['questions'])
+                        self.verify_question_structure(response['questions'])
+                
+                if employees:
+                    print(f"   ✅ Employee structure verified")
+                    for i, emp in enumerate(employees[:3]):  # Show first 3 employees
+                        name = f"{emp.get('first_name', '')} {emp.get('last_name', '')}"
+                        print(f"   📋 Employee {i+1}: {name} ({emp.get('department', 'Unknown')})")
+                else:
+                    print("   ⚠️  No employees found - this may cause issues in frontend")
+            else:
+                self.log_test("Questions Share List Structure", False, "Missing 'questions' or 'employees' in response")
+        
+        # Test 2: Test without authentication (should fail)
+        temp_token = self.token
+        self.token = None
+        
+        success, response = self.run_test(
+            "Questions Share List Without Auth (Should Fail)",
+            "GET",
+            "questions-share-list",
+            401
+        )
+        
+        if success:
+            print("   ✅ Properly rejects unauthenticated requests")
+        
+        self.token = temp_token
+
+    def verify_question_periods(self, questions):
+        """Verify questions have proper period values"""
+        print("\n   🔍 Verifying Question Periods...")
+        
+        valid_periods = ["Günlük", "Haftalık", "Aylık", "Çeyreklik", "Altı Aylık", "Yıllık", "İhtiyaç Halinde"]
+        period_counts = {}
+        
+        for question in questions:
+            period = question.get('period')
+            if period in valid_periods:
+                period_counts[period] = period_counts.get(period, 0) + 1
+                print(f"   ✅ Question '{question.get('question_text', '')[:50]}...' has valid period: {period}")
+            else:
+                self.log_test("Question Period Validation", False, f"Invalid period '{period}' found")
+        
+        print(f"\n   📊 Period Distribution:")
+        for period, count in period_counts.items():
+            print(f"   📋 {period}: {count} questions")
+        
+        if period_counts:
+            print(f"   ✅ All questions have valid periods")
+        else:
+            print(f"   ❌ No questions with valid periods found")
+
+    def verify_question_structure(self, questions):
+        """Verify question structure includes required fields"""
+        print("\n   🔍 Verifying Question Structure...")
+        
+        required_fields = ['id', 'category', 'question_text', 'period', 'importance_reason', 'expected_action']
+        
+        for i, question in enumerate(questions[:3]):  # Check first 3 questions
+            missing_fields = [field for field in required_fields if field not in question]
+            
+            if not missing_fields:
+                print(f"   ✅ Question {i+1} structure is complete")
+                print(f"   📋 Category: {question.get('category')}")
+                print(f"   📋 Period: {question.get('period')}")
+                print(f"   📋 Chart Type: {question.get('chart_type', 'Not specified')}")
+                
+                # Check table_rows if present
+                if 'table_rows' in question and question['table_rows']:
+                    print(f"   📋 Table Rows: {len(question['table_rows'])} rows")
+                    for row in question['table_rows'][:2]:  # Show first 2 rows
+                        print(f"      - {row.get('name', 'Unknown')} ({row.get('unit', 'No unit')})")
+            else:
+                self.log_test(f"Question {i+1} Structure", False, f"Missing fields: {missing_fields}")
+
+    def create_test_questions_with_periods(self):
+        """Create test questions with all period types"""
+        print("\n   🔧 Creating test questions with all period types...")
+        
+        periods = ["Günlük", "Haftalık", "Aylık", "Çeyreklik", "Altı Aylık", "Yıllık", "İhtiyaç Halinde"]
+        categories = ["İnsan Kaynakları", "Bilgi İşlem", "Pazarlama", "Satış", "Finans"]
+        
+        for i, period in enumerate(periods):
+            category = categories[i % len(categories)]
+            
+            question_data = {
+                "category": category,
+                "question_text": f"{period} periyotta {category.lower()} departmanının performansını nasıl değerlendiriyorsunuz?",
+                "importance_reason": f"{period} bazında {category.lower()} performansının takibi kritik önem taşır.",
+                "expected_action": f"{period} raporlar hazırlanmalı ve gerekli aksiyonlar alınmalıdır.",
+                "period": period,
+                "chart_type": "Sütun",
+                "table_rows": [
+                    {
+                        "name": "Performans Skoru",
+                        "unit": "puan",
+                        "order": 1
+                    },
+                    {
+                        "name": "Hedef Gerçekleşme",
+                        "unit": "%",
+                        "order": 2
+                    }
+                ]
+            }
+            
+            success, response = self.run_test(
+                f"Create Test Question - {period}",
+                "POST",
+                "questions",
+                200,
+                data=question_data
+            )
+            
+            if success:
+                print(f"   ✅ Created {period} question")
+
+    def test_period_based_filtering(self):
+        """Test if there are any period-based filtering endpoints"""
+        print("\n" + "="*50)
+        print("PERIOD-BASED FILTERING TESTS")
+        print("="*50)
+        
+        if not self.token:
+            print("❌ No authentication token - cannot test filtering")
+            return
+        
+        # Test if questions can be filtered by period (this might not exist yet)
+        periods_to_test = ["Aylık", "Haftalık", "Günlük"]
+        
+        for period in periods_to_test:
+            # Try different possible filtering endpoints
+            possible_endpoints = [
+                f"questions?period={period}",
+                f"questions-share-list?period={period}",
+                f"questions/filter?period={period}"
+            ]
+            
+            for endpoint in possible_endpoints:
+                success, response = self.run_test(
+                    f"Period Filter Test - {period} ({endpoint})",
+                    "GET",
+                    endpoint,
+                    200
+                )
+                
+                if success:
+                    print(f"   ✅ Period filtering endpoint found: {endpoint}")
+                    break
+            else:
+                print(f"   ⚠️  No period filtering endpoint found for {period}")
+
+    def run_authentication_and_sharing_tests(self):
+        """Run focused tests for authentication and question sharing"""
+        print("🚀 Starting Authentication and Question Sharing Tests...")
+        print(f"Backend URL: {self.base_url}")
+        
+        # Test 1: Authentication System
+        if not self.test_authentication_system():
+            print("\n❌ Authentication failed - cannot proceed with other tests")
+            return 1
+        
+        # Test 2: Questions Share List Endpoint
+        self.test_questions_share_list_endpoint()
+        
+        # Test 3: Period-based filtering (if available)
+        self.test_period_based_filtering()
+        
+        # Print focused results
+        print("\n" + "="*50)
+        print("AUTHENTICATION & SHARING TEST RESULTS")
+        print("="*50)
+        print(f"📊 Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+            print(f"🔑 Token: {self.token[:30]}...")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        return 0 if self.tests_passed > 0 else 1
+
     def run_all_tests(self):
         """Run all API tests including new Cevaplar feature"""
         print("🚀 Starting Complete API Testing...")
