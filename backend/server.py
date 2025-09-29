@@ -2002,13 +2002,17 @@ async def create_public_table_response(response_data: TableResponseCreate):
         if response_data.table_data or response_data.monthly_comment:
             try:
                 ai_comment = await generate_ai_comment(
-                    employee_name=f"{employee['first_name']} {employee['last_name']}",
                     question_text=question["question_text"],
-                    numerical_values=response_data.table_data or {},
-                    employee_comment=response_data.monthly_comment or ""
+                    category=question.get("category", ""),
+                    period=question.get("period", ""),
+                    table_data=response_data.table_data or {},
+                    table_rows=question.get("table_rows", []),
+                    monthly_comment=response_data.monthly_comment or "",
+                    year=response_data.year,
+                    month=response_data.month
                 )
             except Exception as e:
-                logger.warning(f"AI comment generation failed: {str(e)}")
+                print(f"AI comment generation failed: {str(e)}")
                 ai_comment = "AI yorumu oluşturulamadı."
         
         if existing_response:
