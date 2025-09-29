@@ -3128,13 +3128,10 @@ const PublicQuestionResponse = () => {
   
   const [periodsArray, setPeriodsArray] = useState([]);
   
-  // Determine which month is currently active based on question period
-  const getCurrentActivePeriod = () => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1; // 1-indexed
-    
-    return { year: currentYear, month: currentMonth };
+  // Get the current active period display text
+  const getActivePeriodDisplayText = () => {
+    const activePeriod = periodsArray.find(p => p.isCurrentPeriod);
+    return activePeriod ? activePeriod.displayText : 'Aktif Dönem';
   };
 
   useEffect(() => {
