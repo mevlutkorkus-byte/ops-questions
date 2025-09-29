@@ -2558,7 +2558,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
                   <Target className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2591,7 +2591,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2624,7 +2624,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <Share className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2665,7 +2665,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2698,7 +2698,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <Settings className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2734,7 +2734,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <FileQuestion className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2767,7 +2767,7 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2812,7 +2812,7 @@ const Dashboard = () => {
             <div className="flex items-center space-x-4">
               {/* Logo Area */}
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -2949,7 +2949,7 @@ const Dashboard = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-400 rounded-lg flex items-center justify-center">
                     <FileQuestion className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -2967,7 +2967,7 @@ const Dashboard = () => {
                       <span className="text-xs bg-emerald-400 px-1 sm:px-1.5 py-0.5 rounded-full">Online</span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 bg-emerald-400 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-400 rounded-lg flex items-center justify-center">
                     <Users className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -2985,7 +2985,7 @@ const Dashboard = () => {
                       <span className="text-xs bg-amber-400 px-1 sm:px-1.5 py-0.5 rounded-full">Hedef</span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-400 rounded-lg flex items-center justify-center">
                     <Target className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -3003,7 +3003,7 @@ const Dashboard = () => {
                       <span className="text-xs bg-purple-400 px-1 sm:px-1.5 py-0.5 rounded-full">Hazır</span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 bg-purple-400 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-400 rounded-lg flex items-center justify-center">
                     <Brain className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -3231,7 +3231,7 @@ const Dashboard = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
                         <FileQuestion className="w-5 h-5 text-white" />
                       </div>
                       <div>
@@ -3256,7 +3256,7 @@ const Dashboard = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
                         <BarChart3 className="w-5 h-5 text-white" />
                       </div>
                       <div>
