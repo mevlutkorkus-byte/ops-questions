@@ -350,25 +350,31 @@ test_plan:
     implemented: false
     working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "Implemented period filter buttons and filtering logic in ShareQuestionsManagement component. Added dynamic table structure in PublicQuestionResponse to adapt column headers based on question period (Günlük, Haftalık, Aylık, etc.). Need testing to verify functionality."
+        - working: false
+          agent: "testing"
+          comment: "❌ BACKEND TESTING REVEALS CRITICAL ISSUE: Period-based filtering is NOT implemented in backend. The /api/questions endpoint does not support period query parameters. Frontend filtering would need to be client-side only OR backend needs period filtering implementation. Questions have proper period values (Günlük, Haftalık, Aylık, Çeyreklik, Altı Aylık, Yıllık, İhtiyaç Halinde) but no server-side filtering exists. Backend implementation required for proper period-based filtering functionality."
 
   - task: "Dynamic Response Table Restructuring based on Period"
     implemented: false
     working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "Implemented dynamic table column structure based on question period. Monthly: 'Yıl | Ay', Weekly: 'Yıl | Hafta', Daily: 'Yıl | Ay | Gün', Quarterly: 'Yıl | Çeyrek', etc. Updated PublicQuestionResponse component with dynamic period array generation and table rendering. Need testing to verify all period types work correctly."
+        - working: false
+          agent: "testing"
+          comment: "❌ BACKEND SUPPORT MISSING: Dynamic response table restructuring requires backend support for period-based data structures. Current backend table_responses model doesn't adapt to different period types. Questions have proper period field with all valid values (Günlük, Haftalık, Aylık, Çeyreklik, Altı Aylık, Yıllık, İhtiyaç Halinde), but response endpoints don't provide period-specific table structures. Backend enhancement needed for period-aware response handling."
 
 agent_communication:
     - agent: "main"
