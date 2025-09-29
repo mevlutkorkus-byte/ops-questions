@@ -3263,7 +3263,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="bg-emerald-100 text-emerald-600 text-xs px-2 py-1 rounded-full font-medium">
-                    156 Rapor
+                    {stats?.ai_analyses || 0} Rapor
                   </span>
                 </div>
               </div>
