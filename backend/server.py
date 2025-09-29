@@ -2063,6 +2063,265 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Export endpoints
+@app.get("/api/export/questions/excel")
+async def export_questions_excel(current_user: dict = Depends(get_current_user)):
+    """Export questions to Excel format"""
+    try:
+        questions = await db.questions.find({}).to_list(length=None)
+        
+        # Create workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Sorular"
+        
+        # Headers
+        headers = ['ID', 'Kategori', 'Soru Metni', 'Periyod', 'Grafik Tipi', 'Önem Sebebi', 'Beklenen Aksiyon', 'Oluşturma Tarihi']
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num, value=header)
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Data
+        for row_num, question in enumerate(questions, 2):
+            ws.cell(row=row_num, column=1, value=question['id'])
+            ws.cell(row=row_num, column=2, value=question.get('category', ''))
+            ws.cell(row=row_num, column=3, value=question.get('question_text', ''))
+            ws.cell(row=row_num, column=4, value=question.get('period', ''))
+            ws.cell(row=row_num, column=5, value=question.get('chart_type', ''))
+            ws.cell(row=row_num, column=6, value=question.get('importance_reason', ''))
+            ws.cell(row=row_num, column=7, value=question.get('expected_action', ''))
+            ws.cell(row=row_num, column=8, value=question.get('created_at', ''))
+        
+        # Auto-adjust columns
+        for column in ws.columns:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column[0].column_letter].width = adjusted_width
+        
+        # Save to memory
+        excel_buffer = io.BytesIO()
+        wb.save(excel_buffer)
+        excel_buffer.seek(0)
+        
+        return StreamingResponse(
+            io.BytesIO(excel_buffer.getvalue()),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=sorular.xlsx"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Excel export error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Excel export failed")
+
+@app.get("/api/export/employees/excel")
+async def export_employees_excel(current_user: dict = Depends(get_current_user)):
+    """Export employees to Excel format"""
+    try:
+        employees = await db.employees.find({}).to_list(length=None)
+        
+        # Create workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Çalışanlar"
+        
+        # Headers
+        headers = ['ID', 'Ad Soyad', 'E-posta', 'Telefon', 'Departman', 'Pozisyon', 'Yaş', 'Cinsiyet', 'Maaş', 'İşe Başlama Tarihi']
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num, value=header)
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Data
+        for row_num, employee in enumerate(employees, 2):
+            ws.cell(row=row_num, column=1, value=employee['id'])
+            ws.cell(row=row_num, column=2, value=employee.get('name', ''))
+            ws.cell(row=row_num, column=3, value=employee.get('email', ''))
+            ws.cell(row=row_num, column=4, value=employee.get('phone', ''))
+            ws.cell(row=row_num, column=5, value=employee.get('department', ''))
+            ws.cell(row=row_num, column=6, value=employee.get('position', ''))
+            ws.cell(row=row_num, column=7, value=employee.get('age', ''))
+            ws.cell(row=row_num, column=8, value=employee.get('gender', ''))
+            ws.cell(row=row_num, column=9, value=employee.get('salary', ''))
+            ws.cell(row=row_num, column=10, value=employee.get('hire_date', ''))
+        
+        # Auto-adjust columns
+        for column in ws.columns:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column[0].column_letter].width = adjusted_width
+        
+        # Save to memory
+        excel_buffer = io.BytesIO()
+        wb.save(excel_buffer)
+        excel_buffer.seek(0)
+        
+        return StreamingResponse(
+            io.BytesIO(excel_buffer.getvalue()),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=calisanlar.xlsx"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Excel export error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Excel export failed")
+
+@app.get("/api/export/responses/excel")
+async def export_responses_excel(current_user: dict = Depends(get_current_user)):
+    """Export responses to Excel format"""
+    try:
+        responses = await db.table_responses.find({}).to_list(length=None)
+        
+        # Create workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Cevaplar"
+        
+        # Headers
+        headers = ['ID', 'Soru ID', 'Çalışan ID', 'Yıl', 'Ay', 'Veri', 'Yorum', 'Oluşturma Tarihi']
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num, value=header)
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Data
+        for row_num, response in enumerate(responses, 2):
+            ws.cell(row=row_num, column=1, value=response['id'])
+            ws.cell(row=row_num, column=2, value=response.get('question_id', ''))
+            ws.cell(row=row_num, column=3, value=response.get('employee_id', ''))
+            ws.cell(row=row_num, column=4, value=response.get('year', ''))
+            ws.cell(row=row_num, column=5, value=response.get('month', ''))
+            # Convert data dict to string
+            data_str = str(response.get('data', '')) if response.get('data') else ''
+            ws.cell(row=row_num, column=6, value=data_str)
+            ws.cell(row=row_num, column=7, value=response.get('comment', ''))
+            ws.cell(row=row_num, column=8, value=response.get('created_at', ''))
+        
+        # Auto-adjust columns
+        for column in ws.columns:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column[0].column_letter].width = adjusted_width
+        
+        # Save to memory
+        excel_buffer = io.BytesIO()
+        wb.save(excel_buffer)
+        excel_buffer.seek(0)
+        
+        return StreamingResponse(
+            io.BytesIO(excel_buffer.getvalue()),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=cevaplar.xlsx"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Excel export error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Excel export failed")
+
+@app.get("/api/export/questions/pdf")
+async def export_questions_pdf(current_user: dict = Depends(get_current_user)):
+    """Export questions to PDF format"""
+    try:
+        questions = await db.questions.find({}).to_list(length=None)
+        
+        # Create PDF buffer
+        pdf_buffer = io.BytesIO()
+        
+        # Create PDF document
+        doc = SimpleDocTemplate(pdf_buffer, pagesize=A4)
+        styles = getSampleStyleSheet()
+        
+        # Title style
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            textColor=colors.darkblue,
+            alignment=1
+        )
+        
+        # Create story (content)
+        story = []
+        
+        # Title
+        story.append(Paragraph("Dijital Dönüşüm Sistemi - Sorular Raporu", title_style))
+        story.append(Spacer(1, 0.3*inch))
+        
+        # Summary
+        summary_text = f"Toplam Soru Sayısı: {len(questions)}<br/>Rapor Tarihi: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+        story.append(Paragraph(summary_text, styles['Normal']))
+        story.append(Spacer(1, 0.2*inch))
+        
+        # Table data
+        data = [['Kategori', 'Soru Metni', 'Periyod', 'Grafik Tipi']]
+        
+        for question in questions:
+            row = [
+                question.get('category', '')[:20] + '...' if len(question.get('category', '')) > 20 else question.get('category', ''),
+                question.get('question_text', '')[:50] + '...' if len(question.get('question_text', '')) > 50 else question.get('question_text', ''),
+                question.get('period', ''),
+                question.get('chart_type', '')
+            ]
+            data.append(row)
+        
+        # Create table
+        table = Table(data, colWidths=[1.5*inch, 3*inch, 1*inch, 1.2*inch])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        
+        story.append(table)
+        
+        # Build PDF
+        doc.build(story)
+        pdf_buffer.seek(0)
+        
+        return StreamingResponse(
+            io.BytesIO(pdf_buffer.getvalue()),
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=sorular.pdf"}
+        )
+        
+    except Exception as e:
+        logger.error(f"PDF export error: {str(e)}")
+        raise HTTPException(status_code=500, detail="PDF export failed")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
