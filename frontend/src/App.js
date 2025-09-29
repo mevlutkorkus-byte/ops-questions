@@ -3839,6 +3839,17 @@ const DemoQuestionResponse = () => {
       <div className="max-w-6xl mx-auto">
         <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
           <CardHeader className="text-center border-b border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/dashboard'}
+              >
+                ← Dashboard'a Dön
+              </Button>
+              <span className="text-sm text-red-600 font-semibold bg-red-100 px-2 py-1 rounded">
+                GEÇİCİ DEMO SAYFA
+              </span>
+            </div>
             <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
               <FileQuestion className="w-6 h-6 text-white" />
             </div>
