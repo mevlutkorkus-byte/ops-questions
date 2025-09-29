@@ -1898,8 +1898,10 @@ def main():
             return tester.run_period_filtering_tests()
         elif sys.argv[1] == "--dashboard-stats":
             return tester.run_dashboard_stats_tests()
+        elif sys.argv[1] == "--comprehensive":
+            return tester.run_comprehensive_system_tests()
     else:
-        return tester.run_all_tests()
+        return tester.run_comprehensive_system_tests()  # Default to comprehensive tests
 
 if __name__ == "__main__":
     sys.exit(main())
