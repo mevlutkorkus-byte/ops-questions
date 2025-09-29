@@ -3386,7 +3386,7 @@ const PublicQuestionResponse = () => {
                     </h3>
                     <div className="text-sm text-gray-500">
                       <span className="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800">
-                        Aktif: {getCurrentActivePeriod().month}/{getCurrentActivePeriod().year}
+                        Aktif: {getActivePeriodDisplayText()}
                       </span>
                     </div>
                   </div>
