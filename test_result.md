@@ -115,6 +115,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ GMAIL SMTP INTEGRATION TESTED: Gmail SMTP configuration is properly loaded and functional. Email sending functionality works through question sharing (Soruları Paylaş) feature. Backend logs show successful email processing with proper Gmail SMTP credentials. Email templates are correctly formatted with HTML content. Assignment creation works correctly (1 assignment created per test). Note: Email sending is currently in DEMO mode for testing purposes - actual Gmail SMTP integration is configured and ready for production use. All email automation endpoints working correctly."
+        - working: true
+          agent: "testing"
+          comment: "🎯 CRITICAL GMAIL SMTP VERIFICATION COMPLETED: Real Gmail SMTP emails are now being sent successfully! Backend logs confirm '✅ Gmail SMTP ile e-posta gönderildi: mevlutkorkus@gmail.com' and 'dijitaldonusumgen@gmail.com' messages. NO MORE '[DEMO EMAIL]' messages in recent logs. ✅ VERIFIED: Question sharing (Soruları Paylaş) endpoint successfully triggers real Gmail SMTP email sending ✅ VERIFIED: Email credentials working with dijitaldonusumgen@gmail.com and app password dpfm awac xlgj fxcq ✅ VERIFIED: SMTP server smtp.gmail.com:587 connection successful ✅ VERIFIED: HTML email templates properly formatted and sent ✅ VERIFIED: Assignment creation and email sending working in production mode. Gmail SMTP integration is fully operational and sending real emails to the specified recipients."
 
   - task: "PDF/Excel Export Endpoints"
     implemented: true
