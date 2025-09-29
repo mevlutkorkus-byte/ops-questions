@@ -4379,8 +4379,66 @@ const DataAnalysisPage = () => {
   const [selectedQuestion, setSelectedQuestion] = useState(0);
   const [selectedPeriodFilter, setSelectedPeriodFilter] = useState('all');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [error, setError] = useState('');
   
-  // Demo sorular ve geçmiş verileri
+  // Fetch real analytics data
+  useEffect(() => {
+    fetchAnalyticsData();
+  }, []);
+  
+  const fetchAnalyticsData = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.get(`${API}/analytics/dashboard`);
+      setAnalyticsData(response.data);
+      
+      if (response.data.questions.length > 0) {
+        setSelectedQuestion(0);
+      }
+    } catch (error) {
+      console.error('Analytics veri yüklenirken hata:', error);
+      setError('Analiz verileri yüklenirken hata oluştu');
+      
+      // Fallback to demo data if API fails
+      setAnalyticsData({
+        questions: [
+          {
+            id: 'demo-1',
+            question_text: 'Henüz analiz edilecek gerçek veri bulunmuyor',
+            category: 'Sistem',
+            period: 'Aylık',
+            table_rows: [],
+            historical_data: [],
+            trends: {},
+            ai_insights: 'Lütfen önce soruları paylaşın ve yanıtlanmasını bekleyin.',
+            total_responses: 0,
+            last_updated: null
+          }
+        ],
+        total_questions: 0,
+        generated_at: new Date().toISOString()
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-emerald-600 mx-auto mb-4" />
+          <p className="text-lg text-gray-600">Analiz verileri yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestion = analyticsData?.questions?.[selectedQuestion];
+  const hasRealData = analyticsData && analyticsData.questions.length > 0 && analyticsData.questions[0].total_responses > 0;
   const analysisQuestions = [
     {
       id: '1',
