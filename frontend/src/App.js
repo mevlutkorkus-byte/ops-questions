@@ -3331,7 +3331,7 @@ const PublicQuestionResponse = () => {
             </div>
             <CardTitle className="text-2xl text-gray-900">Dijital Dönüşüm</CardTitle>
             <CardDescription>
-              {questionData?.question?.period} Değerlendirme Formu - {getCurrentActivePeriod().month}/{getCurrentActivePeriod().year}
+              {questionData?.question?.period} Değerlendirme Formu - {getActivePeriodDisplayText()}
             </CardDescription>
           </CardHeader>
 
