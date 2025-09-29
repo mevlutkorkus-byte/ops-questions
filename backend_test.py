@@ -2824,6 +2824,53 @@ class QuestionBankAPITester:
             if success:
                 print(f"   ✅ {report_type.title()} report generation working")
 
+    def run_new_features_tests(self):
+        """Run focused tests for the newly implemented Gmail SMTP and Export features"""
+        print("🚀 Starting NEW FEATURES Testing (Gmail SMTP + Export Endpoints)...")
+        print(f"Backend URL: {self.base_url}")
+        print("="*70)
+        
+        # Test 1: Authentication System
+        if not self.test_auth_and_setup():
+            print("\n❌ Authentication failed - cannot proceed with new features tests")
+            return 1
+        
+        # Test 2: Gmail SMTP Integration (HIGH PRIORITY)
+        self.test_gmail_smtp_integration()
+        
+        # Test 3: Export Endpoints (HIGH PRIORITY)
+        self.test_export_endpoints()
+        
+        # Test 4: Email Automation Endpoints (HIGH PRIORITY)
+        self.test_email_automation_endpoints()
+        
+        # Print focused results for new features
+        print("\n" + "="*70)
+        print("NEW FEATURES TEST RESULTS")
+        print("="*70)
+        print(f"📊 Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success rate: {(self.tests_passed/self.tests_run*100):.1f}%" if self.tests_run > 0 else "0%")
+        
+        # Show authentication status
+        if self.token:
+            print(f"✅ Authentication: WORKING")
+            print(f"🔑 Token: {self.token[:30]}...")
+        else:
+            print(f"❌ Authentication: FAILED")
+        
+        # Show specific test results for new features
+        new_feature_tests = [result for result in self.test_results if any(keyword in result['test_name'].lower() 
+                            for keyword in ['gmail', 'smtp', 'export', 'email', 'automation'])]
+        if new_feature_tests:
+            print(f"\n📋 NEW FEATURES SPECIFIC RESULTS:")
+            for test in new_feature_tests:
+                status = "✅ PASSED" if test['success'] else "❌ FAILED"
+                print(f"   {status}: {test['test_name']}")
+                if not test['success'] and test['details']:
+                    print(f"      Details: {test['details']}")
+        
+        return 0 if self.tests_passed > 0 else 1
+
     def run_all_tests(self):
         """Run all API tests including Program Sabitleri and Cevaplar features"""
         print("🚀 Starting Complete API Testing...")
