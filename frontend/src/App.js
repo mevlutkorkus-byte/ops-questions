@@ -575,6 +575,7 @@ const ShareQuestionsManagement = ({ onBack }) => {
     try {
       const response = await axios.get(`${API}/questions-share-list`);
       setQuestions(response.data.questions);
+      setAllQuestions(response.data.questions); // Store all questions
       setEmployees(response.data.employees);
       
       // Initialize assignments array
@@ -592,6 +593,34 @@ const ShareQuestionsManagement = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Filter questions by period
+  const filterQuestionsByPeriod = (period) => {
+    setSelectedPeriod(period);
+    
+    if (period === '') {
+      // Show all questions
+      setQuestions(allQuestions);
+    } else {
+      // Filter by selected period
+      const filtered = allQuestions.filter(question => question.period === period);
+      setQuestions(filtered);
+    }
+    
+    // Update assignments array based on filtered questions
+    const filteredQuestions = period === '' ? allQuestions : allQuestions.filter(q => q.period === period);
+    const newAssignments = filteredQuestions.map(question => {
+      // Keep existing assignments if they exist
+      const existingAssignment = assignments.find(a => a.question_id === question.id);
+      return existingAssignment || {
+        question_id: question.id,
+        employee_id: '',
+        department: '',
+        employee_email: ''
+      };
+    });
+    setAssignments(newAssignments);
   };
 
   const handleEmployeeChange = (questionIndex, employeeId) => {
