@@ -3323,6 +3323,31 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
+            {/* E-posta Otomasyonu Card */}
+            <Card 
+              className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              onClick={() => setCurrentView('automation')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform shadow-md">
+                      <Mail className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">E-posta Otomasyonu</h3>
+                      <p className="text-sm text-gray-600">Otomatik e-posta gönderimi ve raporlama</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    <span className="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full font-medium">
+                      Aktif
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* DEMO & VERİ ANALİZİ Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* DEMO SAYFA Card */}
