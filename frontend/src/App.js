@@ -2929,7 +2929,7 @@ const Dashboard = () => {
         
         {/* KPI İstatistik Kartları */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">📊 Sistem Durumu</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">📊 Sistem Durumu</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 px-2 sm:px-0">
             
             {/* Bu Ay Yanıtları */}
@@ -3104,7 +3104,7 @@ const Dashboard = () => {
 
         {/* Ana Fonksiyon Kartları */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">🚀 Ana Fonksiyonlar</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">🚀 Ana Fonksiyonlar</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -4863,7 +4863,7 @@ const DataAnalysisPage = () => {
           <CardContent className="p-8">
             {/* Filtreler */}
             <div className="mb-8 bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtreler</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">Filtreler</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Soru Seçimi */}
                 <div>
@@ -4946,7 +4946,7 @@ const DataAnalysisPage = () => {
 
             {/* Grafik */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Trend Analizi</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">Trend Analizi</h3>
               
               {/* Chart Type Selector */}
               <div className="mb-4 flex space-x-2">
@@ -5000,7 +5000,7 @@ const DataAnalysisPage = () => {
 
             {/* İkincil Grafik - Bar Chart */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Karşılaştırma Analizi</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">Karşılaştırma Analizi</h3>
               <div className="bg-white border rounded-lg p-6" style={{height: '300px'}}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData}>
@@ -5024,7 +5024,7 @@ const DataAnalysisPage = () => {
 
             {/* Üçüncül Grafik - Pie Chart (Son dönem için) */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Güncel Dağılım</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">Güncel Dağılım</h3>
               <div className="bg-white border rounded-lg p-6" style={{height: '300px'}}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -5052,7 +5052,7 @@ const DataAnalysisPage = () => {
 
             {/* Geçmiş Veriler Tablosu */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Geçmiş Veriler</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">Geçmiş Veriler</h3>
               <div className="border rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -5099,7 +5099,7 @@ const DataAnalysisPage = () => {
 
             {/* AI İçgörüler */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI İçgörüler & Öneriler</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 px-2 sm:px-0">🤖 AI İçgörüler & Öneriler</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
                   <h4 className="font-semibold text-blue-800 mb-2">📈 Trend Analizi</h4>
